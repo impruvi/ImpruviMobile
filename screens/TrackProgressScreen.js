@@ -1,10 +1,12 @@
-import {View} from "react-native";
+import {SafeAreaView, Text, View} from "react-native";
 
 const TrackProgressScreen = () => {
     return (
-        <View>
-
-        </View>
+        <SafeAreaView style={{flex: 1}}>
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                <Text>👀 Coming soon</Text>
+            </View>
+        </SafeAreaView>
     )
 }
 

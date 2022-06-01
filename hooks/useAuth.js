@@ -4,7 +4,7 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({children}) => {
 
-    const [userId, setUserId] = useState();
+    const [userId, setUserId] = useState('abc123');
 
     const memoedValue = useMemo(() => ({
         userId,

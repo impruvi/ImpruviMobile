@@ -1,115 +1,29 @@
 import apiClientFactory from 'aws-api-gateway-client';
-import {Equipment} from "../constants/equipment";
-import {Categories} from "../constants/categories";
-export const Endpoint = 'https://r5gmmfe8rd.execute-api.us-west-2.amazonaws.com/prod';
 
-
-const equipment = [
-    {
-        type: Equipment.Ball,
-        value: 1
-    },
-    {
-        type: Equipment.Cone,
-        value: 5
-    },
-    {
-        type: Equipment.Goal,
-        value: 1
-    },
-    {
-        type: Equipment.Space,
-        value: 10
-    }
-]
-
-const drill1 = {
-    drill: {
-        drillId: 'abc123',
-        category: Categories.Dribbling,
-        name: 'Ptachik warmup',
-        equipment: equipment,
-        fileLocations: {
-            front: '',
-            side: '',
-            closeUp: ''
-        }
-    },
-    submission: {
-        fileLocation: ''
-    },
-    feedback: {
-        fileLocation: ''
-    },
-    description: 'This is the second drill',
-    tips: [
-        'Focus on keeping your head up'
-    ],
-    repetitions: 3
-};
-
-const drill2 = {
-    drill: {
-        drillId: 'abc123',
-        category: Categories.Shooting,
-        name: 'Rapid fire',
-        equipment: equipment,
-        fileLocations: {
-            front: '',
-            side: '',
-            closeUp: ''
-        },
-        description: 'This is the second drill',
-        tips: [
-            'Focus on keeping your head up'
-        ],
-        repetitions: 3
-    },
-    submission: {
-        fileLocation: ''
-    },
-    feedback: {
-        fileLocation: ''
-    }
-};
 
 class HttpClient {
 
     #client = apiClientFactory.newClient({
-        invokeUrl: Endpoint,
+        invokeUrl: 'https://sdla1ah8n1.execute-api.us-west-2.amazonaws.com/prod',
         region: 'us-west-2',
-        accessKey: 'AKIA2UFO5ZGGFOG7GMZI',
-        secretKey: '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',
+        accessKey: 'AKIAXTDBP63P4IWBNXM6',
+        secretKey: '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',
     });
 
-    validateInviteCode = async (code) => {
-        await this.stall();
+    validateInviteCode = async (invitationCode) => {
+        const response = await this.#client.invokeApi({}, '/validate-invitation-code', 'POST', {}, {
+            invitationCode: invitationCode
+        });
 
-        return code === 'Hello' ? {
-            success: true,
-            user: {
-                userId: 'abc123'
-            }
-        } : {
-            success: false,
-            user: null
-        };
+        return response.data;
     }
 
     getSessions = async (userId) => {
-        await this.stall();
+        const response = await this.#client.invokeApi({}, '/get-sessions', 'POST', {}, {
+            userId: userId
+        });
 
-        return [
-            {
-                sessionId: 'abc123',
-                sessionNumber: 1,
-                equipment: equipment,
-                drills: [
-                    drill1,
-                    drill2,
-                ]
-            }
-        ]
+        return response.data.sessions;
     }
 
     stall = async (stallTime = 100) => {

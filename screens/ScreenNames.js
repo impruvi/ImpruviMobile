@@ -3,5 +3,7 @@ export const ScreenNames = {
     Authentication: 'Authentication',
     Training: 'Training',
     Feedback: 'Feedback',
-    Progress: 'Progress'
+    Progress: 'Progress',
+    Session: 'Session',
+    SessionFeedback: 'SessionFeedback',
 }

@@ -11,10 +11,11 @@ const AuthenticationScreen = () => {
     const {httpClient} = useHttpClient();
 
     const submit = async () => {
-        const result = await httpClient.validateInviteCode(invitationCode);
-        if (result.success) {
+        try {
+            const result = await httpClient.validateInviteCode(invitationCode);
             setUserId(result.user.userId);
-        } else {
+        } catch (e) {
+            console.error(e);
             setError('Invalid code');
         }
     }

@@ -3,8 +3,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image, SafeAreaView, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import AuthenticationScreen from "../screens/AuthenticationScreen";
-import Training from "../screens/Training";
 import TrainingScreen from "../screens/TrainingScreen";
+import SessionScreen from "../screens/SessionScreen";
 import FeedbackScreen from "../screens/FeedbackScreen";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import {faHouse, faPlay, faChartLine} from '@fortawesome/pro-light-svg-icons';
@@ -13,6 +13,7 @@ import { ScreenNames } from '../screens/ScreenNames';
 import useAuth from "../hooks/useAuth";
 import TrackProgressScreen from "../screens/TrackProgressScreen";
 import {Colors} from "../constants/colors";
+import SessionFeedbackScreen from "../screens/SessionFeedbackScreen";
 
 
 const Stack = createStackNavigator();
@@ -82,7 +83,7 @@ const MyTabBar = ({ state, descriptors, navigation }) => {
 const TabNavigator = () =>  {
     return (
         <Tab.Navigator screenOptions={{headerShown: false}} initialRouteName={ScreenNames.Training} tabBar={props => <MyTabBar {...props}/>}>
-            <Tab.Screen name={ScreenNames.Training} component={Training}/>
+            <Tab.Screen name={ScreenNames.Training} component={TrainingScreen}/>
             <Tab.Screen name={ScreenNames.Feedback} component={FeedbackScreen} />
             <Tab.Screen name={ScreenNames.Progress} component={TrackProgressScreen}/>
         </Tab.Navigator>
@@ -99,7 +100,8 @@ const StackNavigator = () => {
                 <>
                     <Stack.Group>
                         <Stack.Screen name={ScreenNames.TabNavigator} component={TabNavigator}/>
-                        <Stack.Screen name={ScreenNames.Training} component={TrainingScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={ScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={ScreenNames.SessionFeedback} component={SessionFeedbackScreen} options={{gestureResponseDistance: width}}/>
                     </Stack.Group>
                 </>
                 :

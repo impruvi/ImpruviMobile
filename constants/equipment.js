@@ -1,4 +1,4 @@
-export const Equipment = {
+export const EquipmentTypes = {
     Ball: 'Ball',
     Cone: 'Cone',
     Goal: 'Goal',

@@ -1,4 +1,4 @@
-export const Categories = {
+export const CategoryTypes = {
     Dribbling: 'Dribbling',
     Passing: 'Passing',
     Shooting: 'Shooting',
