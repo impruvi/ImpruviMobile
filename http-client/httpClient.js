@@ -1,6 +1,5 @@
 import apiClientFactory from 'aws-api-gateway-client';
 
-
 class HttpClient {
 
     #client = apiClientFactory.newClient({
@@ -24,6 +23,29 @@ class HttpClient {
         });
 
         return response.data.sessions;
+    }
+
+    submitDrillVideo = async (userId, sessionNumber, drillId, video) => {
+        // get s3 presigned url
+        const getVideoUploadUrlResponse = await this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
+            videoType: 'Submission',
+            userId: userId,
+            sessionNumber: sessionNumber,
+            drillId: drillId
+        });
+
+        // upload file to s3
+        const file = await fetch(video.uri);
+        const blob = await file.blob();
+        await fetch(getVideoUploadUrlResponse.data.uploadUrl, { method: 'PUT', body: blob });
+
+        // update submission for drill
+        await this.#client.invokeApi({}, '/create-submission', 'POST', {}, {
+            userId: userId,
+            sessionNumber: sessionNumber,
+            drillId: drillId,
+            fileLocation: getVideoUploadUrlResponse.data.fileLocation
+        });
     }
 
     stall = async (stallTime = 100) => {

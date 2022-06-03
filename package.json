@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.2.0-6",
-    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/pro-light-svg-icons": "^6.1.1",
     "@fortawesome/pro-regular-svg-icons": "^6.1.1",
@@ -23,8 +23,11 @@
     "@react-navigation/native-stack": "^6.2.5",
     "@react-navigation/stack": "^6.0.11",
     "aws-api-gateway-client": "^0.3.7",
+    "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "expo": "~44.0.0",
+    "expo-av": "~10.2.0",
+    "expo-camera": "~12.1.2",
     "expo-linear-gradient": "~11.0.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
@@ -35,9 +38,7 @@
     "react-native-screens": "~3.10.1",
     "react-native-svg": "12.3.0",
     "react-native-tab-view": "^3.1.1",
-    "react-native-web": "0.17.1",
-    "expo-av": "~10.2.0",
-    "expo-camera": "~12.1.2"
+    "react-native-web": "0.17.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

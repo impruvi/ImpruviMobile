@@ -4,6 +4,8 @@ export const ScreenNames = {
     Training: 'Training',
     Feedback: 'Feedback',
     Progress: 'Progress',
+    SessionNavigator: 'SessionNavigator',
     Session: 'Session',
+    SessionCamera: 'SessionCamera',
     SessionFeedback: 'SessionFeedback',
 }

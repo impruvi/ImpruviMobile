@@ -25,9 +25,17 @@ const TrainingScreen = () => {
                 </Text>
 
                 {sessions.length > 0 && (
-                    <SessionOverview session={sessions[0]} startSession={() => navigation.navigate(ScreenNames.Session, {
-                        session: sessions[0]
-                    })}/>
+                    <SessionOverview session={sessions[0]} startSession={() => navigation.navigate(
+                        {
+                            name: ScreenNames.SessionNavigator,
+                            merge: true,
+                            params: {
+                                screen: ScreenNames.Session,
+                                params: {
+                                    session: sessions[0]
+                                }
+                            }
+                        })}/>
                 )}
             </View>
         </SafeAreaView>

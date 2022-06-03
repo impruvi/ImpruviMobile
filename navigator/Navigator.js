@@ -14,6 +14,7 @@ import useAuth from "../hooks/useAuth";
 import TrackProgressScreen from "../screens/TrackProgressScreen";
 import {Colors} from "../constants/colors";
 import SessionFeedbackScreen from "../screens/SessionFeedbackScreen";
+import SessionCameraScreen from "../screens/SessionCameraScreen";
 
 
 const Stack = createStackNavigator();
@@ -90,6 +91,17 @@ const TabNavigator = () =>  {
     );
 }
 
+const SessionNavigator = () => {
+    const {width, height} = useWindowDimensions();
+
+    return (
+        <Stack.Navigator screenOptions={{headerShown: false, presentation: 'modal'}} initialRouteName={'Test'}>
+            <Stack.Screen name={ScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={ScreenNames.SessionCamera} component={SessionCameraScreen} options={{gestureResponseDistance: height}}/>
+        </Stack.Navigator>
+    )
+}
+
 const StackNavigator = () => {
     const {width} = useWindowDimensions();
     const {userId} = useAuth();
@@ -100,7 +112,7 @@ const StackNavigator = () => {
                 <>
                     <Stack.Group>
                         <Stack.Screen name={ScreenNames.TabNavigator} component={TabNavigator}/>
-                        <Stack.Screen name={ScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={ScreenNames.SessionNavigator} component={SessionNavigator} options={{gestureResponseDistance: width}}/>
                         <Stack.Screen name={ScreenNames.SessionFeedback} component={SessionFeedbackScreen} options={{gestureResponseDistance: width}}/>
                     </Stack.Group>
                 </>

@@ -28,7 +28,7 @@ const FeedbackScreen = () => {
 
                 <ScrollView>
                     {sessions.map(session => (
-                        <View style={commonStyles.row}>
+                        <View style={commonStyles.row} key={session.sessionNumber}>
                             <TouchableOpacity style={commonStyles.box} onPress={() => navigation.navigate(ScreenNames.SessionFeedback, {
                                 session: session
                             })}>
