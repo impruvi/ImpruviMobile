@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "impruvi-mobile-assets",
+    "name": "Impruvi",
     "slug": "impruvi-mobile-assets",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.impruvi.impruvimobileassets"
     },
     "android": {
       "adaptiveIcon": {

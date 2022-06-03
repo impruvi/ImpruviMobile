@@ -6,6 +6,7 @@ export const ScreenNames = {
     Progress: 'Progress',
     SessionNavigator: 'SessionNavigator',
     Session: 'Session',
-    SessionCamera: 'SessionCamera',
+    DrillSubmission: 'DrillSubmission',
+    SessionCompleted: 'SessionCompleted',
     SessionFeedback: 'SessionFeedback',
 }

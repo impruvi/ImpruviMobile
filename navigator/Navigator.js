@@ -14,7 +14,8 @@ import useAuth from "../hooks/useAuth";
 import TrackProgressScreen from "../screens/TrackProgressScreen";
 import {Colors} from "../constants/colors";
 import SessionFeedbackScreen from "../screens/SessionFeedbackScreen";
-import SessionCameraScreen from "../screens/SessionCameraScreen";
+import DrillSubmissionScreen from "../screens/DrillSubmissionScreen";
+import SessionCompleteScreen from "../screens/SessionCompleteScreen";
 
 
 const Stack = createStackNavigator();
@@ -97,7 +98,8 @@ const SessionNavigator = () => {
     return (
         <Stack.Navigator screenOptions={{headerShown: false, presentation: 'modal'}} initialRouteName={'Test'}>
             <Stack.Screen name={ScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={ScreenNames.SessionCamera} component={SessionCameraScreen} options={{gestureResponseDistance: height}}/>
+            <Stack.Screen name={ScreenNames.DrillSubmission} component={DrillSubmissionScreen} options={{gestureResponseDistance: height}}/>
+            <Stack.Screen name={ScreenNames.SessionCompleted} component={SessionCompleteScreen} options={{gestureResponseDistance: 0}} />
         </Stack.Navigator>
     )
 }

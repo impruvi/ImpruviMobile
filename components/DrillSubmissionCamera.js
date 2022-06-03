@@ -82,7 +82,7 @@ const DrillSubmissionCamera = ({setVideo}) => {
                     </TouchableOpacity>
                     {cameraState === CameraStates.Recording && (
                         <View style={{position: 'absolute', top: 0, left: 0, width: '100%', alignItems: 'center', paddingTop: 10}}>
-                            <View style={{paddingVertical: 5, paddingHorizontal: 15, backgroundColor: Colors.Primary, borderRadius: 10}}>
+                            <View style={{paddingVertical: 5, paddingHorizontal: 15, backgroundColor: 'rgba(241, 42, 80, 1)', borderRadius: 10}}>
                                 <VideoCounter style={{color: 'white', fontSize: 25}} />
                             </View>
                         </View>

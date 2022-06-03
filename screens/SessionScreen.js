@@ -1,5 +1,5 @@
 import {FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {DrillVideoAngles} from "../constants/drillVideoAngles";
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
 import {faPlus} from '@fortawesome/pro-light-svg-icons';
@@ -26,7 +26,6 @@ const SessionScreen = ({route}) => {
     }).current;
 
     const viewConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
-
 
     const onChangePlaybackRate = () => {
         if (playbackRate === .5) {
@@ -65,7 +64,7 @@ const SessionScreen = ({route}) => {
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                         <TouchableOpacity
                             style={styles.submitButton}
-                            onPress={() => navigation.navigate(ScreenNames.SessionCamera, {
+                            onPress={() => navigation.navigate(ScreenNames.DrillSubmission, {
                                 sessionNumber: session.sessionNumber,
                                 drillId: currentDrillId
                             })}>
@@ -98,7 +97,8 @@ const SessionScreen = ({route}) => {
 const styles = StyleSheet.create({
 
     submitButton: {
-        paddingVertical: 10,
+        marginBottom: 15,
+        paddingVertical: 12,
         paddingHorizontal: 20,
         backgroundColor: Colors.Primary,
         borderRadius: 40,
@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     submitButtonText: {
-        color: 'white'
+        color: 'white',
+        fontSize: 15
     }
 });
 

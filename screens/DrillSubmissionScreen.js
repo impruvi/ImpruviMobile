@@ -2,11 +2,14 @@ import {StyleSheet, View} from "react-native";
 import {useState} from "react";
 import DrillSubmissionCamera from "../components/DrillSubmissionCamera";
 import DrillSubmissionPreview from "../components/DrillSubmissionPreview";
+import {useNavigation} from "@react-navigation/native";
 
 
-const SessionCameraScreen = ({route}) => {
+const DrillSubmissionScreen = ({route}) => {
+    const navigation = useNavigation();
     const [video, setVideo] = useState();
     const {sessionNumber, drillId} = route.params;
+
 
     return (
         <View style={styles.container}>
@@ -18,7 +21,8 @@ const SessionCameraScreen = ({route}) => {
                     video={video}
                     cancel={() => setVideo(null)}
                     sessionNumber={sessionNumber}
-                    drillId={drillId}/>
+                    drillId={drillId}
+                    onComplete={() => navigation.goBack()}/>
             )}
         </View>
     )
@@ -54,4 +58,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SessionCameraScreen;
+export default DrillSubmissionScreen;
