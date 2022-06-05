@@ -23,7 +23,6 @@
     "@react-navigation/native-stack": "^6.2.5",
     "@react-navigation/stack": "^6.0.11",
     "aws-api-gateway-client": "^0.3.7",
-    "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "expo": "~44.0.0",
     "expo-av": "~10.2.0",

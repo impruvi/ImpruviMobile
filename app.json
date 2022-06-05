@@ -4,12 +4,12 @@
     "slug": "impruvi-mobile-assets",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/impruvi-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/impruvi-splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F35156"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

@@ -4,7 +4,6 @@ import {Camera} from "expo-camera";
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faRotate, faStopwatch, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
-import {Colors} from "../constants/colors";
 import VideoCounter from "./VideoCounter";
 import Countdown from "./Countdown";
 import {useEffect, useRef, useState} from "react";
@@ -16,13 +15,13 @@ const CameraStates = {
     Recording: 'Recording',
 }
 
-const DrillSubmissionCamera = ({setVideo}) => {
+const DrillSubmissionCamera = ({setVideo, initialCameraDirection = CameraType.back, initialCountdown = 3}) => {
     const cameraRef = useRef();
     const navigation = useNavigation();
-    const [cameraDirection, setCameraDirection] = useState(CameraType.back);
+    const [cameraDirection, setCameraDirection] = useState(initialCameraDirection);
     const [hasPermission, setHasPermission] = useState(null);
     const [cameraState, setCameraState] = useState(CameraStates.Neutral);
-    const [countDown, setCountDown] = useState(3);
+    const [countDown, setCountDown] = useState(initialCountdown);
 
     useEffect(() => {
         (async () => {

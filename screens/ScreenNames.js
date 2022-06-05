@@ -1,12 +1,25 @@
 export const ScreenNames = {
-    TabNavigator: 'TabNavigator',
     Authentication: 'Authentication',
-    Training: 'Training',
-    Feedback: 'Feedback',
-    Progress: 'Progress',
-    SessionNavigator: 'SessionNavigator',
-    Session: 'Session',
-    DrillSubmission: 'DrillSubmission',
-    SessionCompleted: 'SessionCompleted',
-    SessionFeedback: 'SessionFeedback',
+
+    // coach
+    CoachNavigator: 'CoachNavigator',
+    CoachTabNavigator: 'CoachTabNavigator',
+    CoachHome: 'Home',
+    CoachSessions: 'Sessions',
+    CoachPlayers: 'Players',
+    CoachFeedbackNavigator: 'FeedbackNavigator',
+    CoachSessionFeedback: 'SessionFeedback',
+    CoachDrillFeedback: 'DrillFeedback',
+
+    // player
+    PlayerNavigator: 'PlayerNavigator',
+    PlayerTabNavigator: 'PlayerTabNavigator',
+    PlayerTraining: 'Training',
+    PlayerFeedback: 'Feedback',
+    PlayerProgress: 'Progress',
+    PlayerSessionNavigator: 'SessionNavigator',
+    PlayerSession: 'Session',
+    PlayerDrillSubmission: 'DrillSubmission',
+    PlayerSessionComplete: 'SessionComplete',
+    PlayerSessionFeedback: 'SessionFeedback',
 }

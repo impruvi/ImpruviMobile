@@ -1,10 +1,11 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
-import {faClock, faSoccerBall} from '@fortawesome/pro-light-svg-icons';
+import {faCheckCircle, faClock, faSoccerBall} from '@fortawesome/pro-light-svg-icons';
 import {Colors} from "../constants/colors";
 import {getSessionEquipment} from "../util/equipmentAggregator";
 import Equipment from "./Equipment";
 import {commonStyles} from '../styles/commonStyles';
+import {doesDrillHaveSubmission} from "../util/drillUtil";
 
 
 const SessionOverview = ({session, startSession}) => {
@@ -51,15 +52,18 @@ const SessionOverview = ({session, startSession}) => {
                 <View style={commonStyles.row} key={drill.drill.name}>
                     <View style={commonStyles.box}>
                         <Text style={{fontWeight: '500', marginBottom: 3}}>
-                            {drill.drill.name} ({drill.repetitions} repetitions)
+                            {drill.drill.name}
                         </Text>
                         <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>
                             {drill.drill.category}
                         </Text>
-                        <Text>
-
-                        </Text>
-                        <Text>
+                        {doesDrillHaveSubmission(drill) && (
+                            <View style={{marginTop: 10, flexDirection: 'row'}}>
+                                <FontAwesomeIcon icon={faCheckCircle}  style={{marginRight: 6, color: 'green'}}/>
+                                <Text style={{color: 'green'}}>Your video is submitted</Text>
+                            </View>
+                        )}
+                        <Text style={{position: 'absolute', top: 20, right: 20, color: Colors.TextSecondary}}>
                             {drill.durationMinutes} minutes
                         </Text>
                     </View>
@@ -100,15 +104,16 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: Colors.Primary,
         color: 'white',
-        borderRadius: 20,
-        paddingVertical: 12,
+        borderRadius: 30,
+        paddingVertical: 15,
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 20
     },
     startButtonText: {
         color: 'white',
-        fontWeight: '600'
+        fontWeight: '600',
+        fontSize: 17
     }
 });
 

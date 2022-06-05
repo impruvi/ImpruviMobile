@@ -1,7 +1,7 @@
 import {EquipmentTypes} from "../constants/equipment";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import {faTrafficCone, faSoccerBall, faGoalNet, faRuler} from '@fortawesome/pro-light-svg-icons';
-import {Text, View, StyleSheet} from "react-native";
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
+import {faGoalNet, faRuler, faSoccerBall, faTrafficCone} from '@fortawesome/pro-light-svg-icons';
+import {StyleSheet, Text, View} from "react-native";
 
 const Equipment = ({equipment}) => {
     switch (equipment.equipmentType) {

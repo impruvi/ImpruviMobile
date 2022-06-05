@@ -1,24 +1,10 @@
-import {Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator} from "react-native";
+import {ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
 import {Video} from "expo-av";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faRotateRight, faArrowUpFromLine} from "@fortawesome/pro-light-svg-icons";
+import {faArrowUpFromLine, faRotateRight} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
-import useHttpClient from "../hooks/useHttpClient";
-import useAuth from "../hooks/useAuth";
-import {useState} from "react";
 
-const DrillSubmissionPreview = ({video, cancel, sessionNumber, drillId, onComplete}) => {
-
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const {httpClient} = useHttpClient();
-    const {userId} = useAuth();
-
-    const onSubmit = async () => {
-        setIsSubmitting(true);
-        await httpClient.submitDrillVideo(userId, sessionNumber, drillId, video);
-        setIsSubmitting(false);
-        onComplete();
-    }
+const DrillSubmissionPreview = ({video, cancel, isSubmitting, onSubmit}) => {
 
     return (
         <View style={{flex: 1, position: 'relative'}}>

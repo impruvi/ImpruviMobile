@@ -21,6 +21,7 @@ export const commonStyles = StyleSheet.create({
         shadowColor: '#E2E5E6',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 1,
-        shadowRadius: 2
+        shadowRadius: 2,
+        position: 'relative'
     }
 });

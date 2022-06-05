@@ -1,6 +1,6 @@
 import {SafeAreaView, Text, View} from "react-native";
 
-const TrackProgressScreen = () => {
+const PlayerTrackProgressScreen = () => {
     return (
         <SafeAreaView style={{flex: 1}}>
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -10,4 +10,4 @@ const TrackProgressScreen = () => {
     )
 }
 
-export default TrackProgressScreen;
+export default PlayerTrackProgressScreen;

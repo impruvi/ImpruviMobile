@@ -7,12 +7,13 @@ import {Colors} from "../constants/colors";
 const AuthenticationScreen = () => {
     const [invitationCode, setInvitationCode] = useState('');
     const [error, setError] = useState('');
-    const {setUserId} = useAuth();
+    const {setUserId, setUserType} = useAuth();
     const {httpClient} = useHttpClient();
 
     const submit = async () => {
         try {
             const result = await httpClient.validateInviteCode(invitationCode);
+            setUserType(result.user.userType);
             setUserId(result.user.userId);
         } catch (e) {
             console.error(e);

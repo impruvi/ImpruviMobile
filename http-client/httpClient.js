@@ -17,35 +17,74 @@ class HttpClient {
         return response.data;
     }
 
-    getSessions = async (userId) => {
-        const response = await this.#client.invokeApi({}, '/get-sessions', 'POST', {}, {
+    getPlayerSessions = async (userId) => {
+        const response = await this.#client.invokeApi({}, '/player/get-sessions', 'POST', {}, {
             userId: userId
         });
 
         return response.data.sessions;
     }
 
+    getCoachSessions = async (userId) => {
+        const response = await this.#client.invokeApi({}, '/coach/get-sessions', 'POST', {}, {
+            userId: userId
+        });
+
+        return response.data.playerSessions;
+    }
+
     submitDrillVideo = async (userId, sessionNumber, drillId, video) => {
-        // get s3 presigned url
-        const getVideoUploadUrlResponse = await this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
-            videoType: 'Submission',
-            userId: userId,
-            sessionNumber: sessionNumber,
-            drillId: drillId
-        });
+        try {
+            // get s3 presigned url
+            const getVideoUploadUrlResponse = await this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
+                videoType: 'Submission',
+                userId: userId,
+                sessionNumber: sessionNumber,
+                drillId: drillId
+            });
 
-        // upload file to s3
-        const file = await fetch(video.uri);
-        const blob = await file.blob();
-        await fetch(getVideoUploadUrlResponse.data.uploadUrl, { method: 'PUT', body: blob });
+            // upload file to s3
+            const file = await fetch(video.uri);
+            const blob = await file.blob();
+            await fetch(getVideoUploadUrlResponse.data.uploadUrl, { method: 'PUT', body: blob });
 
-        // update submission for drill
-        await this.#client.invokeApi({}, '/create-submission', 'POST', {}, {
-            userId: userId,
-            sessionNumber: sessionNumber,
-            drillId: drillId,
-            fileLocation: getVideoUploadUrlResponse.data.fileLocation
-        });
+            // update submission for drill
+            await this.#client.invokeApi({}, '/create-submission', 'POST', {}, {
+                userId: userId,
+                sessionNumber: sessionNumber,
+                drillId: drillId,
+                fileLocation: getVideoUploadUrlResponse.data.fileLocation
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    submitDrillFeedback = async (userId, sessionNumber, drillId, video) => {
+        try {
+            // get s3 presigned url
+            const getVideoUploadUrlResponse = await this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
+                videoType: 'Feedback',
+                userId: userId,
+                sessionNumber: sessionNumber,
+                drillId: drillId
+            });
+
+            // upload file to s3
+            const file = await fetch(video.uri);
+            const blob = await file.blob();
+            await fetch(getVideoUploadUrlResponse.data.uploadUrl, { method: 'PUT', body: blob });
+
+            // update submission for drill
+            await this.#client.invokeApi({}, '/create-feedback', 'POST', {}, {
+                userId: userId,
+                sessionNumber: sessionNumber,
+                drillId: drillId,
+                fileLocation: getVideoUploadUrlResponse.data.fileLocation
+            });
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     stall = async (stallTime = 100) => {
