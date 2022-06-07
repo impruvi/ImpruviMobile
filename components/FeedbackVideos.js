@@ -10,7 +10,7 @@ import {ScreenNames} from "../screens/ScreenNames";
 import {useNavigation} from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 
-const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab = FeedbackTabs.Feedback}) => {
+const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab = FeedbackTabs.Submission}) => {
 
     const [selectedTab, setSelectedTab] = useState(initialSelectedTab);
     const [demoStatus, setDemoStatus] = useState({});
@@ -102,7 +102,7 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
 
             {shouldShowActivityIndicator() && (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <ActivityIndicator size="large" color="white"/>
+                    <ActivityIndicator size="small" color="white"/>
                 </View>
             )}
 

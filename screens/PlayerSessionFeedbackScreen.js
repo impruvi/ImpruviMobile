@@ -4,6 +4,7 @@ import VideoBackIcon from "../components/VideoBackIcon";
 import {useNavigation} from "@react-navigation/native";
 import SessionProgress from "../components/SessionProgress";
 import FeedbackVideos from "../components/FeedbackVideos";
+import {StatusBar} from "expo-status-bar";
 
 const PlayerSessionFeedbackScreen = ({route}) => {
     const navigation = useNavigation();
@@ -22,7 +23,6 @@ const PlayerSessionFeedbackScreen = ({route}) => {
                 pagingEnabled
                 data={session.drills}
                 onViewableItemsChanged={viewableItemsChanged}
-                bounces={false}
                 viewabilityConfig={viewConfig}
                 keyExtractor={(item) => item.drill.drillId}
                 showsVerticalScrollIndicator={false}
@@ -34,6 +34,8 @@ const PlayerSessionFeedbackScreen = ({route}) => {
 
             <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
+
+            <StatusBar style="light" />
         </View>
     )
 }

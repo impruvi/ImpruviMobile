@@ -18,8 +18,12 @@
       "**/*"
     ],
     "ios": {
+      "buildNumber": "3",
       "supportsTablet": true,
-      "bundleIdentifier": "com.impruvi.impruvimobileassets"
+      "bundleIdentifier": "com.impruvi.impruvimobileassets",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Using camera for recording drill and feedback videos"
+      }
     },
     "android": {
       "adaptiveIcon": {

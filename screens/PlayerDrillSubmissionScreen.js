@@ -5,26 +5,29 @@ import DrillSubmissionPreview from "../components/DrillSubmissionPreview";
 import {useNavigation} from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import useHttpClient from "../hooks/useHttpClient";
+import useError from "../hooks/useError";
 
 
 const PlayerDrillSubmissionScreen = ({route}) => {
     const [video, setVideo] = useState();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const {setError} = useError();
     const {userId} = useAuth();
     const {httpClient} = useHttpClient();
     const navigation = useNavigation();
     const {sessionNumber, drillId} = route.params;
 
-    useEffect(() => {
-        console.log(sessionNumber);
-    }, [sessionNumber]);
-
     const onSubmit = async () => {
-        setIsSubmitting(true);
-        await httpClient.submitDrillVideo(userId, sessionNumber, drillId, video);
-        setIsSubmitting(false);
-        navigation.goBack();
+        try {
+            setIsSubmitting(true);
+            await httpClient.submitDrillVideo(userId, sessionNumber, drillId, video);
+            setIsSubmitting(false);
+            navigation.goBack();
+        } catch (e) {
+            console.error(e);
+            setError('An error occurred. Please try again.');
+        }
     }
 
     return (

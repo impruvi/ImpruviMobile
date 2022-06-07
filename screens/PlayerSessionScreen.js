@@ -8,6 +8,7 @@ import {ScreenNames} from "./ScreenNames";
 import useHttpClient from "../hooks/useHttpClient";
 import useAuth from "../hooks/useAuth";
 import {doesEveryDrillHaveSubmission} from "../util/sessionUtil";
+import {StatusBar} from "expo-status-bar";
 
 const PlayerSessionScreen = ({route}) => {
     const [currentDrillId, setCurrentDrillId] = useState();
@@ -44,7 +45,6 @@ const PlayerSessionScreen = ({route}) => {
                 pagingEnabled
                 data={session.drills}
                 onViewableItemsChanged={viewableItemsChanged}
-                bounces={false}
                 viewabilityConfig={viewConfig}
                 keyExtractor={(item) => item.drill.drillId}
                 showsVerticalScrollIndicator={false}
@@ -57,6 +57,8 @@ const PlayerSessionScreen = ({route}) => {
 
             <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()}/>
+
+            <StatusBar style="light" />
         </View>
     )
 }

@@ -8,7 +8,7 @@ import {
     useWindowDimensions,
     View
 } from "react-native";
-import {memo, useRef, useState} from "react";
+import {memo, useEffect, useRef, useState} from "react";
 import {DrillVideoAngles} from "../constants/drillVideoAngles";
 import {Video} from "expo-av";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
@@ -21,6 +21,7 @@ import {useNavigation} from "@react-navigation/native";
 import {Colors} from "../constants/colors";
 
 const DemoVideos = ({session, drill, isVisible, isLast}) => {
+    const [hasAutoShownInfo, setHasAutoShownInfo] = useState(false);
     const [isInfoShowing, setIsInfoShowing] = useState(false);
     const [selectedAngle, setSelectedAngle] = useState(DrillVideoAngles.Front);
     const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -33,6 +34,15 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
     const frontRef = useRef();
     const sideRef = useRef();
     const closeUpRef = useRef();
+
+    useEffect(() => {
+        if (hasAutoShownInfo || !isVisible || !frontStatus.isLoaded || frontStatus.isBuffering) {
+            return;
+        }
+
+        setIsInfoShowing(true);
+        setHasAutoShownInfo(true);
+    }, [isVisible, frontStatus]);
 
     const onChangePlaybackRate = () => {
         if (playbackRate === .5) {
@@ -101,7 +111,7 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
             />
             {shouldShowActivityIndicator() && (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <ActivityIndicator size="large" color="white"/>
+                    <ActivityIndicator size="small" color="white"/>
                 </View>
             )}
 
@@ -129,7 +139,7 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
                 visible={isInfoShowing}
                 onRequestClose={() => setIsInfoShowing(!isInfoShowing)}>
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <View style={{backgroundColor: 'white', borderRadius: 20, position: 'relative', width: '75%'}}>
+                    <View style={{backgroundColor: 'white', borderRadius: 20, position: 'relative', width: '80%'}}>
                         <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', position: 'relative', justifyContent: 'center', padding: 20}}>
                             <TouchableOpacity onPress={() => setIsInfoShowing(false)} style={{padding: 20, position: 'absolute', left: 0, top: 0}}>
                                 <FontAwesomeIcon icon={faXmarkLarge} size={25}/>

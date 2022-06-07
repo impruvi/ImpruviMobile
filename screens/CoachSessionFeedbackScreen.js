@@ -6,6 +6,7 @@ import SessionProgress from "../components/SessionProgress";
 import VideoBackIcon from "../components/VideoBackIcon";
 import {FeedbackTabs} from "../constants/feedbackTabs";
 import useHttpClient from "../hooks/useHttpClient";
+import {StatusBar} from "expo-status-bar";
 
 
 const CoachSessionFeedbackScreen = ({route}) => {
@@ -36,7 +37,6 @@ const CoachSessionFeedbackScreen = ({route}) => {
                 pagingEnabled
                 data={session.drills}
                 onViewableItemsChanged={viewableItemsChanged}
-                bounces={false}
                 viewabilityConfig={viewConfig}
                 keyExtractor={(item) => item.drill.drillId}
                 showsVerticalScrollIndicator={false}
@@ -50,6 +50,8 @@ const CoachSessionFeedbackScreen = ({route}) => {
 
             <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
+
+            <StatusBar style="light" />
         </View>
     )
 }
