@@ -1,5 +1,5 @@
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
-import {memo, useRef, useState} from "react";
+import {memo, useRef, useState, useCallback} from "react";
 import {Video} from "expo-av";
 import {FeedbackTabs} from "../constants/feedbackTabs";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
@@ -7,7 +7,7 @@ import {faAnglesDown, faPlus} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../util/drillUtil";
 import {ScreenNames} from "../screens/ScreenNames";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 
 const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab = FeedbackTabs.Submission}) => {
@@ -16,6 +16,7 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
     const [demoStatus, setDemoStatus] = useState({});
     const [submissionStatus, setSubmissionStatus] = useState({});
     const [feedbackStatus, setFeedbackStatus] = useState({});
+    const [isFocused, setIsFocused] = useState(true);
 
     const {userType} = useAuth();
     const navigation = useNavigation();
@@ -23,6 +24,12 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
     const demoRef = useRef();
     const submissionRef = useRef();
     const feedbackRef = useRef();
+
+    useFocusEffect(
+        useCallback(() => {
+            setIsFocused(true);
+        }, [navigation])
+    );
 
     const shouldShowActivityIndicator = () => {
         if (!isVisible) {
@@ -52,18 +59,21 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
 
     return (
         <View key={drill.drillId} style={{height: height, position: 'relative'}}>
-            <Video
-                ref={demoRef}
-                style={selectedTab === FeedbackTabs.Demo ? {flex: 1} : {display: 'none'}}
-                source={{
-                    uri: drill.drill.videos.front.fileLocation,
-                }}
-                resizeMode="cover"
-                shouldPlay={isVisible && selectedTab === FeedbackTabs.Demo}
-                isLooping
-                onPlaybackStatusUpdate={status => setDemoStatus(() => status)}
-            />
-            {doesDrillHaveSubmission(drill) && (
+            {((isVisible && selectedTab === FeedbackTabs.Demo) || demoStatus.isLoaded) && (
+                <Video
+                    ref={demoRef}
+                    style={selectedTab === FeedbackTabs.Demo ? {flex: 1} : {display: 'none'}}
+                    source={{
+                        uri: drill.drill.videos.front.fileLocation,
+                    }}
+                    resizeMode="cover"
+                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTabs.Demo}
+                    isLooping
+                    isMuted
+                    onPlaybackStatusUpdate={status => setDemoStatus(() => status)}
+                />
+            )}
+            {((isVisible && selectedTab === FeedbackTabs.Submission) || submissionStatus.isLoaded) && doesDrillHaveSubmission(drill) && (
                 <Video
                     ref={submissionRef}
                     style={selectedTab === FeedbackTabs.Submission ? {flex: 1} : {display: 'none'}}
@@ -71,7 +81,7 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
                         uri: drill.submission.fileLocation,
                     }}
                     resizeMode="cover"
-                    shouldPlay={isVisible && selectedTab === FeedbackTabs.Submission}
+                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTabs.Submission}
                     isLooping
                     onPlaybackStatusUpdate={status => setSubmissionStatus(() => status)}
                 />
@@ -81,7 +91,7 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
                     <Text style={{color: 'white'}}>No submission</Text>
                 </View>
             )}
-            {doesDrillHaveFeedback(drill) && (
+            {((isVisible && selectedTab === FeedbackTabs.Feedback) || feedbackStatus.isLoaded) && doesDrillHaveFeedback(drill) && (
                 <Video
                     ref={feedbackRef}
                     style={selectedTab === FeedbackTabs.Feedback ? {flex: 1} : {display: 'none'}}
@@ -89,7 +99,7 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
                         uri: drill.feedback.fileLocation,
                     }}
                     resizeMode="cover"
-                    shouldPlay={isVisible && selectedTab === FeedbackTabs.Feedback}
+                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTabs.Feedback}
                     isLooping
                     onPlaybackStatusUpdate={status => setFeedbackStatus(() => status)}
                 />
@@ -132,10 +142,13 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
                     {shouldShowSubmitFeedbackButton() && (
                         <TouchableOpacity
                             style={styles.submitButton}
-                            onPress={() => navigation.navigate(ScreenNames.CoachDrillFeedback, {
-                                session: session,
-                                drillId: drill.drill.drillId
-                            })}>
+                            onPress={() => {
+                                setIsFocused(false);
+                                navigation.navigate(ScreenNames.CoachDrillFeedback, {
+                                    session: session,
+                                    drillId: drill.drill.drillId
+                                })
+                            }}>
                             <FontAwesomeIcon icon={faPlus} style={styles.submitButtonIcon}/>
                             <Text style={styles.submitButtonText}>Submit feedback</Text>
                         </TouchableOpacity>
@@ -160,7 +173,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     tabText: {
-        color: Colors.TextSecondary,
+        color: Colors.TextLightSecondary,
         fontWeight: '600',
         fontSize: 14
     },

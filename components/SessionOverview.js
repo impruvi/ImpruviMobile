@@ -13,7 +13,7 @@ const SessionOverview = ({session, startSession}) => {
     const totalTime = session.drills.reduce((count, drill) => count + drill.durationMinutes, 0);
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <Text style={styles.header}>Overview</Text>
             <View style={commonStyles.row}>
                 <View style={commonStyles.half}>
@@ -30,10 +30,10 @@ const SessionOverview = ({session, startSession}) => {
                     <View style={commonStyles.box}>
                         <View style={styles.boxHeader}>
                             <FontAwesomeIcon icon={faClock} style={styles.boxHeaderIcon}/>
-                            <Text style={styles.boxHeaderTextSmall}>Total time</Text>
+                            <Text style={styles.boxHeaderTextSmall}>Time to complete</Text>
                         </View>
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                            <Text style={{fontSize: 20}}>{totalTime}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>minutes</Text>
+                            <Text style={{fontSize: 20}}>~{totalTime}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>minutes</Text>
                         </View>
                     </View>
                     <View style={commonStyles.box}>
@@ -64,7 +64,10 @@ const SessionOverview = ({session, startSession}) => {
                             </View>
                         )}
                         <Text style={{position: 'absolute', top: 20, right: 20, color: Colors.TextSecondary}}>
-                            {drill.durationMinutes} minutes
+                            {drill.preferredMeasurement === 'DurationMinutes'
+                                ? `${drill.durationMinutes} minutes`
+                                : `${drill.repetitions} reps`}
+
                         </Text>
                     </View>
                 </View>

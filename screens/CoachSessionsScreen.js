@@ -63,7 +63,7 @@ const CoachSessionsScreen = () => {
                     <>
                         {hasError && <Reload onReload={getAllPlayerSessions}/>}
                         {!hasError && (
-                            <ScrollView>
+                            <ScrollView showsVerticalScrollIndicator={false}>
                                 {allPlayerSessions.length === 0 && (
                                     <View>
                                         <Text>No sessions</Text>
@@ -86,22 +86,20 @@ const CoachSessionsScreen = () => {
                                                             <FeedbackStatus drill={drill}/>
                                                         </View>
                                                     ))}
-                                                    {session.drills.some(drill => doesDrillHaveSubmission(drill) && !doesDrillHaveFeedback(drill)) && (
-                                                        <TouchableOpacity style={{width: '100%', justifyContent: 'center', alignItems: 'center', paddingVertical: 13, borderRadius: 30, backgroundColor: Colors.Primary, marginTop: 15}}
-                                                                          onPress={() => navigation.navigate(
-                                                                              {
-                                                                                  name: ScreenNames.CoachFeedbackNavigator,
-                                                                                  merge: true,
+                                                    <TouchableOpacity style={{width: '100%', justifyContent: 'center', alignItems: 'center', paddingVertical: 13, borderRadius: 30, backgroundColor: Colors.Primary, marginTop: 15}}
+                                                                      onPress={() => navigation.navigate(
+                                                                          {
+                                                                              name: ScreenNames.CoachFeedbackNavigator,
+                                                                              merge: true,
+                                                                              params: {
+                                                                                  screen: ScreenNames.CoachSessionFeedback,
                                                                                   params: {
-                                                                                      screen: ScreenNames.CoachSessionFeedback,
-                                                                                      params: {
-                                                                                          session: session
-                                                                                      }
+                                                                                      session: session
                                                                                   }
-                                                                              })}>
-                                                            <Text style={{color: 'white', fontWeight: '600'}}>Provide feedback</Text>
-                                                        </TouchableOpacity>
-                                                    )}
+                                                                              }
+                                                                          })}>
+                                                        <Text style={{color: 'white', fontWeight: '600'}}>View Session</Text>
+                                                    </TouchableOpacity>
                                                 </View>
                                             </View>
                                         ))}

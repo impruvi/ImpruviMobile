@@ -37,7 +37,7 @@ const getMaxRequirements = (requirement1, requirement2) => {
         }
     } else if (requirement1.requirementType === 'Count') {
         return {
-            'count': Math.max(requirement1.count + requirement2.count),
+            'count': Math.max(requirement1.count, requirement2.count),
             'requirementType': 'Count'
         }
     } else {

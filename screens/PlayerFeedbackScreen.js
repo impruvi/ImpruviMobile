@@ -64,7 +64,7 @@ const PlayerFeedbackScreen = () => {
                     <>
                         {hasError && <Reload onReload={getPlayerSessions}/>}
                         {!hasError && (
-                            <ScrollView>
+                            <ScrollView showsVerticalScrollIndicator={false}>
                                 {sessions.map(session => (
                                     <View style={commonStyles.row} key={session.sessionNumber}>
                                         <View style={commonStyles.box}>

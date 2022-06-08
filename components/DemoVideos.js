@@ -8,7 +8,7 @@ import {
     useWindowDimensions,
     View
 } from "react-native";
-import {memo, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {DrillVideoAngles} from "../constants/drillVideoAngles";
 import {Video} from "expo-av";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
@@ -25,6 +25,7 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
     const [isInfoShowing, setIsInfoShowing] = useState(false);
     const [selectedAngle, setSelectedAngle] = useState(DrillVideoAngles.Front);
     const [playbackRate, setPlaybackRate] = useState(1.0);
+
     const [frontStatus, setFrontStatus] = useState({});
     const [sideStatus, setSideStatus] = useState({});
     const [closeUpStatus, setCloseUpStatus] = useState({});
@@ -70,45 +71,53 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
         }
     }
 
-
     return (
         <View key={drill.drill.drillId} style={{height: height, position: 'relative'}}>
-            <Video
-                ref={frontRef}
-                style={selectedAngle === DrillVideoAngles.Front ? {flex: 1} : {display: 'none'}}
-                source={{
-                    uri: drill.drill.videos.front.fileLocation,
-                }}
-                resizeMode="cover"
-                rate={playbackRate}
-                shouldPlay={isVisible && selectedAngle === DrillVideoAngles.Front}
-                isLooping
-                onPlaybackStatusUpdate={status => setFrontStatus(() => status)}
-            />
-            <Video
-                ref={sideRef}
-                style={selectedAngle === DrillVideoAngles.Side ? {flex: 1} : {display: 'none'}}
-                source={{
-                    uri: drill.drill.videos.side.fileLocation,
-                }}
-                resizeMode="cover"
-                rate={playbackRate}
-                shouldPlay={isVisible && selectedAngle === DrillVideoAngles.Side}
-                isLooping
-                onPlaybackStatusUpdate={status => setSideStatus(() => status)}
-            />
-            <Video
-                ref={closeUpRef}
-                style={selectedAngle === DrillVideoAngles.CloseUp ? {flex: 1} : {display: 'none'}}
-                source={{
-                    uri: drill.drill.videos.closeUp.fileLocation,
-                }}
-                resizeMode="cover"
-                rate={playbackRate}
-                shouldPlay={isVisible && selectedAngle === DrillVideoAngles.CloseUp}
-                isLooping
-                onPlaybackStatusUpdate={status => setCloseUpStatus(() => status)}
-            />
+            {((isVisible && selectedAngle === DrillVideoAngles.Front) || frontStatus.isLoaded) && (
+                <Video
+                    ref={frontRef}
+                    style={selectedAngle === DrillVideoAngles.Front ? {flex: 1} : {display: 'none'}}
+                    source={{
+                        uri: drill.drill.videos.front.fileLocation,
+                    }}
+                    resizeMode="cover"
+                    rate={playbackRate}
+                    shouldPlay={isVisible && selectedAngle === DrillVideoAngles.Front}
+                    isLooping
+                    isMuted
+                    onPlaybackStatusUpdate={status => setFrontStatus(() => status)}
+                />
+            )}
+            {((isVisible && selectedAngle === DrillVideoAngles.Side) || sideStatus.isLoaded) && (
+                <Video
+                    ref={sideRef}
+                    style={selectedAngle === DrillVideoAngles.Side ? {flex: 1} : {display: 'none'}}
+                    source={{
+                        uri: drill.drill.videos.side.fileLocation,
+                    }}
+                    resizeMode="cover"
+                    rate={playbackRate}
+                    shouldPlay={isVisible && selectedAngle === DrillVideoAngles.Side}
+                    isLooping
+                    isMuted
+                    onPlaybackStatusUpdate={status => setSideStatus(() => status)}
+                />
+            )}
+            {((isVisible && selectedAngle === DrillVideoAngles.CloseUp) || closeUpStatus.isLoaded) && (
+                <Video
+                    ref={closeUpRef}
+                    style={selectedAngle === DrillVideoAngles.CloseUp ? {flex: 1} : {display: 'none'}}
+                    source={{
+                        uri: drill.drill.videos.closeUp.fileLocation,
+                    }}
+                    resizeMode="cover"
+                    rate={playbackRate}
+                    shouldPlay={isVisible && selectedAngle === DrillVideoAngles.CloseUp}
+                    isLooping
+                    isMuted
+                    onPlaybackStatusUpdate={status => setCloseUpStatus(() => status)}
+                />
+            )}
             {shouldShowActivityIndicator() && (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                     <ActivityIndicator size="small" color="white"/>
@@ -140,16 +149,21 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
                 onRequestClose={() => setIsInfoShowing(!isInfoShowing)}>
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                     <View style={{backgroundColor: 'white', borderRadius: 20, position: 'relative', width: '80%'}}>
-                        <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', position: 'relative', justifyContent: 'center', padding: 20}}>
-                            <TouchableOpacity onPress={() => setIsInfoShowing(false)} style={{padding: 20, position: 'absolute', left: 0, top: 0}}>
+                        <View style={{width: '100%'}}>
+                            <TouchableOpacity onPress={() => setIsInfoShowing(false)} style={{padding: 20}}>
                                 <FontAwesomeIcon icon={faXmarkLarge} size={25}/>
                             </TouchableOpacity>
+                        </View>
+                        <View style={{paddingHorizontal: 20}}>
                             <Text style={{fontWeight: '600', fontSize: 18}}>{drill.drill.name}</Text>
                         </View>
                         <View style={{paddingHorizontal: 20, paddingBottom: 20}}>
-                            <View style={{marginBottom: 10}}>
-                                <Text style={{fontWeight: '600'}}>Description</Text>
-                                <Text>{drill.drill.description}</Text>
+                            <View style={{marginBottom: 15, marginTop: 2}}>
+                                <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>
+                                    {drill.preferredMeasurement === 'DurationMinutes'
+                                        ? `${drill.durationMinutes} minutes`
+                                        : `${drill.repetitions} reps`}
+                                </Text>
                             </View>
                             <View>
                                 <Text style={{fontWeight: '600'}}>Tips</Text>
@@ -157,7 +171,9 @@ const DemoVideos = ({session, drill, isVisible, isLast}) => {
                                     <Text key={tip}>{tip}</Text>
                                 ))}
                             </View>
-                            <Image source={{uri: drill.drill.diagramFileLocation}} style={{width: '100%', height: 280, marginTop: 10, resizeMode: 'cover'}}/>
+                            {!!drill.drill.diagramFileLocation && (
+                                <Image source={{uri: drill.drill.diagramFileLocation}} style={{width: '100%', minHeight: 280, marginTop: 10, resizeMode: 'contain'}}/>
+                            )}
                         </View>
                     </View>
                 </View>
@@ -216,4 +232,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default memo(DemoVideos);
+export default DemoVideos;

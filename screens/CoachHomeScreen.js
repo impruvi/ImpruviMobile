@@ -31,6 +31,23 @@ const CoachHomeScreen = () => {
         setIsLoading(false);
     }
 
+    const getTimeToProvideFeedback = (session) => {
+        const dayInMillis = 24 * 60 * 60 * 1000;
+        const hourInMillis = 60 * 60 * 1000;
+        const minuteInMillis = 60 * 1000;
+        const currentTimeEpochMillis = Date.now();
+        const submissionTimeEpochMillis = Math.max(...session.drills.map(drill =>
+            drill.submission.creationDateEpochMillis
+        ));
+
+        const timeRemainingMillis = submissionTimeEpochMillis + dayInMillis - currentTimeEpochMillis;
+        if (timeRemainingMillis > hourInMillis) {
+            return `${Math.floor(timeRemainingMillis / hourInMillis)} hrs remaining to provide feedback`
+        } else {
+            return `${Math.floor(timeRemainingMillis / minuteInMillis)} minutes remaining to provide feedback`
+        }
+    }
+
     const getIncompletePlayerSessionsLazy = async () => {
         try {
             const allPlayerSessions = await httpClient.getCoachSessions(userId);
@@ -74,7 +91,7 @@ const CoachHomeScreen = () => {
                     <>
                         {hasError && <Reload onReload={getIncompletePlayerSessions}/>}
                         {!hasError && (
-                            <ScrollView>
+                            <ScrollView showsVerticalScrollIndicator={false}>
                                 {incompletePlayerSessions.length === 0 && (
                                     <View>
                                         <Text>No sessions to review</Text>
@@ -86,7 +103,10 @@ const CoachHomeScreen = () => {
                                         {playerSessions.sessions.map(session => (
                                             <View style={commonStyles.row} key={session.sessionNumber}>
                                                 <View style={commonStyles.box}>
-                                                    <Text style={{fontSize: 24, fontWeight: '500', marginBottom: 10}}>Session {session.sessionNumber}</Text>
+                                                    <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, justifyContent: 'space-between'}}>
+                                                        <Text style={{fontSize: 24, fontWeight: '500',  marginRight: 10}}>Session {session.sessionNumber}</Text>
+                                                        <Text style={{fontSize: 12, width: 120, color: Colors.TextSecondary, textAlign: 'right', fontWeight: '500'}}>{getTimeToProvideFeedback(session)}</Text>
+                                                    </View>
                                                     {session.drills.map(drill => (
                                                         <View style={{marginVertical: 10}} key={drill.drill.drillId}>
                                                             <Text style={styles.drillName}>
