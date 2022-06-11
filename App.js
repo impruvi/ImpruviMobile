@@ -3,6 +3,7 @@ import {HttpClientProvider} from "./hooks/useHttpClient";
 import Navigator from "./navigator/Navigator";
 import {NavigationContainer} from "@react-navigation/native";
 import {ErrorProvider} from "./hooks/useError";
+import {PushProvider} from "./hooks/usePush";
 
 export default function App() {
   return (
@@ -10,7 +11,9 @@ export default function App() {
           <AuthProvider>
               <ErrorProvider>
                   <HttpClientProvider>
-                      <Navigator />
+                      <PushProvider>
+                        <Navigator />
+                      </PushProvider>
                   </HttpClientProvider>
               </ErrorProvider>
           </AuthProvider>
