@@ -4,9 +4,8 @@ import Navigator from "./navigator/Navigator";
 import {NavigationContainer} from "@react-navigation/native";
 import {ErrorProvider} from "./hooks/useError";
 import {OnboardingProvider} from "./hooks/useOnboarding";
-
 import {BottomSheetModalProvider,} from '@gorhom/bottom-sheet';
-
+import {PushProvider} from "./hooks/usePush";
 
 export default function App() {
   return (
@@ -16,7 +15,9 @@ export default function App() {
                   <ErrorProvider>
                       <OnboardingProvider>
                           <HttpClientProvider>
-                              <Navigator />
+                              <PushProvider>
+                                <Navigator />
+                              </PushProvider>
                           </HttpClientProvider>
                       </OnboardingProvider>
                   </ErrorProvider>
