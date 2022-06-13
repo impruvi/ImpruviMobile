@@ -3,5 +3,6 @@ export const Colors = {
     PrimaryWashed: '#fbd0d2',
     TextPrimary: '#000',
     TextSecondary: '#aaa',
-    TextLightSecondary: '#ccc'
+    TextLightSecondary: '#ddd',
+    Border: '#EFF3F4',
 }

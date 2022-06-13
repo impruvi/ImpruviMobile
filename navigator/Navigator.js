@@ -3,19 +3,20 @@ import {Animated, Text, TouchableOpacity, View, SafeAreaView} from 'react-native
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthenticationScreen from "../screens/AuthenticationScreen";
 
-import {ScreenNames} from '../screens/ScreenNames';
+import {RootScreenNames} from '../screens/ScreenNames';
 import useAuth from "../hooks/useAuth";
 import PlayerNavigator from "./PlayerNavigator";
 import CoachNavigator from "./CoachNavigator";
 import useError from "../hooks/useError";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
+import {UserType} from "../constants/userType";
 
 
 const Stack = createStackNavigator();
 
 const RootNavigator = () => {
-    const {userId, userType} = useAuth();
+    const {userType} = useAuth();
     const {error, setError} = useError();
     const errorAnimation = useRef(new Animated.Value(-200)).current
 
@@ -29,15 +30,15 @@ const RootNavigator = () => {
 
     return (
         <View style={{flex: 1, position: 'relative'}}>
-            <Stack.Navigator screenOptions={{headerShown: false}}>
-                {!userId && (
-                    <Stack.Screen name={ScreenNames.Authentication} component={AuthenticationScreen}/>
+            <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>
+                {!userType && (
+                    <Stack.Screen name={RootScreenNames.Authentication} component={AuthenticationScreen}/>
                 )}
-                {!!userId && userType === 'Player' && (
-                    <Stack.Screen name={ScreenNames.PlayerNavigator} component={PlayerNavigator}/>
+                {!!userType && userType === UserType.Player && (
+                    <Stack.Screen name={RootScreenNames.PlayerNavigator} component={PlayerNavigator}/>
                 )}
-                {!!userId && userType === 'Coach' && (
-                    <Stack.Screen name={ScreenNames.CoachNavigator} component={CoachNavigator}/>
+                {!!userType && userType === UserType.Coach && (
+                    <Stack.Screen name={RootScreenNames.CoachNavigator} component={CoachNavigator}/>
                 )}
             </Stack.Navigator>
 

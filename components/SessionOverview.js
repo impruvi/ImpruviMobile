@@ -1,33 +1,36 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
-import {faCheckCircle, faClock, faSoccerBall} from '@fortawesome/pro-light-svg-icons';
+import {faClock, faSoccerBall, faCheckCircle} from '@fortawesome/pro-light-svg-icons';
 import {Colors} from "../constants/colors";
 import {getSessionEquipment} from "../util/equipmentAggregator";
 import Equipment from "./Equipment";
-import {commonStyles} from '../styles/commonStyles';
+import SpaceBetweenComponent from "./SpaceBetweenComponent";
+import Box from "./Box";
+import SessionDrillItem from "./SessionDrillItem";
 import {doesDrillHaveSubmission} from "../util/drillUtil";
+import {getCategoryDisplayValue} from "../constants/categoryType";
 
 
 const SessionOverview = ({session, startSession}) => {
     const sessionEquipment = getSessionEquipment(session);
-    const totalTime = session.drills.reduce((count, drill) => count + drill.durationMinutes, 0);
+    const totalTime = session.drills.reduce((count, drill) => count + drill.estimatedDurationMinutes, 0);
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <Text style={styles.header}>Overview</Text>
-            <View style={commonStyles.row}>
-                <View style={commonStyles.half}>
-                    <View style={commonStyles.box}>
+            <SpaceBetweenComponent>
+                <View style={{width: '49%'}}>
+                    <Box style={{padding: 15}}>
                         <Text style={styles.boxHeaderTextLarge}>What you need</Text>
                         <View>
                             {sessionEquipment.map(equipment => (
                                 <Equipment equipment={equipment} key={equipment.equipmentType}/>
                             ))}
                         </View>
-                    </View>
+                    </Box>
                 </View>
-                <View style={commonStyles.half}>
-                    <View style={commonStyles.box}>
+                <View style={{width: '49%'}}>
+                    <Box style={{padding: 15}}>
                         <View style={styles.boxHeader}>
                             <FontAwesomeIcon icon={faClock} style={styles.boxHeaderIcon}/>
                             <Text style={styles.boxHeaderTextSmall}>Time to complete</Text>
@@ -35,8 +38,8 @@ const SessionOverview = ({session, startSession}) => {
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Text style={{fontSize: 20}}>~{totalTime}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>minutes</Text>
                         </View>
-                    </View>
-                    <View style={commonStyles.box}>
+                    </Box>
+                    <Box style={{padding: 15}}>
                         <View style={styles.boxHeader}>
                             <FontAwesomeIcon icon={faSoccerBall} style={styles.boxHeaderIcon}/>
                             <Text style={styles.boxHeaderTextSmall}>Number of drills</Text>
@@ -44,18 +47,17 @@ const SessionOverview = ({session, startSession}) => {
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Text style={{fontSize: 20}}>{session.drills.length}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>drills</Text>
                         </View>
-                    </View>
+                    </Box>
                 </View>
-            </View>
+            </SpaceBetweenComponent>
             <Text style={styles.header}>Drills</Text>
             {session.drills.map(drill => (
-                <View style={commonStyles.row} key={drill.drill.name}>
-                    <View style={commonStyles.box}>
+                <Box style={{padding: 15}}>
                         <Text style={{fontWeight: '500', marginBottom: 3}}>
-                            {drill.drill.name}
+                            {drill.name}
                         </Text>
                         <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>
-                            {drill.drill.category}
+                            {getCategoryDisplayValue(drill.category)}
                         </Text>
                         {doesDrillHaveSubmission(drill) && (
                             <View style={{marginTop: 10, flexDirection: 'row'}}>
@@ -63,17 +65,13 @@ const SessionOverview = ({session, startSession}) => {
                                 <Text style={{color: 'green'}}>Your video is submitted</Text>
                             </View>
                         )}
-                        <Text style={{position: 'absolute', top: 20, right: 20, color: Colors.TextSecondary}}>
-                            {drill.preferredMeasurement === 'DurationMinutes'
-                                ? `${drill.durationMinutes} minutes`
-                                : `${drill.repetitions} reps`}
-
+                        <Text style={{position: 'absolute', top: 15, right: 15, color: Colors.TextSecondary}}>
+                            {drill.estimatedDurationMinutes} minutes
                         </Text>
-                    </View>
-                </View>
+                </Box>
             ))}
             <TouchableOpacity style={styles.startButton} onPress={startSession}>
-                <Text style={styles.startButtonText}>Start</Text>
+                <Text style={styles.startButtonText}>Start training</Text>
             </TouchableOpacity>
         </ScrollView>
     )
@@ -111,12 +109,13 @@ const styles = StyleSheet.create({
         paddingVertical: 13,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 20
+        marginTop: 10,
+        marginBottom: 20
     },
     startButtonText: {
         color: 'white',
         fontWeight: '600',
-        fontSize: 17
+        fontSize: 14
     }
 });
 

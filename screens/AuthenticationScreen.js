@@ -1,15 +1,16 @@
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView} from "react-native";
 import useAuth from "../hooks/useAuth";
 import {useState} from "react";
 import useHttpClient from "../hooks/useHttpClient";
 import {Colors} from "../constants/colors";
 import {StatusBar} from "expo-status-bar";
+import {UserType} from "../constants/userType";
 
 const AuthenticationScreen = () => {
     const [invitationCode, setInvitationCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const {setUserId, setUserType} = useAuth();
+    const {setUserType, setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
 
     const submit = async () => {
@@ -19,9 +20,15 @@ const AuthenticationScreen = () => {
         setIsSubmitting(true);
         try {
             const result = await httpClient.validateInviteCode(invitationCode);
-            setUserType(result.user.userType);
-            setUserId(result.user.userId);
+            if (result.userType === UserType.Player) {
+                setPlayer(result.player);
+                setUserType(UserType.Player);
+            } else {
+                setCoach(result.coach);
+                setUserType(UserType.Coach);
+            }
         } catch (e) {
+            console.log(e);
             setError('Invalid code');
         }
         setIsSubmitting(false);
@@ -29,26 +36,27 @@ const AuthenticationScreen = () => {
 
     return (
         <SafeAreaView style={styles.safeAreaView}>
-
             <TouchableWithoutFeedback style={{flex: 1}} onPress={Keyboard.dismiss}>
-                <View style={styles.container}>
-                    <Text style={styles.title}>impruvi</Text>
-                    <View style={styles.inputContainer}>
+                <KeyboardAvoidingView style={styles.container} behavior={'padding'}>
+                    <View style={styles.contentContainer}>
+                        <Text style={styles.title}>impr<Text style={{color: Colors.Primary}}>ü</Text>vi</Text>
+
                         <Text style={styles.inputText}>Enter your invitation code</Text>
                         <TextInput style={styles.input} value={invitationCode} onChangeText={setInvitationCode}/>
+
+                        <TouchableOpacity style={isSubmitting ? {...styles.button, backgroundColor: 'rgba(243, 81, 86, .6)'} : styles.button} onPress={submit}>
+                            {isSubmitting && (
+                                <Text style={styles.buttonText}>Validating...</Text>
+                            )}
+                            {!isSubmitting && (
+                                <Text style={styles.buttonText}>Continue</Text>
+                            )}
+                        </TouchableOpacity>
+                        {!!error && !isSubmitting && (
+                            <Text style={styles.error}>{error}</Text>
+                        )}
                     </View>
-                    <TouchableOpacity style={isSubmitting ? {...styles.button, backgroundColor: 'rgba(243, 81, 86, .8)'} : styles.button} onPress={submit}>
-                        {isSubmitting && (
-                            <Text style={{...styles.buttonText, color: 'rgba(255, 255, 255, .8)'}}>Validating...</Text>
-                        )}
-                        {!isSubmitting && (
-                            <Text style={styles.buttonText}>Continue</Text>
-                        )}
-                    </TouchableOpacity>
-                    {!!error && (
-                        <Text style={styles.error}>{error}</Text>
-                    )}
-                </View>
+                </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
 
             <StatusBar style="dark" />
@@ -59,7 +67,7 @@ const AuthenticationScreen = () => {
 const styles = StyleSheet.create({
     safeAreaView:  {
         flex: 1,
-        backgroundColor: 'white'
+        // backgroundColor: 'white'
     },
     container: {
         flex: 1,
@@ -72,9 +80,8 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         marginBottom: 40
     },
-    inputContainer: {
+    contentContainer: {
         width: '100%',
-        marginBottom: 10,
         alignItems: 'center'
     },
     inputText: {

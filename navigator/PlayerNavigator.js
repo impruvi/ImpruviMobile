@@ -1,17 +1,17 @@
 import {createStackNavigator} from "@react-navigation/stack";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {SafeAreaView, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
-import {ScreenNames} from "../screens/ScreenNames";
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
+import {PlayerScreenNames, ScreenNames} from "../screens/ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faChartLine, faHouse, faPlay} from "@fortawesome/pro-light-svg-icons";
+import {faChartLine, faHouse, faListUl, faPlay} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
-import PlayerTrainingScreen from "../screens/PlayerTrainingScreen";
-import PlayerFeedbackScreen from "../screens/PlayerFeedbackScreen";
-import PlayerTrackProgressScreen from "../screens/PlayerTrackProgressScreen";
-import PlayerSessionScreen from "../screens/PlayerSessionScreen";
-import PlayerDrillSubmissionScreen from "../screens/PlayerDrillSubmissionScreen";
-import PlayerSessionCompleteScreen from "../screens/PlayerSessionCompleteScreen";
-import PlayerSessionFeedbackScreen from "../screens/PlayerSessionFeedbackScreen";
+import TrainingScreen from "../screens/player/TrainingScreen";
+import FeedbackScreen from "../screens/player/FeedbackScreen";
+import TrackProgressScreen from "../screens/player/TrackProgressScreen";
+import SessionScreen from "../screens/player/SessionScreen";
+import DrillSubmissionScreen from "../screens/player/DrillSubmissionScreen";
+import SessionCompleteScreen from "../screens/player/SessionCompleteScreen";
+import SessionFeedbackScreen from "../screens/player/SessionFeedbackScreen";
 import React from "react";
 
 const Stack = createStackNavigator();
@@ -55,21 +55,26 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
                     return (
                         <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={{ width: 80, height: 50, marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }} key={label}>
-                            {label === ScreenNames.PlayerTraining &&
-                                <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'}/>
+                            {label === PlayerScreenNames.Training &&
+                                <>
+                                    <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'}/>
+                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Training</Text>
+                                </>
                             }
 
-                            {label === ScreenNames.PlayerFeedback &&
-                                <FontAwesomeIcon icon={faPlay} color={isFocused ? Colors.Primary : 'black'}/>
+                            {label === PlayerScreenNames.Feedback &&
+                                <>
+                                    <FontAwesomeIcon icon={faPlay} color={isFocused ? Colors.Primary : 'black'}/>
+                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Feedback</Text>
+                                </>
                             }
 
-                            {label === ScreenNames.PlayerProgress &&
-                                <FontAwesomeIcon icon={faChartLine} color={isFocused ? Colors.Primary : 'black'}/>
+                            {label === PlayerScreenNames.Progress &&
+                                <>
+                                    <FontAwesomeIcon icon={faChartLine} color={isFocused ? Colors.Primary : 'black'}/>
+                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Progress</Text>
+                                </>
                             }
-
-                            <Text style={{ color: isFocused ? Colors.Primary : 'black', marginTop: 7, fontSize: 12, fontWeight: '600', }}>
-                                {label}
-                            </Text>
                         </TouchableOpacity>
                     );
                 })}
@@ -80,10 +85,10 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
 const TabNavigator = () =>  {
     return (
-        <Tab.Navigator screenOptions={{headerShown: false}} initialRouteName={ScreenNames.PlayerTraining} tabBar={props => <TabBar {...props}/>}>
-            <Tab.Screen name={ScreenNames.PlayerTraining} component={PlayerTrainingScreen}/>
-            <Tab.Screen name={ScreenNames.PlayerFeedback} component={PlayerFeedbackScreen} />
-            <Tab.Screen name={ScreenNames.PlayerProgress} component={PlayerTrackProgressScreen}/>
+        <Tab.Navigator screenOptions={{headerShown: false}} initialRouteName={PlayerScreenNames.Training} tabBar={props => <TabBar {...props}/>}>
+            <Tab.Screen name={PlayerScreenNames.Training} component={TrainingScreen}/>
+            <Tab.Screen name={PlayerScreenNames.Feedback} component={FeedbackScreen} />
+            <Tab.Screen name={PlayerScreenNames.Progress} component={TrackProgressScreen}/>
         </Tab.Navigator>
     );
 };
@@ -92,10 +97,10 @@ const SessionNavigator = () => {
     const {width, height} = useWindowDimensions();
 
     return (
-        <Stack.Navigator screenOptions={{headerShown: false, presentation: 'modal'}}>
-            <Stack.Screen name={ScreenNames.PlayerSession} component={PlayerSessionScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={ScreenNames.PlayerDrillSubmission} component={PlayerDrillSubmissionScreen} options={{gestureResponseDistance: height}}/>
-            <Stack.Screen name={ScreenNames.PlayerSessionComplete} component={PlayerSessionCompleteScreen} options={{gestureResponseDistance: 0}} />
+        <Stack.Navigator screenOptions={{headerShown: false, presentation: 'modal', cardStyle: {backgroundColor: '#EFF3F4'}}}>
+            <Stack.Screen name={PlayerScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={PlayerScreenNames.DrillSubmission} component={DrillSubmissionScreen} options={{gestureResponseDistance: height}}/>
+            <Stack.Screen name={PlayerScreenNames.SessionComplete} component={SessionCompleteScreen} options={{gestureResponseDistance: 0}} />
         </Stack.Navigator>
     );
 };
@@ -104,12 +109,27 @@ const PlayerNavigator = () => {
     const {width} = useWindowDimensions();
 
     return (
-        <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen name={ScreenNames.PlayerTabNavigator} component={TabNavigator}/>
-            <Stack.Screen name={ScreenNames.PlayerSessionNavigator} component={SessionNavigator} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={ScreenNames.PlayerSessionFeedback} component={PlayerSessionFeedbackScreen} options={{gestureResponseDistance: width}}/>
+        <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: '#EFF3F4'}}}>
+            <Stack.Screen name={PlayerScreenNames.TabNavigator} component={TabNavigator}/>
+            <Stack.Screen name={PlayerScreenNames.SessionNavigator} component={SessionNavigator} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={PlayerScreenNames.SessionFeedback} component={SessionFeedbackScreen} options={{gestureResponseDistance: width}}/>
         </Stack.Navigator>
     );
 };
+
+const styles = StyleSheet.create({
+    tabText: {
+        marginTop: 7,
+        fontSize: 12,
+        fontWeight: '600',
+        color: 'black'
+    },
+    tabTextFocused: {
+        marginTop: 7,
+        fontSize: 12,
+        fontWeight: '600',
+        color: Colors.Primary
+    }
+})
 
 export default PlayerNavigator;

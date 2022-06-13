@@ -1,25 +1,43 @@
-export const ScreenNames = {
+export const RootScreenNames = {
     Authentication: 'Authentication',
-
-    // coach
     CoachNavigator: 'CoachNavigator',
-    CoachTabNavigator: 'CoachTabNavigator',
-    CoachHome: 'Home',
-    CoachSessions: 'Sessions',
-    CoachPlayers: 'Players',
-    CoachFeedbackNavigator: 'FeedbackNavigator',
-    CoachSessionFeedback: 'SessionFeedback',
-    CoachDrillFeedback: 'DrillFeedback',
-
-    // player
     PlayerNavigator: 'PlayerNavigator',
-    PlayerTabNavigator: 'PlayerTabNavigator',
-    PlayerTraining: 'Training',
-    PlayerFeedback: 'Feedback',
-    PlayerProgress: 'Progress',
-    PlayerSessionNavigator: 'SessionNavigator',
-    PlayerSession: 'Session',
-    PlayerDrillSubmission: 'DrillSubmission',
-    PlayerSessionComplete: 'SessionComplete',
-    PlayerSessionFeedback: 'SessionFeedback',
+}
+
+export const CoachScreenNames = {
+    TabNavigator: 'CoachTabNavigator',
+    Home: 'CoachHome',
+    Players: 'CoachPlayers',
+    Drills: 'CoachDrills',
+
+    PlayersNavigator: 'PlayersNavigator',
+
+    CreateOrEditDrill: 'CoachCreateOrEditDrill',
+    EditDrillName: 'CoachEditDrillName',
+    EditDrillDescription: 'CoachEditDrillDescription',
+    EditDrillCategory: 'CoachEditDrillCategory',
+    EditDrillEquipment: 'CoachEditDrillEquipment',
+    EditDrillDemo: 'CoachEditDrillDemo',
+
+    Player: 'CoachPlayer',
+    CreateOrEditSession: 'CoachCreateOrEditSession',
+    SelectDrill: 'CoachSelectDrill',
+    EditDrillSelectionDetails: 'EditDrillSelectionDetails',
+    EditEstimatedDurationScreen: 'CoachEditEstimatedDurationScreen',
+    PreviewSession: 'CoachPreviewSession',
+
+    Session: 'CoachSession',
+    DrillFeedback: 'CoachDrillFeedback',
+}
+
+export const PlayerScreenNames = {
+    TabNavigator: 'PlayerTabNavigator',
+    Training: 'PlayerTraining',
+    Feedback: 'PlayerFeedback',
+    Progress: 'PlayerProgress',
+    SessionNavigator: 'PlayerSessionNavigator',
+    Session: 'PlayerSession',
+    DrillSubmission: 'PlayerDrillSubmission',
+    SessionComplete: 'PlayerSessionComplete',
+    SessionFeedback: 'PlayerSessionFeedback',
 }

@@ -1,16 +1,19 @@
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {memo, useRef, useState, useCallback} from "react";
 import {Video} from "expo-av";
-import {FeedbackTabs} from "../constants/feedbackTabs";
+import {FeedbackTab} from "../constants/feedbackTab";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAnglesDown, faPlus} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../util/drillUtil";
-import {ScreenNames} from "../screens/ScreenNames";
+import {CoachScreenNames, ScreenNames} from "../screens/ScreenNames";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
+import {UserType} from "../constants/userType";
+import {LinearGradient} from "expo-linear-gradient";
+import DemoVideos from "./demo/DemoVideos";
 
-const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab = FeedbackTabs.Submission}) => {
+const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab = FeedbackTab.Submission}) => {
 
     const [selectedTab, setSelectedTab] = useState(initialSelectedTab);
     const [demoStatus, setDemoStatus] = useState({});
@@ -36,9 +39,9 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
             return false;
         }
 
-        if (selectedTab === FeedbackTabs.Demo) {
+        if (selectedTab === FeedbackTab.Demo) {
             return !demoStatus.isLoaded || demoStatus.isBuffering;
-        } else if (selectedTab === FeedbackTabs.Submission) {
+        } else if (selectedTab === FeedbackTab.Submission) {
             if (!doesDrillHaveSubmission(drill)) {
                 return false;
             }
@@ -52,59 +55,59 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
     }
 
     const shouldShowSubmitFeedbackButton = () => {
-        return userType === 'Coach'
+        return userType === UserType.Coach
             && doesDrillHaveSubmission(drill)
             && !doesDrillHaveFeedback(drill);
     }
 
     return (
         <View key={drill.drillId} style={{height: height, position: 'relative'}}>
-            {((isVisible && selectedTab === FeedbackTabs.Demo) || demoStatus.isLoaded) && (
+            {((isVisible && selectedTab === FeedbackTab.Demo) || demoStatus.isLoaded) && (
                 <Video
                     ref={demoRef}
-                    style={selectedTab === FeedbackTabs.Demo ? {flex: 1} : {display: 'none'}}
+                    style={selectedTab === FeedbackTab.Demo ? {flex: 1} : {display: 'none'}}
                     source={{
-                        uri: drill.drill.videos.front.fileLocation,
+                        uri: drill.demos.front.fileLocation,
                     }}
                     resizeMode="cover"
-                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTabs.Demo}
+                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTab.Demo}
                     isLooping
                     isMuted
                     onPlaybackStatusUpdate={status => setDemoStatus(() => status)}
                 />
             )}
-            {((isVisible && selectedTab === FeedbackTabs.Submission) || submissionStatus.isLoaded) && doesDrillHaveSubmission(drill) && (
+            {((isVisible && selectedTab === FeedbackTab.Submission) || submissionStatus.isLoaded) && doesDrillHaveSubmission(drill) && (
                 <Video
                     ref={submissionRef}
-                    style={selectedTab === FeedbackTabs.Submission ? {flex: 1} : {display: 'none'}}
+                    style={selectedTab === FeedbackTab.Submission ? {flex: 1} : {display: 'none'}}
                     source={{
                         uri: drill.submission.fileLocation,
                     }}
                     resizeMode="cover"
-                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTabs.Submission}
+                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTab.Submission}
                     isLooping
                     onPlaybackStatusUpdate={status => setSubmissionStatus(() => status)}
                 />
             )}
-            {!doesDrillHaveSubmission(drill) && selectedTab === FeedbackTabs.Submission &&  (
+            {!doesDrillHaveSubmission(drill) && selectedTab === FeedbackTab.Submission &&  (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={{color: 'white'}}>No submission</Text>
                 </View>
             )}
-            {((isVisible && selectedTab === FeedbackTabs.Feedback) || feedbackStatus.isLoaded) && doesDrillHaveFeedback(drill) && (
+            {((isVisible && selectedTab === FeedbackTab.Feedback) || feedbackStatus.isLoaded) && doesDrillHaveFeedback(drill) && (
                 <Video
                     ref={feedbackRef}
-                    style={selectedTab === FeedbackTabs.Feedback ? {flex: 1} : {display: 'none'}}
+                    style={selectedTab === FeedbackTab.Feedback ? {flex: 1} : {display: 'none'}}
                     source={{
                         uri: drill.feedback.fileLocation,
                     }}
                     resizeMode="cover"
-                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTabs.Feedback}
+                    shouldPlay={isFocused && isVisible && selectedTab === FeedbackTab.Feedback}
                     isLooping
                     onPlaybackStatusUpdate={status => setFeedbackStatus(() => status)}
                 />
             )}
-            {!doesDrillHaveFeedback(drill) && selectedTab === FeedbackTabs.Feedback &&  (
+            {!doesDrillHaveFeedback(drill) && selectedTab === FeedbackTab.Feedback &&  (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={{color: 'white'}}>No feedback</Text>
                 </View>
@@ -116,21 +119,38 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
                 </View>
             )}
 
+            <LinearGradient
+                colors={['rgba(0, 0, 0, .4)', 'transparent']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={{width: '100%', height: 175, position: 'absolute', top: 0, left: 0}} />
+
+            <LinearGradient
+                colors={['rgba(0, 0, 0, .4)', 'transparent']}
+                start={{ x: 0, y: 1 }}
+                end={{ x: 0, y: 0 }}
+                style={{width: '100%', height: 175, position: 'absolute', bottom: 0, left: 0}} />
+
+            <LinearGradient
+                colors={['rgba(0, 0, 0, .3)', 'transparent']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{width: 175, height: '100%', position: 'absolute', top: 0, left: 0}} />
 
             <View style={{position: 'absolute', width: '100%', top: 0, left: 0}}>
                 <View style={{flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: 50}}>
-                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(FeedbackTabs.Demo)}>
-                        <Text style={selectedTab === FeedbackTabs.Demo ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
+                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(FeedbackTab.Demo)}>
+                        <Text style={selectedTab === FeedbackTab.Demo ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
                             Demo
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(FeedbackTabs.Submission)}>
-                        <Text style={selectedTab === FeedbackTabs.Submission ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
+                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(FeedbackTab.Submission)}>
+                        <Text style={selectedTab === FeedbackTab.Submission ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
                             Submission
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(FeedbackTabs.Feedback)}>
-                        <Text style={selectedTab === FeedbackTabs.Feedback ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
+                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(FeedbackTab.Feedback)}>
+                        <Text style={selectedTab === FeedbackTab.Feedback ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
                             Feedback
                         </Text>
                     </TouchableOpacity>
@@ -144,9 +164,9 @@ const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab =
                             style={styles.submitButton}
                             onPress={() => {
                                 setIsFocused(false);
-                                navigation.navigate(ScreenNames.CoachDrillFeedback, {
+                                navigation.navigate(CoachScreenNames.DrillFeedback, {
                                     session: session,
-                                    drillId: drill.drill.drillId
+                                    drillId: drill.drillId
                                 })
                             }}>
                             <FontAwesomeIcon icon={faPlus} style={styles.submitButtonIcon}/>
@@ -175,14 +195,19 @@ const styles = StyleSheet.create({
     tabText: {
         color: Colors.TextLightSecondary,
         fontWeight: '600',
-        fontSize: 14
+        fontSize: 14,
+        textShadowColor: 'rgba(0, 0, 0, .2)',
+        textShadowOffset: {width: 0, height: 0},
+        textShadowRadius: 1
     },
     tabTextSelected: {
         color: 'white',
         fontWeight: '800',
-        fontSize: 18
+        fontSize: 18,
+        textShadowColor: 'rgba(0, 0, 0, .3)',
+        textShadowOffset: {width: 0, height: 0},
+        textShadowRadius: 2
     },
-
     submitButton: {
         paddingVertical: 12,
         paddingHorizontal: 20,

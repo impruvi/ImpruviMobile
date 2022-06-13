@@ -4,15 +4,18 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({children}) => {
 
-    const [userId, setUserId] = useState();
-    const [userType, setUserType] = useState();
+    const [userType, setUserType] = useState(); // if userType is present then user is authenticated
+    const [player, setPlayer] = useState();
+    const [coach, setCoach] = useState();
 
     const memoedValue = useMemo(() => ({
-        userId,
-        setUserId,
         userType,
-        setUserType
-    }), [userId, setUserId, userType, setUserType]);
+        player,
+        coach,
+        setUserType,
+        setPlayer,
+        setCoach
+    }), [userType, player, coach, setUserType, setPlayer, setCoach]);
 
     return (
         <AuthContext.Provider value={memoedValue}>
