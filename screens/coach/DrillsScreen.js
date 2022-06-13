@@ -11,8 +11,6 @@ import {CoachScreenNames} from '../ScreenNames';
 import {Colors} from '../../constants/colors';
 import HeaderText from "../../components/HeaderText";
 import PaddedScreen from "../../components/PaddedScreen";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faPlus} from "@fortawesome/pro-regular-svg-icons";
 import DrillList from "../../components/DrillList";
 
 const DrillsScreen = () => {

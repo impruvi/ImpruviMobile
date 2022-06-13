@@ -1,7 +1,5 @@
 import BottomSheet, {BottomSheetView, useBottomSheetTimingConfigs} from "@gorhom/bottom-sheet";
-import {Image, Text, TouchableOpacity, View} from "react-native";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
+import {Image, Text, View} from "react-native";
 import {Colors} from "../../constants/colors";
 import {useEffect, useRef} from 'react';
 

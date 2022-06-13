@@ -9,7 +9,6 @@ import {doesDrillHaveSubmission} from "../../util/drillUtil";
 import {useNavigation} from "@react-navigation/native";
 import {Colors} from "../../constants/colors";
 import SideOption from "./SideOption";
-import InfoSheet from "./InfoSheet";
 import {LinearGradient} from "expo-linear-gradient";
 import {PlayerScreenNames} from '../../screens/ScreenNames';
 

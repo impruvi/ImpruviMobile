@@ -1,17 +1,16 @@
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
-import {memo, useRef, useState, useCallback} from "react";
+import {memo, useCallback, useRef, useState} from "react";
 import {Video} from "expo-av";
 import {FeedbackTab} from "../constants/feedbackTab";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAnglesDown, faPlus} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../util/drillUtil";
-import {CoachScreenNames, ScreenNames} from "../screens/ScreenNames";
+import {CoachScreenNames} from "../screens/ScreenNames";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import {UserType} from "../constants/userType";
 import {LinearGradient} from "expo-linear-gradient";
-import DemoVideos from "./demo/DemoVideos";
 
 const FeedbackVideos = ({session, drill, isVisible, isLast, initialSelectedTab = FeedbackTab.Submission}) => {
 

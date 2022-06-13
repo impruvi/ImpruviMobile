@@ -1,7 +1,7 @@
 import {useNavigation} from "@react-navigation/native";
 import EditContainer from "../../../components/EditContainer";
 import EditHeader from "../../../components/EditHeader";
-import {StyleSheet, TextInput, Text, View} from "react-native";
+import {StyleSheet, Text, TextInput, View} from "react-native";
 import {Colors} from "../../../constants/colors";
 import {useState} from "react";
 

@@ -1,12 +1,11 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'
-import {faClock, faSoccerBall, faCheckCircle} from '@fortawesome/pro-light-svg-icons';
+import {faCheckCircle, faClock, faSoccerBall} from '@fortawesome/pro-light-svg-icons';
 import {Colors} from "../constants/colors";
 import {getSessionEquipment} from "../util/equipmentAggregator";
 import Equipment from "./Equipment";
 import SpaceBetweenComponent from "./SpaceBetweenComponent";
 import Box from "./Box";
-import SessionDrillItem from "./SessionDrillItem";
 import {doesDrillHaveSubmission} from "../util/drillUtil";
 import {getCategoryDisplayValue} from "../constants/categoryType";
 

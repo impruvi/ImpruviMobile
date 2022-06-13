@@ -1,4 +1,4 @@
-import {FlatList, Text, TouchableOpacity, Image, useWindowDimensions} from "react-native";
+import {FlatList, Image, Text, TouchableOpacity, useWindowDimensions} from "react-native";
 import {Colors} from "../constants/colors";
 import {getCategoryDisplayValue} from "../constants/categoryType";
 

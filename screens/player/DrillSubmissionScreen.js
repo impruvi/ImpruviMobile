@@ -1,5 +1,5 @@
 import {StyleSheet, View} from "react-native";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import VideoCamera from "../../components/camera/VideoCamera";
 import VideoPreview from "../../components/camera/VideoPreview";
 import {useNavigation} from "@react-navigation/native";

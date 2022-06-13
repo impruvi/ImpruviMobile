@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 
 const SideOption = ({icon, text, onPress, color = 'white'}) => {

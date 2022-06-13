@@ -1,10 +1,6 @@
 import {ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
-import HeaderText from "../../components/HeaderText";
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {useState} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faAngleDown} from "@fortawesome/pro-regular-svg-icons";
-import SpaceBetweenComponent from "../../components/SpaceBetweenComponent";
 import {useNavigation} from "@react-navigation/native";
 import {Colors} from "../../constants/colors";
 import {CoachScreenNames} from "../ScreenNames";

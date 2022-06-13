@@ -1,5 +1,5 @@
 import {SafeAreaView, StyleSheet, Text, View} from "react-native";
-import {useCallback, useState, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import SessionOverview from "../../components/SessionOverview";

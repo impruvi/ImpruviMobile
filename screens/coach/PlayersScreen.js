@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";

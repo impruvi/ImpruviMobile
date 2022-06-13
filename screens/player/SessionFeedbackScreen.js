@@ -5,7 +5,6 @@ import {useNavigation} from "@react-navigation/native";
 import SessionProgress from "../../components/SessionProgress";
 import FeedbackVideos from "../../components/FeedbackVideos";
 import {StatusBar} from "expo-status-bar";
-import {LinearGradient} from "expo-linear-gradient";
 
 const SessionFeedbackScreen = ({route}) => {
     const navigation = useNavigation();

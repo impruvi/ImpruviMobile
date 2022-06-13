@@ -20,7 +20,7 @@ class HttpClient {
         await this.stall();
 
         const response = await this.#client.invokeApi({}, '/validate-invitation-code', 'POST', {}, {
-            invitationCode: invitationCode
+            invitationCode: invitationCode.trim()
         });
 
         return response.data;

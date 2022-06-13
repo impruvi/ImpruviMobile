@@ -2,7 +2,7 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
-import {useCallback, useState, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {PlayerScreenNames} from "../ScreenNames";
 import {Colors} from "../../constants/colors";
 import SubmissionStatus from "../../components/SubmissionStatus";

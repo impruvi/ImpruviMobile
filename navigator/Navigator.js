@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import {Animated, Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
+import {Animated, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthenticationScreen from "../screens/AuthenticationScreen";
 

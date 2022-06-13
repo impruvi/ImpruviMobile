@@ -1,6 +1,6 @@
 import {SafeAreaView, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
-import {PlayerScreenNames, ScreenNames} from "../ScreenNames";
+import {PlayerScreenNames} from "../ScreenNames";
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";

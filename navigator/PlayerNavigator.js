@@ -1,9 +1,9 @@
 import {createStackNavigator} from "@react-navigation/stack";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
-import {PlayerScreenNames, ScreenNames} from "../screens/ScreenNames";
+import {PlayerScreenNames} from "../screens/ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faChartLine, faHouse, faListUl, faPlay} from "@fortawesome/pro-light-svg-icons";
+import {faChartLine, faHouse, faPlay} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 import TrainingScreen from "../screens/player/TrainingScreen";
 import FeedbackScreen from "../screens/player/FeedbackScreen";

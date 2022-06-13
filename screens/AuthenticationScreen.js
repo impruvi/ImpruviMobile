@@ -1,4 +1,14 @@
-import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView} from "react-native";
+import {
+    Keyboard,
+    KeyboardAvoidingView,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
 import useAuth from "../hooks/useAuth";
 import {useState} from "react";
 import useHttpClient from "../hooks/useHttpClient";

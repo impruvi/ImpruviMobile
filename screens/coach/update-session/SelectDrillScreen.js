@@ -1,4 +1,4 @@
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, Text, View} from 'react-native';
 import {CoachScreenNames} from "../../ScreenNames";
 import Loader from "../../../components/Loader";
 import Reload from "../../../components/Reload";

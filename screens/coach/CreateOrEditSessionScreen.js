@@ -1,12 +1,8 @@
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useState} from "react";
 import {Colors} from "../../constants/colors";
 import {CoachScreenNames} from "../ScreenNames";
 import {useNavigation} from "@react-navigation/native";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faAngleDown, faPlus} from "@fortawesome/pro-regular-svg-icons";
-import Box from "../../components/Box";
-import {getCategoryDisplayValue} from "../../constants/categoryType";
 import useError from "../../hooks/useError";
 import useHttpClient from "../../hooks/useHttpClient";
 import Loader from "../../components/Loader";
@@ -101,14 +97,5 @@ const CreateOrEditSessionScreen = ({route}) => {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    button: {
-
-    },
-    buttonDisabled: {
-
-    }
-});
 
 export default CreateOrEditSessionScreen;
