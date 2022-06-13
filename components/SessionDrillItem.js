@@ -11,9 +11,11 @@ const SessionDrillItem = ({drill}) => {
             </View>
             <View style={{paddingVertical: 20, paddingRight: 20, flex: 1}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                    <Text style={{fontWeight: '500', marginBottom: 3}}>
-                        {drill.name}
-                    </Text>
+                    <View style={{flexWrap: 'wrap', flexDirection: 'row', flex: 1}}>
+                        <Text style={{fontWeight: '500', marginBottom: 3, flex: 1, flexWrap: 'wrap'}}>
+                            {drill.name}
+                        </Text>
+                    </View>
                     <Text style={{color: Colors.TextSecondary}}>
                         {drill.estimatedDurationMinutes} minutes
                     </Text>

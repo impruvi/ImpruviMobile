@@ -66,7 +66,7 @@ const CreateOrEditSessionScreen = ({route}) => {
                               })}/>
 
                 <View style={{flex: 1, paddingHorizontal: 15}}>
-                    <ScrollView style={{flex: 1}}>
+                    <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
                         {(!drills || drills.length === 0) && (
                             <Text>No drills</Text>
                         )}

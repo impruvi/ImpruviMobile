@@ -73,7 +73,7 @@ const PlayerScreen = ({route}) => {
                                   playerId: playerSessions.player.playerId
                               })}/>
 
-                <ScrollView style={{paddingHorizontal: 15}}>
+                <ScrollView style={{paddingHorizontal: 15}} showsVerticalScrollIndicator={false}>
                     {playerSessions.sessions.length === 0 && (
                         <Text>No sessions</Text>
                     )}
