@@ -10,8 +10,6 @@ export const PushProvider = ({children}) => {
     const [expoPushToken, setExpoPushToken] = useState('');
 
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-    console.log("expo push token: " + expoPushToken)
-
 
     const memoedValue = useMemo(() => ({
         expoPushToken

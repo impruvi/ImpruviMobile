@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import useAuth from "../hooks/useAuth";
 import {useState} from "react";
+import usePush from '../hooks/useAuth';
 import useHttpClient from "../hooks/useHttpClient";
 import {Colors} from "../constants/colors";
 import {StatusBar} from "expo-status-bar";
@@ -27,7 +28,10 @@ const AuthenticationScreen = () => {
     const {setError} = useError();
     const {setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
+    const {expoPushToken} = usePush();
     const navigation = useNavigation();
+
+    console.log('push token: ' + expoPushToken);
 
     const submit = async () => {
         if (isSubmitting) {
@@ -35,7 +39,7 @@ const AuthenticationScreen = () => {
         }
         setIsSubmitting(true);
         try {
-            const result = await httpClient.validateInviteCode(invitationCode);
+            const result = await httpClient.validateInviteCode(invitationCode, expoPushToken);
             if (result.success) {
                 if (result.userType === UserType.Player) {
                     setPlayer(result.player);
