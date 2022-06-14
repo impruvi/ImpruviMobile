@@ -162,7 +162,7 @@ const CreateOrEditDrillScreen = ({route}) => {
                 return `${equipmentItem.requirement.count} ${getEquipmentTypeDisplayValue(equipmentItem.equipmentType)}(s)`;
             } else {
                 const length = equipmentItem.requirement.dimension.length;
-                const width = equipmentItem.requirement.dimension.length;
+                const width = equipmentItem.requirement.dimension.width;
                 return `${length} X ${width} yards`;
             }
         }).join(', ');

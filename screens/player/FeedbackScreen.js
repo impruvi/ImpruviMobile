@@ -75,7 +75,7 @@ const FeedbackScreen = () => {
                                                           session: session
                                                       })}>
                                         <Box style={{padding: 15}} key={session.sessionNumber}>
-                                            <Text style={{fontSize: 24, fontWeight: '500', marginBottom: 10}}>Session {session.sessionNumber}</Text>
+                                            <Text style={{fontSize: 20, fontWeight: '500', marginBottom: 10}}>Session {session.sessionNumber}</Text>
                                             {session.drills.map(drill => (
                                                 <View style={{marginVertical: 10}} key={drill.drillId}>
                                                     <Text style={styles.drillName}>

@@ -18,7 +18,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "7",
+      "buildNumber": "9",
       "supportsTablet": true,
       "bundleIdentifier": "com.impruvi.impruvimobileassets",
       "infoPlist": {

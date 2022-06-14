@@ -43,8 +43,11 @@ const PlayerScreen = ({route}) => {
 
     const getPlayerSessionsLazy = async () => {
         try {
-            const sessions = await httpClient.getCoachSessions(coach.coachId);
-            const playerSessions = sessions.find(playerSessions => playerSessions.player.playerId === playerSessions.player.playerId);
+            if (!playerSessions) {
+                return;
+            }
+            const allPlayerSessions = await httpClient.getCoachSessions(coach.coachId);
+            const playerSessions = allPlayerSessions.find(ps => ps.player.playerId === playerSessions.player.playerId);
             setPlayerSessions(playerSessions);
         } catch (e) {
             console.log(e);

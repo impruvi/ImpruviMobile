@@ -35,7 +35,12 @@ const InfoSheet = ({isOpen, onClose, drill}) => {
                             {drill.estimatedDurationMinutes} minutes
                         </Text>
                     </View>
+                    <View style={{marginBottom: 20}}>
+                        <Text style={{fontWeight: '600', marginBottom: 5, fontSize: 15}}>Description</Text>
+                        <Text>{drill.description}</Text>
+                    </View>
                     <View>
+                        <Text style={{fontWeight: '600', marginBottom: 5, fontSize: 15}}>Notes from your coach</Text>
                         <Text>{drill.notes}</Text>
                     </View>
                     {!!drill.diagramFileLocation && (
