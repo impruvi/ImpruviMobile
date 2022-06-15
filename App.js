@@ -3,17 +3,23 @@ import {HttpClientProvider} from "./hooks/useHttpClient";
 import Navigator from "./navigator/Navigator";
 import {NavigationContainer} from "@react-navigation/native";
 import {ErrorProvider} from "./hooks/useError";
+import {
+    BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+
 
 export default function App() {
   return (
       <NavigationContainer>
-          <AuthProvider>
-              <ErrorProvider>
-                  <HttpClientProvider>
-                      <Navigator />
-                  </HttpClientProvider>
-              </ErrorProvider>
-          </AuthProvider>
+          <BottomSheetModalProvider>
+              <AuthProvider>
+                  <ErrorProvider>
+                      <HttpClientProvider>
+                          <Navigator />
+                      </HttpClientProvider>
+                  </ErrorProvider>
+              </AuthProvider>
+          </BottomSheetModalProvider>
       </NavigationContainer>
   );
 }

@@ -32,12 +32,18 @@ export const CoachScreenNames = {
 
 export const PlayerScreenNames = {
     TabNavigator: 'PlayerTabNavigator',
-    Training: 'PlayerTraining',
+    TrainingNavigator: 'TrainingNavigator',
     Feedback: 'PlayerFeedback',
     Progress: 'PlayerProgress',
+
+    Training: 'PlayerTraining',
+    SessionDetails: 'PlayerSessionDetails',
+
     SessionNavigator: 'PlayerSessionNavigator',
     Session: 'PlayerSession',
     DrillSubmission: 'PlayerDrillSubmission',
     SessionComplete: 'PlayerSessionComplete',
     SessionFeedback: 'PlayerSessionFeedback',
+
+    CoachBio: 'PlayerCoachBio'
 }
