@@ -13,10 +13,10 @@ import {useNavigation} from "@react-navigation/native";
 const SessionDetailsScreen = ({route}) => {
 
     const navigation = useNavigation();
-    const {nextSession} = route.params;
+    const {session} = route.params;
 
-    const sessionEquipment = getSessionEquipment(nextSession);
-    const totalTime = nextSession.drills.reduce((count, drill) => count + drill.estimatedDurationMinutes, 0);
+    const sessionEquipment = getSessionEquipment(session);
+    const totalTime = session.drills.reduce((count, drill) => count + drill.estimatedDurationMinutes, 0);
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -56,13 +56,13 @@ const SessionDetailsScreen = ({route}) => {
                                 <Text style={styles.boxHeaderTextSmall}>Number of drills</Text>
                             </View>
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Text style={{fontSize: 20}}>{nextSession.drills.length}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>drills</Text>
+                                <Text style={{fontSize: 20}}>{session.drills.length}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>drills</Text>
                             </View>
                         </Box>
                     </View>
                 </SpaceBetweenComponent>
                 <Text style={styles.header}>Drills</Text>
-                {nextSession.drills.map(drill => (
+                {session.drills.map(drill => (
                     <Box style={{padding: 15}}>
                         <Text style={{fontWeight: '500', marginBottom: 3}}>
                             {drill.name}

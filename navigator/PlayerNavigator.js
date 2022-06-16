@@ -59,22 +59,22 @@ const TabBar = ({ state, descriptors, navigation }) => {
                         <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={{ width: 80, height: 50, marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }} key={label}>
                             {label === PlayerScreenNames.TrainingNavigator &&
                                 <>
-                                    <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'} size={20}/>
-                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Home</Text>
+                                    <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'} size={25}/>
+                                    {/*<Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Home</Text>*/}
                                 </>
                             }
 
                             {label === PlayerScreenNames.Feedback &&
                                 <>
-                                    <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'} size={20}/>
-                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Profile</Text>
+                                    <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'} size={25}/>
+                                    {/*<Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Profile</Text>*/}
                                 </>
                             }
 
                             {label === PlayerScreenNames.Progress &&
                                 <>
-                                    <FontAwesomeIcon icon={faChartLine} color={isFocused ? Colors.Primary : 'black'} size={20}/>
-                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Progress</Text>
+                                    <FontAwesomeIcon icon={faChartLine} color={isFocused ? Colors.Primary : 'black'} size={25}/>
+                                    {/*<Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Progress</Text>*/}
                                 </>
                             }
                         </TouchableOpacity>
@@ -122,7 +122,7 @@ const PlayerNavigator = () => {
     const {width} = useWindowDimensions();
 
     return (
-        <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: '#EFF3F4'}}}>
+        <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>
             <Stack.Screen name={PlayerScreenNames.TabNavigator} component={TabNavigator}/>
             <Stack.Screen name={PlayerScreenNames.SessionNavigator} component={SessionNavigator} options={{gestureResponseDistance: width}}/>
             <Stack.Screen name={PlayerScreenNames.SessionFeedback} component={SessionFeedbackScreen} options={{gestureResponseDistance: width}}/>
