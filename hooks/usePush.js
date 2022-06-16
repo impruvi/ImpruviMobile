@@ -20,7 +20,7 @@ export const PushProvider = ({children}) => {
             {children}
         </PushContext.Provider>
     )
-}
+};
 
 export default function usePush() {
     return useContext(PushContext);
