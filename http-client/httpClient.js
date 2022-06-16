@@ -10,11 +10,7 @@ const VideoTypes = {
 class HttpClient {
 
     #client = apiClientFactory.newClient({
-<<<<<<< HEAD
-        invokeUrl: 'https://pmpq5sqn7f.execute-api.us-west-2.amazonaws.com/prod',
-=======
         invokeUrl: 'https://k6l56vcom2.execute-api.us-west-2.amazonaws.com/prod',
->>>>>>> b99e8b8 (added push)
         region: 'us-west-2',
         accessKey: 'AKIAXTDBP63P4IWBNXM6',
         secretKey: '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',
