@@ -39,7 +39,7 @@ const CoachBioScreen = () => {
                             <Text style={{color: Colors.TextSecondary}}>Center midfielder</Text>
                         </View>
                         <TouchableOpacity style={{paddingVertical: 8, paddingHorizontal: 20, backgroundColor: Colors.Primary, borderRadius: 20, marginRight: 10}}>
-                            <Text style={{color:'white', fontWeight: '600'}}>Request 1:1</Text>
+                            <Text style={{color:'white', fontWeight: '600'}}>Contact</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{marginVertical: 3}}>
