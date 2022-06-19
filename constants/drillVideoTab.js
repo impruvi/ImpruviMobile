@@ -1,4 +1,4 @@
-export const FeedbackTab = {
+export const DrillVideoTab = {
     Demo: 'DEMO',
     Submission: 'SUBMISSION',
     Feedback: 'FEEDBACK'

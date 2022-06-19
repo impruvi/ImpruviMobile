@@ -1,5 +1,6 @@
 export const RootScreenNames = {
     Authentication: 'Authentication',
+    TermsAndConditions: 'TermsAndConditions',
     CoachNavigator: 'CoachNavigator',
     PlayerNavigator: 'PlayerNavigator',
 }
@@ -9,6 +10,7 @@ export const CoachScreenNames = {
     Home: 'CoachHome',
     Players: 'CoachPlayers',
     Drills: 'CoachDrills',
+    Profile: 'CoachProfile',
 
     PlayersNavigator: 'PlayersNavigator',
 
@@ -28,22 +30,36 @@ export const CoachScreenNames = {
 
     Session: 'CoachSession',
     DrillFeedback: 'CoachDrillFeedback',
+
+    EditAbout: 'CoachEditAbout',
+    EditEmail: 'CoachEditEmail',
+    EditHeadshot: 'CoachEditHeadshot',
+    EditName: 'CoachEditName',
+    EditPosition: 'CoachEditPosition',
+    EditSchool: 'CoachEditSchool',
+    EditYouthClub: 'CoachEditYouthClub'
 }
 
 export const PlayerScreenNames = {
     TabNavigator: 'PlayerTabNavigator',
-    TrainingNavigator: 'TrainingNavigator',
-    Feedback: 'PlayerFeedback',
-    Progress: 'PlayerProgress',
+    TrainingNavigator: 'PlayerTrainingNavigator',
+    SessionNavigator: 'PlayerSessionNavigator',
 
     Training: 'PlayerTraining',
-    SessionDetails: 'PlayerSessionDetails',
+    Profile: 'PlayerProfile',
+    Progress: 'PlayerProgress',
 
-    SessionNavigator: 'PlayerSessionNavigator',
+    SessionDetails: 'PlayerSessionDetails',
     Session: 'PlayerSession',
     DrillSubmission: 'PlayerDrillSubmission',
     SessionComplete: 'PlayerSessionComplete',
-    SessionFeedback: 'PlayerSessionFeedback',
 
-    CoachBio: 'PlayerCoachBio'
+    CoachDetails: 'PlayerCoachDetails',
+
+    EditAvailability: 'PlayerEditAvailability',
+    EditEmail: 'PlayerEditEmail',
+    EditName: 'PlayerEditName',
+
+    Onboarding: 'PlayerOnboarding',
+    FAQ: 'PlayerFAQ',
 }

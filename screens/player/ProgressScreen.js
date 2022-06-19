@@ -1,9 +1,11 @@
 import {SafeAreaView, Text, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
+import HeaderCenter from "../../components/HeaderCenter";
 
-const TrackProgressScreen = () => {
+const ProgressScreen = () => {
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+            <HeaderCenter title={'Progress'}/>
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                 <Text>👀 Coming soon</Text>
             </View>
@@ -13,4 +15,4 @@ const TrackProgressScreen = () => {
     )
 }
 
-export default TrackProgressScreen;
+export default ProgressScreen;

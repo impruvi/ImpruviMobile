@@ -11,6 +11,7 @@ import useError from "../hooks/useError";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {UserType} from "../constants/userType";
+import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
 
 
 const Stack = createStackNavigator();
@@ -32,7 +33,10 @@ const RootNavigator = () => {
         <View style={{flex: 1, position: 'relative'}}>
             <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>
                 {!userType && (
-                    <Stack.Screen name={RootScreenNames.Authentication} component={AuthenticationScreen}/>
+                    <>
+                        <Stack.Screen name={RootScreenNames.Authentication} component={AuthenticationScreen}/>
+                        <Stack.Screen name={RootScreenNames.TermsAndConditions} component={TermsAndConditionsScreen}/>
+                    </>
                 )}
                 {!!userType && userType === UserType.Player && (
                     <Stack.Screen name={RootScreenNames.PlayerNavigator} component={PlayerNavigator}/>

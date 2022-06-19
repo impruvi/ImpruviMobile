@@ -3,13 +3,15 @@ import {Colors} from '../../constants/colors';
 
 const CoachOverview = ({navigateToCoach}) => {
     return (
-        <View style={{backgroundColor: 'white', borderRadius: 20, padding: 15, marginBottom: 20}}>
+        <View style={{backgroundColor: 'white', borderRadius: 20}}>
             <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
-                <View>
+                <View style={{flexDirection: 'row'}}>
                     <Image source={{uri: 'https://cdn.tatlerasia.com/tatlerasia/i/2021/08/10122920-gettyimages-1176667280_cover_2000x1335.jpg'}}
                            style={{height: 60, width: 60, borderRadius: 50}}/>
-                    <Text style={{fontWeight: '600', marginTop: 3}}>Henry Grein</Text>
-                    <Text style={{color: Colors.TextSecondary}}>Center midfielder</Text>
+                    <View style={{marginLeft: 10}}>
+                        <Text style={{color: Colors.TextSecondary}}>YOUR COACH</Text>
+                        <Text style={{fontWeight: '600', marginTop: 3}}>Henry Grein</Text>
+                    </View>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity style={{paddingVertical: 8, paddingHorizontal: 15, borderWidth: 1, borderRadius: 20, borderColor: Colors.Primary}}

@@ -5,7 +5,7 @@ import {FlatList, useWindowDimensions, View} from "react-native";
 import SessionProgress from "../../components/SessionProgress";
 import VideoBackIcon from "../../components/VideoBackIcon";
 import {StatusBar} from "expo-status-bar";
-import DemoVideos from "../../components/demo/DemoVideos";
+import DemoVideos from "../../components/drill-videos/demo/DemoVideos";
 
 const PreviewSessionScreen = ({route}) => {
 

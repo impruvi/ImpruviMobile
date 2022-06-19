@@ -1,9 +1,9 @@
-import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../util/drillUtil";
+import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
 import {StyleSheet, Text, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle} from "@fortawesome/pro-light-svg-icons";
 
-const FeedbackStatus = ({drill}) => {
+const DrillFeedbackStatus = ({drill}) => {
     if (!doesDrillHaveSubmission(drill)) {
         return null;
     }
@@ -11,8 +11,8 @@ const FeedbackStatus = ({drill}) => {
     if (doesDrillHaveFeedback(drill)) {
         return (
             <View style={styles.status}>
-                <FontAwesomeIcon icon={faCheckCircle} style={{color: 'green', marginRight: 5}} size={14}/>
-                <Text style={{color: 'green'}}>Feedback provided</Text>
+                <FontAwesomeIcon icon={faCheckCircle} style={{color: 'rgba(24, 180, 102, 1)', marginRight: 5}} size={14}/>
+                <Text style={{color: 'rgba(24, 180, 102, 1)'}}>Feedback provided</Text>
             </View>
         );
     } else {
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default FeedbackStatus;
+export default DrillFeedbackStatus;

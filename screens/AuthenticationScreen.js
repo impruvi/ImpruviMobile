@@ -15,6 +15,8 @@ import useHttpClient from "../hooks/useHttpClient";
 import {Colors} from "../constants/colors";
 import {StatusBar} from "expo-status-bar";
 import {UserType} from "../constants/userType";
+import {useNavigation} from "@react-navigation/native";
+import {RootScreenNames} from "./ScreenNames";
 
 const AuthenticationScreen = () => {
     const [invitationCode, setInvitationCode] = useState('');
@@ -22,6 +24,7 @@ const AuthenticationScreen = () => {
     const [error, setError] = useState('');
     const {setUserType, setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
+    const navigation = useNavigation();
 
     const submit = async () => {
         if (isSubmitting) {
@@ -65,6 +68,15 @@ const AuthenticationScreen = () => {
                         {!!error && !isSubmitting && (
                             <Text style={styles.error}>{error}</Text>
                         )}
+
+                        <View style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15}}>
+                            <Text style={{color: '#999', justifyContent: 'center', marginRight: 2, fontSize: 13}}>
+                                By continuing you agree to our
+                            </Text>
+                            <TouchableOpacity onPress={() => navigation.navigate(RootScreenNames.TermsAndConditions)} style={{padding: 3}}>
+                                <Text style={{fontSize: 13, textDecorationLine: 'underline', color: '#999'}}>terms and conditions</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
@@ -77,7 +89,6 @@ const AuthenticationScreen = () => {
 const styles = StyleSheet.create({
     safeAreaView:  {
         flex: 1,
-        // backgroundColor: 'white'
     },
     container: {
         flex: 1,

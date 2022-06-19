@@ -3,8 +3,8 @@ import {useCallback, useEffect, useState} from "react";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
-import SubmissionStatus from "../../components/SubmissionStatus";
-import FeedbackStatus from "../../components/FeedbackStatus";
+import DrillSubmissionStatus from "../../components/status/DrillSubmissionStatus";
+import DrillFeedbackStatus from "../../components/status/DrillFeedbackStatus";
 import {Colors} from "../../constants/colors";
 import {CoachScreenNames} from "../ScreenNames";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
@@ -39,7 +39,7 @@ const HomeScreen = () => {
         const minuteInMillis = 60 * 1000;
         const currentTimeEpochMillis = Date.now();
         const submissionTimeEpochMillis = Math.max(...session.drills.map(drill =>
-            !!drill.submission ? drill.submission.videoUploadDateEpochMillis : -1
+            !!drill.submission ? drill.submission.uploadDateEpochMillis : -1
         ));
 
         const timeRemainingMillis = submissionTimeEpochMillis + dayInMillis - currentTimeEpochMillis;
@@ -116,8 +116,8 @@ const HomeScreen = () => {
                                                             {drill.name}
                                                         </Text>
 
-                                                        <SubmissionStatus drill={drill}/>
-                                                        <FeedbackStatus drill={drill}/>
+                                                        <DrillSubmissionStatus drill={drill}/>
+                                                        <DrillFeedbackStatus drill={drill}/>
                                                     </View>
                                                 ))}
                                             </Box>

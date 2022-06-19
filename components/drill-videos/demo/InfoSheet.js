@@ -1,6 +1,6 @@
-import BottomSheet, {BottomSheetView, useBottomSheetTimingConfigs} from "@gorhom/bottom-sheet";
+import {BottomSheetModal, BottomSheetView, useBottomSheetTimingConfigs} from "@gorhom/bottom-sheet";
 import {Image, Text, View} from "react-native";
-import {Colors} from "../../constants/colors";
+import {Colors} from "../../../constants/colors";
 import {useEffect, useRef} from 'react';
 
 const InfoSheet = ({isOpen, onClose, drill}) => {
@@ -13,18 +13,25 @@ const InfoSheet = ({isOpen, onClose, drill}) => {
 
     useEffect(() => {
         if (isOpen) {
-            sheetRef.current?.snapToIndex(0);
+            sheetRef.current?.present();
         }
     }, [isOpen]);
 
     return (
-        <BottomSheet
+        <BottomSheetModal
             ref={sheetRef}
+            index={0}
             snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            onClose={onClose}
             animationConfigs={animationConfigs}
-            index={-1}>
+            onDismiss={onClose}
+            onChange={index => {
+                if (index === 0) {
+                    onClose();
+                }
+            }}
+            enablePanDownToClose={true}
+            enableOverDrag={false}
+            style={{shadowColor: 'black', shadowOffset: { width: 0, height: 1 }, shadowOpacity: .15, shadowRadius: 5}}>
             <BottomSheetView>
                 <View style={{paddingHorizontal: 20}}>
                     <Text style={{fontWeight: '600', fontSize: 18}}>{drill.name}</Text>
@@ -48,7 +55,7 @@ const InfoSheet = ({isOpen, onClose, drill}) => {
                     )}
                 </View>
             </BottomSheetView>
-        </BottomSheet>
+        </BottomSheetModal>
     )
 }
 

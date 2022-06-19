@@ -1,30 +1,54 @@
-import {Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faCheckCircle} from "@fortawesome/pro-light-svg-icons";
-import {Colors} from "../../constants/colors";
+import {faAngleRight} from "@fortawesome/pro-light-svg-icons";
+import {useNavigation} from "@react-navigation/native";
+import {PlayerScreenNames} from "../../screens/ScreenNames";
+import SessionSubmissionStatus from "../status/SessionSubmissionStatus";
+import SessionFeedbackStatus from "../status/SessionFeedbackStatus";
 
-const SessionCard = ({navigateToSession}) => {
+const SessionCard = ({session}) => {
+
+    const navigation = useNavigation();
+
+    const navigateToSession = () => {
+        navigation.navigate(PlayerScreenNames.SessionDetails, {
+            session: session
+        });
+    }
+
     return (
-        <View style={{backgroundColor: 'white', padding: 15, borderRadius: 20, marginBottom: 12, position: 'relative'}}>
-            <Text style={{fontSize: 18, fontWeight: '500', marginBottom: 10}}>Training 1:</Text>
-            <View style={{flexDirection: 'row', marginBottom: 5}}>
-                <FontAwesomeIcon icon={faCheckCircle}  style={{marginRight: 6, color: 'green'}}/>
-                <Text style={{color: 'green'}}>Session complete</Text>
+        <TouchableOpacity style={styles.container} onPress={navigateToSession}>
+            <View>
+                <Text style={{fontSize: 18, fontWeight: '500', marginBottom: 10}}>Training {session.sessionNumber}:</Text>
+                <View style={{flexDirection: 'row', marginBottom: 5}}>
+                    <SessionSubmissionStatus session={session} />
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                    <SessionFeedbackStatus session={session} />
+                </View>
             </View>
-            <View style={{flexDirection: 'row'}}>
-                <FontAwesomeIcon icon={faCheckCircle}  style={{marginRight: 6, color: 'green'}}/>
-                <Text style={{color: 'green'}}>Feedback available</Text>
+            <View>
+                <FontAwesomeIcon icon={faAngleRight} size={20}/>
             </View>
-            <View style={{width: '100%', alignItems: 'flex-end'}}>
-                <TouchableOpacity style={{backgroundColor: Colors.Primary, paddingVertical: 8, paddingHorizontal: 25, borderRadius: 20}} onPress={navigateToSession}>
-                    <Text style={{color: 'white'}}>View training</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={{position: 'absolute', top: 12, right: 30}}>
-                <Text style={{color: Colors.Primary, fontSize: 20, fontWeight: '600'}}>ü</Text>
-            </View>
-        </View>
+        </TouchableOpacity>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        padding: 15,
+        borderRadius: 20,
+        marginBottom: 12,
+        position: 'relative',
+        shadowColor: 'rgba(0,0,0,.8)',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: .15,
+        shadowRadius: 3
+    }
+})
 
 export default SessionCard;

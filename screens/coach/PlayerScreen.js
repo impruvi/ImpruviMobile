@@ -10,8 +10,8 @@ import {useCallback, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
 import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
-import SubmissionStatus from "../../components/SubmissionStatus";
-import FeedbackStatus from "../../components/FeedbackStatus";
+import DrillSubmissionStatus from "../../components/status/DrillSubmissionStatus";
+import DrillFeedbackStatus from "../../components/status/DrillFeedbackStatus";
 import Confirmation from "../../components/Confirmation";
 
 const PlayerScreen = ({route}) => {
@@ -94,8 +94,8 @@ const PlayerScreen = ({route}) => {
                                         <Text style={{marginBottom: 5}}>
                                             {drill.name}
                                         </Text>
-                                        <SubmissionStatus drill={drill}/>
-                                        <FeedbackStatus drill={drill}/>
+                                        <DrillSubmissionStatus drill={drill}/>
+                                        <DrillFeedbackStatus drill={drill}/>
                                     </View>
                                 ))}
                             </View>

@@ -1,85 +1,199 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Cell from './Cell';
 import {Colors} from '../../constants/colors';
 import SpaceBetweenComponent from "../SpaceBetweenComponent";
+import {useNavigation} from "@react-navigation/native";
+import {PlayerScreenNames} from "../../screens/ScreenNames";
+import {
+    getCurrentDayOfMonth,
+    getCurrentDayOfWeek,
+    getCurrentMonth,
+    getCurrentYear,
+    getDayOfWeekNumber,
+    getMonthDisplayName,
+    getNumberOfDaysInMonth
+} from "../../util/dateUtil";
+import {useRef, useState} from "react";
+import Legend from "./Legend";
+import Header from './Header';
+import {doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
 
-const Calendar = ({navigateToSession, startSession}) => {
+const Calendar = ({sessions}) => {
 
+    const [widthOfCalendar, setWidthOfCalendar] = useState(330);
+
+    const slidesRef = useRef();
+    const navigation = useNavigation();
+
+    const navigateToSessionForToday = () => {
+        const session = getSessionForDay(getCurrentYear(), getCurrentMonth(), getCurrentDayOfMonth());
+        navigation.navigate(PlayerScreenNames.SessionDetails, {
+            session: session
+        });
+    }
+
+    const getNumberOfRows = (year, month) => {
+        const totalDaysInMonth = getNumberOfDaysInMonth(getCurrentYear(), getCurrentDayOfMonth());
+        const lastDayOfMonthWeekNumber = getDayOfWeekNumber(year, month, getNumberOfDaysInMonth(year, month));
+
+        let numberOfRows = 1;
+        let daysLeft = totalDaysInMonth - (1 + lastDayOfMonthWeekNumber);
+        while (daysLeft > 0) {
+            daysLeft -= 7;
+            numberOfRows++;
+        }
+
+        return numberOfRows;
+    }
+
+    const getDayOfMonth = (year, month, rowNumber, dayOfWeekNumber) => {
+        const totalDaysInMonth = getNumberOfDaysInMonth(year, month);
+        const firstDayOfMonthDayOfWeekNumber = getDayOfWeekNumber(year, month, 1);
+
+        let dayOfMonth;
+        if (rowNumber === 0) {
+            dayOfMonth =  dayOfWeekNumber - firstDayOfMonthDayOfWeekNumber + 1;
+        } else {
+            dayOfMonth = rowNumber * 7 - firstDayOfMonthDayOfWeekNumber + dayOfWeekNumber + 1;
+        }
+
+        if (dayOfMonth < 1 || dayOfMonth > totalDaysInMonth) {
+            return null
+        } else {
+            return dayOfMonth;
+        }
+    }
+
+    const isCurrentDay = (year, month, day) => {
+        return year === getCurrentYear() &&  month === getCurrentMonth() && day === getCurrentDayOfMonth();
+    }
+
+    const getSessionForDay = (year, month, day) => {
+        const sessionList = sessions.filter(session =>
+            session.date.year === year &&
+            session.date.month === month &&
+            session.date.day === day
+        );
+        return sessionList.length > 0
+            ? sessionList[0]
+            : null
+    }
+
+    const compareDates = (a, b) => {
+        if ( a.year < b.year ) {
+            return -1;
+        } else if (a.year > b.year) {
+            return 1;
+        } else if ( a.month < b.month ) {
+            return -1;
+        } else if (a.month > b.month) {
+            return 1;
+        } else if ( a.day < b.day ) {
+            return -1;
+        } else if (a.day > b.day) {
+            return 1;
+        }
+        return 0;
+    }
+
+    const getNextMonth = (month) => {
+        return {
+            month: month.month === 12 ? 1 : month.month + 1,
+            year: month.month === 12 ? month.year + 1 : month.year
+        }
+    }
+
+    const getCurrentMonthIndex = (months) => {
+        const currentMonth = getCurrentMonth();
+        const currentYear = getCurrentYear();
+        return months.indexOf(months.find(month => month.month === currentMonth && month.year === currentYear));
+    }
+
+    const getMonths = () => {
+        const sessionsSorted = sessions.sort((a, b) => a.sessionNumber - b.sessionNumber);
+        if (sessionsSorted.length === 0) {
+            const currentMonth = {
+                month: getCurrentMonth(),
+                year: getCurrentYear()
+            }
+            return [currentMonth, getNextMonth(currentMonth)];
+        } else {
+            const months = [];
+            const firstSession = sessionsSorted[0];
+            const lastSession = sessionsSorted[sessionsSorted.length - 1];
+            const firstMonth = {month: firstSession.date.month, year: firstSession.date.year}
+            const lastMonth = {month: lastSession.date.month, year: lastSession.date.year}
+            let currentMonth = firstMonth;
+            while (compareDates(currentMonth, lastMonth) < 1) {
+                months.push(currentMonth);
+                currentMonth = getNextMonth(currentMonth);
+            }
+            months.push(currentMonth); // add one more month of buffer
+            return months;
+        }
+    }
+
+    const hasIncompleteSessionToday = () => {
+        const session = getSessionForDay(getCurrentYear(), getCurrentMonth(), getCurrentDayOfMonth());
+        return !!session && !doesEveryDrillHaveSubmission(session);
+    }
+
+    const months = getMonths();
     return (
         <View style={styles.container}>
-            <View>
-                <View style={{flexDirection: 'row'}}>
-                    <Cell text={'SUN'} isHeader={true} isCurrent={true}/>
-                    <Cell text={'MON'} isHeader={true}/>
-                    <Cell text={'TUE'} isHeader={true}/>
-                    <Cell text={'WED'} isHeader={true}/>
-                    <Cell text={'THU'} isHeader={true}/>
-                    <Cell text={'FRI'} isHeader={true}/>
-                    <Cell text={'SAT'} isHeader={true}/>
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <Cell text={'1'} isCompleted={true} onPress={navigateToSession}/>
-                    <Cell text={'2'} />
-                    <Cell text={'3'} />
-                    <Cell text={'4'} />
-                    <Cell text={'5'} isCompleted={true} onPress={navigateToSession}/>
-                    <Cell text={'6'} />
-                    <Cell text={'7'} />
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <Cell text={'8'} isCompleted={true} onPress={navigateToSession}/>
-                    <Cell text={'9'} />
-                    <Cell text={'10'} />
-                    <Cell text={'11'} />
-                    <Cell text={'12'} isCompleted={true} onPress={navigateToSession}/>
-                    <Cell text={'13'} />
-                    <Cell text={'14'} />
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <Cell text={'15'} isCurrent={true} onPress={navigateToSession}/>
-                    <Cell text={'16'} />
-                    <Cell text={'17'} />
-                    <Cell text={'18'} />
-                    <Cell text={'19'} hasSession={true} onPress={navigateToSession}/>
-                    <Cell text={'20'} />
-                    <Cell text={'21'} />
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <Cell text={'22'} hasSession={true} onPress={navigateToSession}/>
-                    <Cell text={'23'} />
-                    <Cell text={'24'} />
-                    <Cell text={'25'} />
-                    <Cell text={'26'} hasSession={true} onPress={navigateToSession}/>
-                    <Cell text={'27'} />
-                    <Cell text={'28'} />
-                </View>
-                <View style={{flexDirection: 'row'}}>
-                    <Cell text={'29'} />
-                    <Cell text={'30'} />
-                    <Cell text={'31'} />
-                </View>
+            <View onLayout={(event) => setWidthOfCalendar(event.nativeEvent.layout.width)}>
+                <FlatList ref={slidesRef}
+                          showsHorizontalScrollIndicator={false}
+                          horizontal
+                          pagingEnabled
+                          initialScrollIndex={getCurrentMonthIndex(months)}
+                          onScrollToIndexFailed={info => {
+                              const wait = new Promise(resolve => setTimeout(resolve, 0));
+                              wait.then(() => {
+                                  slidesRef.current?.scrollToIndex({ index: info.index, animated: false });
+                              });
+                          }}
+                          data={months}
+                          keyExtractor={(item) => `${item.month}-${item.year}`}
+                          renderItem={({item}) => (
+                              <View style={{width: widthOfCalendar}}>
+                                  <Text style={{paddingHorizontal: 10, fontWeight: '600', fontSize: 16}}>
+                                      {getMonthDisplayName(item.month)} {item.year}
+                                  </Text>
+                                  <Header currentDayOfWeek={getCurrentDayOfWeek()}
+                                          isCurrentMonth={getCurrentYear() === item.year && getCurrentMonth() === item.month}/>
+
+                                  {[...Array(getNumberOfRows(item.year, item.month)).keys()].map(rowNumber => (
+                                      <View style={{flexDirection: 'row'}} key={rowNumber}>
+                                          {[...Array(7).keys()].map(dayOfWeekNumber => {
+                                              const day = getDayOfMonth(item.year, item.month, rowNumber, dayOfWeekNumber);
+                                              if (!day) {
+                                                  return <Cell key={dayOfWeekNumber}/>
+                                              } else {
+                                                  return (
+                                                      <Cell key={dayOfWeekNumber}
+                                                            text={day}
+                                                            isCurrent={isCurrentDay(item.year, item.month, day)}
+                                                            session={getSessionForDay(item.year, item.month, day)} />
+                                                  )
+                                              }
+                                          })}
+                                      </View>
+                                  ))}
+                              </View>
+                          )}/>
             </View>
-            <View style={styles.legendContainer}>
-                <View style={styles.legendKeyContainer}>
-                    <View style={{...styles.legendKeyColorIndicator, backgroundColor: Colors.Primary}} />
-                    <Text style={styles.legendKeyText}>Today</Text>
-                </View>
-                <View style={styles.legendKeyContainer}>
-                    <View style={{...styles.legendKeyColorIndicator, backgroundColor: 'rgba(24, 180, 102, .2)'}} />
-                    <Text style={styles.legendKeyText}>Completed</Text>
-                </View>
-                <View style={styles.legendKeyContainer}>
-                    <View style={{...styles.legendKeyColorIndicator, backgroundColor: 'rgba(30, 102, 240, .2)'}} />
-                    <Text style={styles.legendKeyText}>Upcoming</Text>
-                </View>
-            </View>
-            <SpaceBetweenComponent style={styles.startTrainingContainer}>
-                <Text style={styles.startTrainingText}>You have a session today!</Text>
-                <TouchableOpacity style={styles.startTrainingButton}
-                                  onPress={startSession}>
-                    <Text style={styles.startTrainingButtonText}>Start</Text>
-                </TouchableOpacity>
-            </SpaceBetweenComponent>
+
+            <Legend />
+            {hasIncompleteSessionToday() && (
+                <SpaceBetweenComponent style={styles.startTrainingContainer}>
+                    <Text style={styles.startTrainingText}>You have a training session today!</Text>
+                    <TouchableOpacity style={styles.startTrainingButton}
+                                      onPress={navigateToSessionForToday}>
+                        <Text style={styles.startTrainingButtonText}>Start</Text>
+                    </TouchableOpacity>
+                </SpaceBetweenComponent>
+            )}
         </View>
     )
 }
@@ -88,40 +202,25 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         padding: 15,
-        borderRadius: 20
-    },
-    legendContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        flex: 1,
-        paddingHorizontal: 10
-    },
-    legendKeyContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginHorizontal: 3,
-        marginVertical: 5
-    },
-    legendKeyColorIndicator: {
-        borderRadius: 10,
-        width: 10,
-        height: 10
-    },
-    legendKeyText: {
-        marginHorizontal: 3,
-        fontSize: 12
+        borderRadius: 20,
+        shadowColor: 'rgba(0,0,0,.8)', shadowOffset: { width: 0, height: 1 }, shadowOpacity: .15, shadowRadius: 3
     },
     startTrainingContainer: {
+        borderTopWidth: 1,
+        flexWrap: 'wrap',
+        borderColor: Colors.Border,
         marginHorizontal: 5,
-        marginVertical: 10,
-        padding: 20,
-        backgroundColor: Colors.Border,
+        marginTop: 15,
+        paddingTop: 15,
+        paddingHorizontal: 15,
+        paddingBottom: 5,
         borderRadius: 20,
         alignItems: 'center'
     },
     startTrainingText: {
+        flex: 1,
         marginRight: 10,
-        fontWeight: '600'
+        fontWeight: '600',
     },
     startTrainingButton: {
         paddingVertical: 12,

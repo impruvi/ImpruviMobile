@@ -24,7 +24,7 @@ const SessionProgress = ({session, currentDrillId}) => {
     const {height} = useWindowDimensions();
 
     return (
-        <View style={{position: 'absolute', height: height, width: 60, top: 0, left: 0}}>
+        <View style={{position: 'absolute', height: height, width: 30, top: 0, left: 0}}>
             <View style={{justifyContent: 'center', flex: 1, boxSizing: 'border-box', width: 40, alignItems: 'center'}}>
                 {session.drills.map((drill, idx) => (
                     <View key={drill.drillId}  style={{justifyContent: 'center', boxSizing: 'border-box', alignItems: 'center'}}>

@@ -1,15 +1,15 @@
-import {doesDrillHaveSubmission} from "../util/drillUtil";
+import {doesDrillHaveSubmission} from "../../util/drillUtil";
 import {StyleSheet, Text, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faCircleEllipsis} from "@fortawesome/pro-light-svg-icons";
-import {Colors} from "../constants/colors";
+import {Colors} from "../../constants/colors";
 
-const SubmissionStatus = ({drill}) => {
+const DrillSubmissionStatus = ({drill}) => {
     if (doesDrillHaveSubmission(drill)) {
         return (
             <View style={styles.status}>
-                <FontAwesomeIcon icon={faCheckCircle} style={{color: 'green', marginRight: 5}} size={14}/>
-                <Text style={{color: 'green'}}>Video submitted</Text>
+                <FontAwesomeIcon icon={faCheckCircle} style={{color: 'rgba(24, 180, 102, 1)', marginRight: 5}} size={14}/>
+                <Text style={{color: 'rgba(24, 180, 102, 1)'}}>Video submitted</Text>
             </View>
         )
     } else {
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SubmissionStatus;
+export default DrillSubmissionStatus;

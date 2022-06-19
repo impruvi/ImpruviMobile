@@ -5,13 +5,13 @@ const EditHeader = ({onCancel, onSave, title}) => {
     return (
         <View style={styles.container}>
             <View style={{position: 'absolute', left: 0}}>
-                <TouchableOpacity onPress={onCancel}>
+                <TouchableOpacity onPress={onCancel} style={{paddingVertical: 10, paddingRight: 10}}>
                     <Text style={{color: Colors.TextSecondary}}>Cancel</Text>
                 </TouchableOpacity>
             </View>
             <Text style={styles.title}>{title}</Text>
             <View style={{position: 'absolute', right: 0}}>
-                <TouchableOpacity onPress={onSave}>
+                <TouchableOpacity onPress={onSave} style={{paddingVertical: 10, paddingLeft: 10}}>
                     <Text style={{color: Colors.Primary, fontWeight: '500'}}>Save</Text>
                 </TouchableOpacity>
             </View>

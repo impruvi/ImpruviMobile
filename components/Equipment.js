@@ -37,7 +37,7 @@ const Equipment = ({equipment}) => {
                 <View style={styles.container}>
                     <FontAwesomeIcon icon={faRuler} style={styles.icon}/>
                     <View style={styles.textContainer}>
-                        <Text style={styles.text}>{equipment.requirement.dimension.width} x {equipment.requirement.dimension.length} yards of space</Text>
+                        <Text style={styles.text}>{equipment.requirement.dimension.width} x {equipment.requirement.dimension.length} yards</Text>
                     </View>
                 </View>
             )
@@ -49,21 +49,21 @@ const Equipment = ({equipment}) => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        // alignItems: 'flex-start',
         marginVertical: 2,
     },
     textContainer: {
         flexWrap: 'wrap',
-        width: '90%',
+        // width: '90%',
         flexDirection: 'row'
     },
     text: {
-        flex: 1,
-        flexWrap: 'wrap'
+        // flex: 1,
+        // flexWrap: 'wrap'
     },
     icon: {
         marginRight: 5,
-        width: '10%'
+        // width: '10%'
     }
 })
 

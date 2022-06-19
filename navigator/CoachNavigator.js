@@ -1,9 +1,9 @@
 import {CardStyleInterpolators, createStackNavigator} from "@react-navigation/stack";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
+import {SafeAreaView, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {CoachScreenNames} from "../screens/ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faHouse, faListUl, faUser} from "@fortawesome/pro-light-svg-icons";
+import {faHouse, faListUl, faUser, faUsers} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 import React from "react";
 import HomeScreen from "../screens/coach/HomeScreen";
@@ -23,6 +23,14 @@ import SelectDrillScreen from "../screens/coach/update-session/SelectDrillScreen
 import EditDrillSelectionDetailsScreen from "../screens/coach/update-session/EditDrillSelectionDetailsScreen";
 import EditEstimatedDurationScreen from "../screens/coach/update-session/EditEstimatedDurationScreen";
 import PreviewSessionScreen from "../screens/coach/PreviewSessionScreen";
+import ProfileScreen from "../screens/coach/ProfileScreen";
+import EditAboutScreen from "../screens/coach/update-profile/EditAboutScreen";
+import EditEmailScreen from "../screens/coach/update-profile/EditEmailScreen";
+import EditNameScreen from "../screens/coach/update-profile/EditNameScreen";
+import EditPositionScreen from "../screens/coach/update-profile/EditPositionScreen";
+import EditSchoolScreen from "../screens/coach/update-profile/EditSchoolScreen";
+import EditYouthClubScreen from "../screens/coach/update-profile/EditYouthClubScreen";
+import EditHeadshotScreen from "../screens/coach/update-profile/EditHeadshotScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -64,26 +72,21 @@ const TabBar = ({ state, descriptors, navigation }) => {
                     };
 
                     return (
-                        <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={{ width: 80, height: 50, marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }} key={label}>
+                        <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={{ width: 50, height: 50, marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }} key={label}>
                             {label === CoachScreenNames.Home &&
-                                <>
-                                    <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'}/>
-                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Home</Text>
-                                </>
+                                <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'} size={25}/>
                             }
 
                             {label === CoachScreenNames.PlayersNavigator &&
-                                <>
-                                    <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'}/>
-                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Players</Text>
-                                </>
+                                <FontAwesomeIcon icon={faUsers} color={isFocused ? Colors.Primary : 'black'} size={25}/>
                             }
 
                             {label === CoachScreenNames.Drills &&
-                                <>
-                                    <FontAwesomeIcon icon={faListUl} color={isFocused ? Colors.Primary : 'black'}/>
-                                    <Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Drills</Text>
-                                </>
+                                <FontAwesomeIcon icon={faListUl} color={isFocused ? Colors.Primary : 'black'} size={25}/>
+                            }
+
+                            {label === CoachScreenNames.Profile &&
+                                <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'} size={25}/>
                             }
                         </TouchableOpacity>
                     );
@@ -110,6 +113,7 @@ const TabNavigator = () =>  {
             <Tab.Screen name={CoachScreenNames.Home} component={HomeScreen}/>
             <Tab.Screen name={CoachScreenNames.PlayersNavigator} component={PlayersNavigator}/>
             <Tab.Screen name={CoachScreenNames.Drills} component={DrillsScreen} />
+            <Tab.Screen name={CoachScreenNames.Profile} component={ProfileScreen} />
         </Tab.Navigator>
     );
 };
@@ -168,23 +172,17 @@ const CoachNavigator = () => {
                               gestureDirection: 'vertical',
                               cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
                           }}/>
+
+            <Stack.Screen name={CoachScreenNames.EditAbout} component={EditAboutScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditEmail} component={EditEmailScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditHeadshot} component={EditHeadshotScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditName} component={EditNameScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditPosition} component={EditPositionScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditSchool} component={EditSchoolScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditYouthClub} component={EditYouthClubScreen} options={{gestureResponseDistance: width}}/>
+
         </Stack.Navigator>
     );
 };
-
-const styles = StyleSheet.create({
-    tabText: {
-        marginTop: 7,
-        fontSize: 12,
-        fontWeight: '600',
-        color: 'black'
-    },
-    tabTextFocused: {
-        marginTop: 7,
-        fontSize: 12,
-        fontWeight: '600',
-        color: Colors.Primary
-    }
-})
 
 export default CoachNavigator;

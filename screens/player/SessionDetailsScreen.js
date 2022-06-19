@@ -1,14 +1,16 @@
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView} from "react-native";
+import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import SpaceBetweenComponent from "../../components/SpaceBetweenComponent";
-import Box from "../../components/Box";
 import Equipment from "../../components/Equipment";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faAngleLeft, faCheckCircle, faClock, faSoccerBall} from "@fortawesome/pro-light-svg-icons";
+import {faAngleLeft, faAngleRight, faCheck} from "@fortawesome/pro-light-svg-icons";
+import {faCircleSmall} from "@fortawesome/pro-solid-svg-icons";
 import {Colors} from "../../constants/colors";
 import {getCategoryDisplayValue} from "../../constants/categoryType";
-import {doesDrillHaveSubmission} from "../../util/drillUtil";
 import {getSessionEquipment} from "../../util/equipmentAggregator";
 import {useNavigation} from "@react-navigation/native";
+import {PlayerScreenNames} from "../ScreenNames";
+import HeaderCenter from "../../components/HeaderCenter";
+import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
 
 const SessionDetailsScreen = ({route}) => {
 
@@ -16,127 +18,94 @@ const SessionDetailsScreen = ({route}) => {
     const {session} = route.params;
 
     const sessionEquipment = getSessionEquipment(session);
-    const totalTime = session.drills.reduce((count, drill) => count + drill.estimatedDurationMinutes, 0);
+
+    const startSession = (drillId) => {
+        navigation.navigate(
+            {
+                name: PlayerScreenNames.SessionNavigator,
+                merge: true,
+                params: {
+                    screen: PlayerScreenNames.Session,
+                    params: {
+                        session: session,
+                        drillId: drillId
+                    }
+                }
+            });
+    }
 
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <ScrollView style={{
-                flex: 1,
-                padding: 20,
-            }}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={{width: 40, height: 40, marginBottom: 0}}>
-                    <FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>
-                </TouchableOpacity>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+            <ScrollView style={{flex: 1}}>
+                <HeaderCenter title={''}
+                              left={<FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>}
+                              onLeftPress={navigation.goBack}/>
 
-                <Text style={styles.header}>Sunday, June 14</Text>
-                <SpaceBetweenComponent>
-                    <View style={{width: '49%'}}>
-                        <Box style={{padding: 15}}>
-                            <Text style={styles.boxHeaderTextLarge}>What you need</Text>
+                <View style={{paddingHorizontal: 20}}>
+                    <SpaceBetweenComponent style={{marginBottom: 30}}>
+                        <View style={{width: '50%', justifyContent: 'center', alignItems: 'center', borderRightWidth: 1, borderColor: 'black'}}>
+                            <Text style={{fontSize: 25}}>Training</Text>
+                            <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
+                                <Text style={{fontSize: 30, marginTop: 10, marginRight: 3}}>#</Text>
+                                <Text style={{fontSize: 60}}>{session.sessionNumber}</Text>
+                            </View>
+                        </View>
+                        <View style={{width: '50%', alignItems: 'center', justifyContent: 'center'}}>
                             <View>
+                                <Text style={{marginBottom: 5, fontWeight: '600'}}>What you need:</Text>
                                 {sessionEquipment.map(equipment => (
                                     <Equipment equipment={equipment} key={equipment.equipmentType}/>
                                 ))}
                             </View>
-                        </Box>
+                        </View>
+                    </SpaceBetweenComponent>
+                    <View style={{flexDirection: 'row'}}>
+                        <View>
+                            {session.drills.map((drill, idx) => (
+                                <View style={{width: 30, height: 105, justifyContent: 'center', position: 'relative'}} key={drill.drillId}>
+                                    <View style={{width: 23, height: 23, marginBottom: 10, borderRadius: 23, backgroundColor: doesDrillHaveSubmission(drill) ? 'black' : Colors.TextLightSecondary, alignItems: 'center', justifyContent: 'center'}}>
+                                        <FontAwesomeIcon icon={doesDrillHaveSubmission(drill) ? faCheck : faCircleSmall} style={{color: 'white'}} size={doesDrillHaveSubmission(drill) ? 13 : 6}/>
+                                    </View>
+                                    {idx < session.drills.length - 1 && (
+                                        <View style={{position: 'absolute', width: 1, height: 70, backgroundColor: '#e1e8ea', top: 65, left: 11}}>
+                                        </View>
+                                    )}
+                                </View>
+                            ))}
+                        </View>
+                        <View style={{flex: 1}}>
+                            {session.drills.map(drill => (
+                                <View key={drill.drillId}>
+                                    <TouchableOpacity style={{backgroundColor: Colors.Primary, height: 80, justifyContent: 'center', paddingHorizontal: 20, borderRadius: 20, position: 'relative'}}
+                                                      onPress={() => startSession(drill.drillId)}>
+                                        <SpaceBetweenComponent style={{alignItems: 'center'}}>
+                                            <View>
+                                                <View style={{flexDirection: 'row'}}>
+                                                    <Text style={{fontWeight: '500', marginBottom: 3, color: 'white', fontSize: 16}}>
+                                                        {drill.name}
+                                                    </Text>
+                                                </View>
+                                                <Text style={{fontWeight: '300', color: 'white'}}>
+                                                    {getCategoryDisplayValue(drill.category)}
+                                                </Text>
+                                            </View>
+                                            <FontAwesomeIcon icon={faAngleRight} style={{fontSize: 80, color: 'white'}} size={30}/>
+                                        </SpaceBetweenComponent>
+                                    </TouchableOpacity>
+                                    <View style={{height: 25, width: '100%', alignItems: 'flex-end', paddingRight: 10}}>
+                                        {doesDrillHaveFeedback(drill) && (
+                                            <Text style={{color: Colors.Primary, fontSize: 12}}>Feedback available</Text>
+                                        )}
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
                     </View>
-                    <View style={{width: '49%'}}>
-                        <Box style={{padding: 15}}>
-                            <View style={styles.boxHeader}>
-                                <FontAwesomeIcon icon={faClock} style={styles.boxHeaderIcon}/>
-                                <Text style={styles.boxHeaderTextSmall}>Time to complete</Text>
-                            </View>
-                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Text style={{fontSize: 20}}>~{totalTime}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>minutes</Text>
-                            </View>
-                        </Box>
-                        <Box style={{padding: 15}}>
-                            <View style={styles.boxHeader}>
-                                <FontAwesomeIcon icon={faSoccerBall} style={styles.boxHeaderIcon}/>
-                                <Text style={styles.boxHeaderTextSmall}>Number of drills</Text>
-                            </View>
-                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Text style={{fontSize: 20}}>{session.drills.length}</Text><Text style={{color: Colors.TextSecondary, marginLeft: 5}}>drills</Text>
-                            </View>
-                        </Box>
-                    </View>
-                </SpaceBetweenComponent>
-                <Text style={styles.header}>Drills</Text>
-                {session.drills.map(drill => (
-                    <Box style={{padding: 15}}>
-                        <Text style={{fontWeight: '500', marginBottom: 3}}>
-                            {drill.name}
-                        </Text>
-                        <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>
-                            {getCategoryDisplayValue(drill.category)}
-                        </Text>
-                        {doesDrillHaveSubmission(drill) && (
-                            <View style={{marginTop: 10, flexDirection: 'row'}}>
-                                <FontAwesomeIcon icon={faCheckCircle}  style={{marginRight: 6, color: 'green'}}/>
-                                <Text style={{color: 'green'}}>Your video is submitted</Text>
-                            </View>
-                        )}
-                        <Text style={{position: 'absolute', top: 15, right: 15, color: Colors.TextSecondary}}>
-                            {drill.estimatedDurationMinutes} minutes
-                        </Text>
-                    </Box>
-                ))}
-
-                <TouchableOpacity style={styles.startButton}>
-                    <Text style={styles.startButtonText}>Start training</Text>
-                </TouchableOpacity>
+                </View>
             </ScrollView>
-
         </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    safeAreaView: {
-        flex: 1,
-        backgroundColor: '#EFF3F4'
-    },
-    container: {
-        flex: 1,
-        paddingHorizontal: 15
-    },
-    header: {
-        fontSize: 20,
-        marginBottom: 10
-    },
-    boxHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5
-    },
-    boxHeaderIcon: {
-        marginRight: 7
-    },
-    boxHeaderTextSmall: {
-        fontWeight: '500'
-    },
-    boxHeaderTextLarge: {
-        fontSize: 18,
-        fontWeight: '500',
-        marginBottom: 5
-    },
-    startButton: {
-        width: '100%',
-        backgroundColor: Colors.Primary,
-        color: 'white',
-        borderRadius: 30,
-        paddingVertical: 13,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 10,
-        marginBottom: 20
-    },
-    startButtonText: {
-        color: 'white',
-        fontWeight: '600',
-        fontSize: 14
-    }
-});
 
 
 export default SessionDetailsScreen;

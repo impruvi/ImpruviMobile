@@ -1,5 +1,6 @@
 import apiClientFactory from 'aws-api-gateway-client';
 import {DrillVideoAngle} from "../constants/drillVideoAngle";
+import {UserType} from "../constants/userType";
 
 const VideoTypes = {
     Submission: 'SUBMISSION',
@@ -17,13 +18,53 @@ class HttpClient {
     });
 
     validateInviteCode = async (invitationCode) => {
-        await this.stall();
-
         const response = await this.#client.invokeApi({}, '/validate-invitation-code', 'POST', {}, {
             invitationCode: invitationCode.trim()
         });
 
         return response.data;
+    }
+
+    updatePlayer = async ({playerId, coachId, firstName, lastName, email, availability}) => {
+        await this.#client.invokeApi({}, '/player/update', 'POST', {},{
+            player: {
+                playerId,
+                coachId,
+                firstName,
+                lastName,
+                email,
+                availability
+            }
+        });
+    }
+
+    updateCoach = async ({coachId, firstName, lastName, email, about, position, school, youthClub, headshot}) => {
+        if (!!headshot && !this.isRemoteMedia(headshot)) {
+            console.log('uploading headshot');
+            await this.uploadHeadshot(UserType.Coach, coachId, headshot);
+        }
+        await this.#client.invokeApi({}, '/coach/update', 'POST', {},{
+            coach: {
+                coachId,
+                firstName,
+                lastName,
+                email,
+                about,
+                position,
+                school,
+                youthClub,
+                headshot: {
+                    uploadDateEpochMillis: new Date().getTime() // TODO: move updating of this to BE
+                }
+            }
+        });
+    }
+
+    getCoach = async (coachId) => {
+        const response = await this.#client.invokeApi({}, '/coach/get', 'POST', {},{
+            coachId: coachId
+        });
+        return response.data.coach;
     }
 
     getPlayerSessions = async (playerId) => {
@@ -169,12 +210,12 @@ class HttpClient {
 
     uploadDemoVideos = async ({drillId, frontVideo, sideVideo, closeVideo, frontVideoThumbnail, sideVideoThumbnail, closeVideoThumbnail}) => {
         await Promise.all([
-            !this.isRemoteVideo(frontVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Front, frontVideo) : Promise.resolve(),
-            !this.isRemoteVideo(sideVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Side, sideVideo) : Promise.resolve(),
-            !this.isRemoteVideo(closeVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Close, closeVideo) : Promise.resolve(),
-            !this.isRemoteVideo(frontVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Front, frontVideoThumbnail) : Promise.resolve(),
-            !this.isRemoteVideo(sideVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Side, sideVideoThumbnail) : Promise.resolve(),
-            !this.isRemoteVideo(closeVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Close, closeVideoThumbnail) : Promise.resolve(),
+            !this.isRemoteMedia(frontVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Front, frontVideo) : Promise.resolve(),
+            !this.isRemoteMedia(sideVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Side, sideVideo) : Promise.resolve(),
+            !this.isRemoteMedia(closeVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Close, closeVideo) : Promise.resolve(),
+            !this.isRemoteMedia(frontVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Front, frontVideoThumbnail) : Promise.resolve(),
+            !this.isRemoteMedia(sideVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Side, sideVideoThumbnail) : Promise.resolve(),
+            !this.isRemoteMedia(closeVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Close, closeVideoThumbnail) : Promise.resolve(),
         ]);
     }
 
@@ -186,6 +227,13 @@ class HttpClient {
     uploadDemoVideoThumbnail = async (drillId, angle, image) => {
         const uploadUrl = await this.getDemoVideoThumbnailUploadUrl(drillId, angle);
         await this.uploadFile(image, uploadUrl);
+    }
+
+    uploadHeadshot = async (userType, userId, image) => {
+        const uploadUrl = await this.getHeadshotUploadUrl(userType, userId);
+        console.log('upload url', uploadUrl);
+        await this.uploadFile(image, uploadUrl);
+        console.log('finished uploading headshot');
     }
 
     getDemoVideoUploadUrl = async (drillId, angle) => {
@@ -210,13 +258,21 @@ class HttpClient {
         return response.data.uploadUrl;
     }
 
+    getHeadshotUploadUrl = async (userType, userId) => {
+        const response = await this.#client.invokeApi({}, '/get-headshot-upload-url', 'POST', {}, {
+            userType,
+            userId
+        });
+        return response.data.uploadUrl;
+    }
+
     uploadFile = async (fileRef, uploadUrl) => {
         const file = await fetch(fileRef.uri);
         const blob = await file.blob();
         await fetch(uploadUrl, { method: 'PUT', body: blob });
     }
 
-    isRemoteVideo = (video) => {
+    isRemoteMedia = (video) => {
         // TODO: not sure that this works in all cases
         return video.uri.startsWith('https://');
     }

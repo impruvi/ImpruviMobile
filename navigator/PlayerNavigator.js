@@ -1,20 +1,25 @@
 import {createStackNavigator} from "@react-navigation/stack";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
+import {SafeAreaView, TouchableOpacity, useWindowDimensions, View} from "react-native";
 import {PlayerScreenNames} from "../screens/ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faChartLine, faHouse, faPlay, faUser} from "@fortawesome/pro-light-svg-icons";
+import {faChartLine, faHouse, faUser} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 import TrainingScreen from "../screens/player/TrainingScreen";
-import FeedbackScreen from "../screens/player/FeedbackScreen";
-import TrackProgressScreen from "../screens/player/TrackProgressScreen";
-import SessionScreen from "../screens/player/SessionScreen";
+import ProfileScreen from "../screens/player/ProfileScreen";
+import ProgressScreen from "../screens/player/ProgressScreen";
 import DrillSubmissionScreen from "../screens/player/DrillSubmissionScreen";
 import SessionCompleteScreen from "../screens/player/SessionCompleteScreen";
-import SessionFeedbackScreen from "../screens/player/SessionFeedbackScreen";
+import SessionScreen from "../screens/player/SessionScreen";
 import React from "react";
-import CoachBioScreen from "../screens/player/CoachBioScreen";
+import CoachDetailsScreen from "../screens/player/CoachDetailsScreen";
 import SessionDetailsScreen from "../screens/player/SessionDetailsScreen";
+import EditAvailabilityScreen from "../screens/player/update-profile/EditAvailabilityScreen";
+import EditEmailScreen from "../screens/player/update-profile/EditEmailScreen";
+import EditNameScreen from "../screens/player/update-profile/EditNameScreen";
+import OnboardingScreen from "../screens/player/onboarding/OnboardingScreen";
+import useOnboarding from "../hooks/useOnboarding";
+import FAQScreen from "../screens/player/FAQScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,24 +63,15 @@ const TabBar = ({ state, descriptors, navigation }) => {
                     return (
                         <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={{ width: 80, height: 50, marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }} key={label}>
                             {label === PlayerScreenNames.TrainingNavigator &&
-                                <>
-                                    <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                                    {/*<Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Home</Text>*/}
-                                </>
+                                <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'} size={25}/>
                             }
 
-                            {label === PlayerScreenNames.Feedback &&
-                                <>
-                                    <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                                    {/*<Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Profile</Text>*/}
-                                </>
+                            {label === PlayerScreenNames.Profile &&
+                                <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'} size={25}/>
                             }
 
                             {label === PlayerScreenNames.Progress &&
-                                <>
-                                    <FontAwesomeIcon icon={faChartLine} color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                                    {/*<Text style={isFocused ? styles.tabTextFocused : styles.tabText}>Progress</Text>*/}
-                                </>
+                                <FontAwesomeIcon icon={faChartLine} color={isFocused ? Colors.Primary : 'black'} size={25}/>
                             }
                         </TouchableOpacity>
                     );
@@ -89,8 +85,8 @@ const TabNavigator = () =>  {
     return (
         <Tab.Navigator screenOptions={{headerShown: false}} initialRouteName={PlayerScreenNames.Training} tabBar={props => <TabBar {...props}/>}>
             <Tab.Screen name={PlayerScreenNames.TrainingNavigator} component={TrainingNavigator}/>
-            <Tab.Screen name={PlayerScreenNames.Progress} component={TrackProgressScreen}/>
-            <Tab.Screen name={PlayerScreenNames.Feedback} component={FeedbackScreen} />
+            <Tab.Screen name={PlayerScreenNames.Progress} component={ProgressScreen}/>
+            <Tab.Screen name={PlayerScreenNames.Profile} component={ProfileScreen} />
         </Tab.Navigator>
     );
 };
@@ -120,30 +116,27 @@ const SessionNavigator = () => {
 
 const PlayerNavigator = () => {
     const {width} = useWindowDimensions();
+    const {isOnboardingComplete} = useOnboarding();
 
     return (
         <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>
-            <Stack.Screen name={PlayerScreenNames.TabNavigator} component={TabNavigator}/>
-            <Stack.Screen name={PlayerScreenNames.SessionNavigator} component={SessionNavigator} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={PlayerScreenNames.SessionFeedback} component={SessionFeedbackScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={PlayerScreenNames.CoachBio} component={CoachBioScreen} options={{gestureResponseDistance: width}}/>
+            {isOnboardingComplete ?
+                <>
+                    <Stack.Group>
+                        <Stack.Screen name={PlayerScreenNames.TabNavigator} component={TabNavigator}/>
+                        <Stack.Screen name={PlayerScreenNames.SessionNavigator} component={SessionNavigator} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={PlayerScreenNames.CoachDetails} component={CoachDetailsScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={PlayerScreenNames.EditAvailability} component={EditAvailabilityScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={PlayerScreenNames.EditEmail} component={EditEmailScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={PlayerScreenNames.EditName} component={EditNameScreen} options={{gestureResponseDistance: width}}/>
+                        <Stack.Screen name={PlayerScreenNames.FAQ} component={FAQScreen} options={{gestureResponseDistance: width}}/>
+                    </Stack.Group>
+                </>
+                :
+                <Stack.Screen name={PlayerScreenNames.Onboarding} component={OnboardingScreen} />
+            }
         </Stack.Navigator>
     );
 };
-
-const styles = StyleSheet.create({
-    tabText: {
-        marginTop: 7,
-        fontSize: 12,
-        fontWeight: '600',
-        color: 'black'
-    },
-    tabTextFocused: {
-        marginTop: 7,
-        fontSize: 12,
-        fontWeight: '600',
-        color: Colors.Primary
-    }
-})
 
 export default PlayerNavigator;

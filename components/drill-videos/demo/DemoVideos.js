@@ -1,19 +1,22 @@
-import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, View} from "react-native";
 import {useRef, useState} from "react";
-import {DrillVideoAngle} from "../../constants/drillVideoAngle";
+import {DrillVideoAngle} from "../../../constants/drillVideoAngle";
 import {Video} from "expo-av";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faForwardStep, faInfoCircle, faVideo} from "@fortawesome/pro-solid-svg-icons";
-import {faAnglesDown, faPlus} from "@fortawesome/pro-light-svg-icons";
-import {doesDrillHaveSubmission} from "../../util/drillUtil";
+import {doesDrillHaveSubmission} from "../../../util/drillUtil";
 import {useNavigation} from "@react-navigation/native";
-import {Colors} from "../../constants/colors";
+import {Colors} from "../../../constants/colors";
 import SideOption from "./SideOption";
 import {LinearGradient} from "expo-linear-gradient";
-import {PlayerScreenNames} from '../../screens/ScreenNames';
+import {PlayerScreenNames} from '../../../screens/ScreenNames';
+import InfoSheet from './InfoSheet';
+import NextDrillIndicator from "../NextDrillIndicator";
+import SubmitButton from "../SubmitButton";
+import useAuth from "../../../hooks/useAuth";
+import {UserType} from "../../../constants/userType";
+import Footer from "../Footer";
 
-
-const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOptions, openInfo}) => {
+const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
 
     const [selectedAngle, setSelectedAngle] = useState(DrillVideoAngle.Front);
     const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -21,8 +24,10 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOpti
     const [frontStatus, setFrontStatus] = useState({});
     const [sideStatus, setSideStatus] = useState({});
     const [closeStatus, setCloseStatus] = useState({});
+    const [isInfoShowing, setIsInfoShowing] = useState(false);
 
     const navigation = useNavigation();
+    const {userType} = useAuth();
     const frontRef = useRef();
     const sideRef = useRef();
     const closeRef = useRef();
@@ -33,6 +38,11 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOpti
         } else if (playbackRate === 1.0) {
             setPlaybackRate(.5);
         }
+    }
+
+    const shouldShowSubmitButton = () => {
+        return userType === UserType.Player
+            && !doesDrillHaveSubmission(drill);
     }
 
     const shouldShowActivityIndicator = () => {
@@ -50,7 +60,7 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOpti
     }
 
     return (
-        <View key={drill.drillId} style={{flex: 1, position: 'relative'}}>
+        <View key={drill.drillId} style={shouldHide ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {((isVisible && selectedAngle === DrillVideoAngle.Front) || frontStatus.isLoaded) && (
                 <Video
                     ref={frontRef}
@@ -96,6 +106,7 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOpti
                     onPlaybackStatusUpdate={status => setCloseStatus(() => status)}
                 />
             )}
+
             {shouldShowActivityIndicator() && (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
                     <ActivityIndicator size="small" color="white"/>
@@ -110,27 +121,15 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOpti
 
             <LinearGradient
                 colors={['rgba(0, 0, 0, .3)', 'transparent']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={{width: '100%', height: 175, position: 'absolute', top: 0, left: 0}} />
-
-            <LinearGradient
-                colors={['rgba(0, 0, 0, .3)', 'transparent']}
                 start={{ x: 1, y: 0 }}
                 end={{ x: 0, y: 0 }}
                 style={{width: 175, height: '100%', position: 'absolute', top: 0, right: 0}} />
-
-            <LinearGradient
-                colors={['rgba(0, 0, 0, .3)', 'transparent']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{width: 175, height: '100%', position: 'absolute', top: 0, left: 0}} />
 
             <View style={{position: 'absolute', bottom: 0, right: 0}}>
                 <View style={{paddingBottom: 80, paddingRight: 10}}>
                     <SideOption icon={faInfoCircle}
                                 text={'Info'}
-                                onPress={openInfo}/>
+                                onPress={() => setIsInfoShowing(true)}/>
                     <SideOption icon={faForwardStep}
                                 text={playbackRate !== 1 ? `.${playbackRate.toString().split('.')[1]}x` : `${playbackRate}x`}
                                 onPress={onChangePlaybackRate}/>
@@ -149,56 +148,21 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldShowSubmissionOpti
                 </View>
             </View>
 
-            {shouldShowSubmissionOptions && (
-                <View style={{position: 'absolute', width: '100%', bottom: 0, left: 0}}>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 40}}>
-                        {!doesDrillHaveSubmission(drill) && (
-                            <TouchableOpacity
-                                style={styles.submitButton}
-                                onPress={() => navigation.navigate(PlayerScreenNames.DrillSubmission, {
-                                    sessionNumber: session.sessionNumber,
-                                    drillId: drill.drillId
-                                })}>
-                                <FontAwesomeIcon icon={faPlus} style={styles.submitButtonIcon}/>
-                                <Text style={styles.submitButtonText}>Submit your video</Text>
-                            </TouchableOpacity>
-                        )}
-                        {doesDrillHaveSubmission(drill) && (
-                            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                                {!isLast && (
-                                    <>
-                                        <Text style={{color: 'white', marginVertical: 5, fontWeight: '500', fontSize: 16}}>Next drill</Text>
-                                        <FontAwesomeIcon icon={faAnglesDown} style={{color: 'white'}} size={30}/>
-                                    </>
-                                )}
-                            </View>
-                        )}
-                    </View>
-                </View>
-            )}
+            <Footer>
+                {shouldShowSubmitButton() && (
+                    <SubmitButton onPress={() => navigation.navigate(PlayerScreenNames.DrillSubmission, {
+                        sessionNumber: session.sessionNumber,
+                        drillId: drill.drillId
+                    })} text={'Submit your video'} />
+                )}
+                {!shouldShowSubmitButton() && !isLast && (
+                    <NextDrillIndicator />
+                )}
+            </Footer>
 
-            {/*<InfoSheet isOpen={isInfoShowing} onClose={() => setIsInfoShowing(false)} drill={drill}/>*/}
-
+            <InfoSheet isOpen={isInfoShowing} onClose={() => setIsInfoShowing(false)} drill={drill}/>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    submitButton: {
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        backgroundColor: Colors.Primary,
-        borderRadius: 40,
-        flexDirection: 'row'
-    },
-    submitButtonIcon: {
-        color: 'white',
-        marginRight: 10
-    },
-    submitButtonText: {
-        color: 'white',
-        fontSize: 15
-    }
-});
 
 export default DemoVideos;
