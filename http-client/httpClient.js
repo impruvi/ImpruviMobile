@@ -40,7 +40,6 @@ class HttpClient {
 
     updateCoach = async ({coachId, firstName, lastName, email, about, position, school, youthClub, headshot}) => {
         if (!!headshot && !this.isRemoteMedia(headshot)) {
-            console.log('uploading headshot');
             await this.uploadHeadshot(UserType.Coach, coachId, headshot);
         }
         await this.#client.invokeApi({}, '/coach/update', 'POST', {},{
@@ -231,9 +230,7 @@ class HttpClient {
 
     uploadHeadshot = async (userType, userId, image) => {
         const uploadUrl = await this.getHeadshotUploadUrl(userType, userId);
-        console.log('upload url', uploadUrl);
         await this.uploadFile(image, uploadUrl);
-        console.log('finished uploading headshot');
     }
 
     getDemoVideoUploadUrl = async (drillId, angle) => {

@@ -21,7 +21,6 @@ import PlayerScreen from "../screens/coach/PlayerScreen";
 import CreateOrEditSessionScreen from "../screens/coach/CreateOrEditSessionScreen";
 import SelectDrillScreen from "../screens/coach/update-session/SelectDrillScreen";
 import EditDrillSelectionDetailsScreen from "../screens/coach/update-session/EditDrillSelectionDetailsScreen";
-import EditEstimatedDurationScreen from "../screens/coach/update-session/EditEstimatedDurationScreen";
 import PreviewSessionScreen from "../screens/coach/PreviewSessionScreen";
 import ProfileScreen from "../screens/coach/ProfileScreen";
 import EditAboutScreen from "../screens/coach/update-profile/EditAboutScreen";
@@ -161,7 +160,6 @@ const CoachNavigator = () => {
                               gestureDirection: 'vertical',
                               cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
                           }}/>
-            <Stack.Screen name={CoachScreenNames.EditEstimatedDurationScreen} component={EditEstimatedDurationScreen} options={{gestureResponseDistance: width}}/>
 
             <Stack.Screen name={CoachScreenNames.PreviewSession} component={PreviewSessionScreen} options={{gestureResponseDistance: width}}/>
             <Stack.Screen name={CoachScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>

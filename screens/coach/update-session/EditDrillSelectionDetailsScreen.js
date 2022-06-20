@@ -14,35 +14,21 @@ import {useNavigation} from "@react-navigation/native";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../../../constants/colors";
 import {useState} from "react";
-import FormOption from "../../../components/FormOption";
-import {CoachScreenNames} from "../../ScreenNames";
 import HeaderCenter from "../../../components/HeaderCenter";
 
-const Fields = {
-    Notes: 'NOTES',
-    EstimatedDuration: 'ESTIMATED_DURATION'
-}
 
 const EditDrillSelectionDetailsScreen = ({route}) => {
 
     const {drill, onSelectDrill, onRemoveDrill} = route.params;
 
-    const [hasSubmitted, setHasSubmitted] = useState(false);
     const [notes, setNotes] = useState(drill.notes);
-    const [estimatedDurationMinutes, setEstimatedDurationMinutes] = useState(drill.estimatedDurationMinutes);
 
     const navigation = useNavigation();
 
     const onAdd = () => {
-        const invalidFields = getFieldsWithInvalidInput();
-        if (invalidFields.length > 0) {
-            setHasSubmitted(true);
-            return;
-        }
         onSelectDrill({
             ...drill,
             notes: notes,
-            estimatedDurationMinutes: estimatedDurationMinutes
         });
         navigation.goBack();
     }
@@ -50,20 +36,6 @@ const EditDrillSelectionDetailsScreen = ({route}) => {
     const onRemove = () => {
         onRemoveDrill(drill);
         navigation.goBack();
-    }
-
-    const getFieldsWithInvalidInput = () => {
-        const fieldsWithInvalidInput = [];
-
-        if (!estimatedDurationMinutes) {
-            fieldsWithInvalidInput.push(Fields.EstimatedDuration);
-        }
-
-        return fieldsWithInvalidInput;
-    }
-
-    const shouldShowValidationErrorForField = (field) => {
-        return hasSubmitted && getFieldsWithInvalidInput().includes(field);
     }
 
     return (
@@ -85,15 +57,6 @@ const EditDrillSelectionDetailsScreen = ({route}) => {
                             <Image source={{uri: drill.demos.frontThumbnail.fileLocation}} style={{height: 150, width: 100}} />
                         </View>
                     </View>
-                    <FormOption title={'Estimated duration'}
-                                onPress={() => navigation.navigate(CoachScreenNames.EditEstimatedDurationScreen, {
-                                    estimatedDurationMinutes: estimatedDurationMinutes,
-                                    setEstimatedDurationMinutes: setEstimatedDurationMinutes
-                                })}
-                                textValue={!!estimatedDurationMinutes ? `${estimatedDurationMinutes} minutes` : ''}
-                                errorMessage={shouldShowValidationErrorForField(Fields.EstimatedDuration)
-                                    ? 'Enter estimated duration'
-                                    : null}/>
                 </View>
 
             </TouchableWithoutFeedback>

@@ -25,7 +25,6 @@ export const CoachScreenNames = {
     CreateOrEditSession: 'CoachCreateOrEditSession',
     SelectDrill: 'CoachSelectDrill',
     EditDrillSelectionDetails: 'EditDrillSelectionDetails',
-    EditEstimatedDurationScreen: 'CoachEditEstimatedDurationScreen',
     PreviewSession: 'CoachPreviewSession',
 
     Session: 'CoachSession',

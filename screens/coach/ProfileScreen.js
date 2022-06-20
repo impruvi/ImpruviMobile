@@ -20,9 +20,9 @@ const ProfileScreen = () => {
 
             <ScrollView style={{flex: 1}}>
                 <View style={{width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 20}}>
-                    <View style={{width: 80, height: 80, borderRadius: 80, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ddd'}}>
+                    <View style={{width: 80, height: 80, borderRadius: 80, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ddd', overflow: 'hidden'}}>
                         {!!coach.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
-                            <Image source={{uri: coach.headshot.fileLocation}} />
+                            <Image source={{uri: coach.headshot.fileLocation}} style={{width: 80, height: 80}}/>
                         )}
                         {(!coach.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
                             <FontAwesomeIcon icon={faUser} size={25}/>

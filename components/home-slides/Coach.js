@@ -25,7 +25,7 @@ const Coach = () => {
         <Container>
             <View style={{padding: 15, width: '50%'}}>
                 <View>
-                    <Text style={{ ...styles.text, fontSize: 20, fontWeight: '500'}}>{coach.firstName} {coach.lastName} </Text>
+                    <Text style={{ ...styles.text, fontSize: 20, fontWeight: '500'}}>{coach?.firstName} {coach?.lastName} </Text>
                     <Text style={{ ...styles.text, fontSize: 12}}>Your coach</Text>
 
                     <TouchableOpacity style={{marginTop: 15, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20, alignItems: 'center'}}
@@ -38,12 +38,12 @@ const Coach = () => {
             </View>
 
             <View style={{width: '50%', alignItems: 'flex-end', justifyContent: 'center', paddingRight: 10}}>
-                <View style={{width: 90, height: 90, borderRadius: 90, backgroundColor: 'white', overflow: 'hidden', alignItems: 'flex-end', justifyContent: 'center'}}>
-                    {!!coach.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
-                        <Image source={{uri: coach.headshot.fileLocation}} style={{height: 90, resizeMode: 'cover'}}/>
+                <View style={{width: 90, height: 90, borderRadius: 90, backgroundColor: 'white', overflow: 'hidden', alignItems: 'center', justifyContent: 'center'}}>
+                    {!!coach?.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
+                        <Image source={{uri: coach?.headshot.fileLocation}} style={{height: 90, width: 90, resizeMode: 'cover'}}/>
                     )}
-                    {(!coach.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
-                        <FontAwesomeIcon icon={faUser} size={25}/>
+                    {(!coach?.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
+                        <FontAwesomeIcon icon={faUser} size={35}/>
                     )}
                 </View>
             </View>

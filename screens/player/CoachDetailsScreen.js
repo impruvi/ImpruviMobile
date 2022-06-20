@@ -1,4 +1,4 @@
-import {Image, ScrollView, Text, View} from 'react-native';
+import {Image, ScrollView, Text, View, SafeAreaView} from 'react-native';
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft, faUser} from "@fortawesome/pro-light-svg-icons";
@@ -12,25 +12,25 @@ const CoachDetailsScreen = ({route}) => {
     const navigation = useNavigation();
 
     return (
-        <View style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1}}>
             <HeaderCenter title={'Your coach'}
                           left={<FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>}
                           onLeftPress={navigation.goBack}/>
 
-            <ScrollView style={{flex: 1}}>
-                <View>
-                    <View>
+            <ScrollView style={{flex: 1, paddingHorizontal: 15}}>
+                <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                    <View style={{width: 120, height: 120, borderRadius: 120, overflow: 'hidden', backgroundColor: Colors.Border, alignItems: 'center', justifyContent: 'center'}}>
                         {!!coach.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
-                            <Image source={{uri: coach.headshot.fileLocation}} />
+                            <Image source={{uri: coach.headshot.fileLocation}} style={{width: 120, height: 120, resizeMode: 'cover'}}/>
                         )}
                         {(!coach.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
-                            <FontAwesomeIcon icon={faUser} size={25}/>
+                            <FontAwesomeIcon icon={faUser} size={40}/>
                         )}
                     </View>
-                </View>
-                <View>
-                    <Text style={{fontSize: 20, fontWeight: '600'}}>{coach.firstName} {coach.lastName}</Text>
-                    <Text style={{color: Colors.TextSecondary}}>{coach.position}</Text>
+                    <View style={{marginVertical: 10, alignItems: 'center'}}>
+                        <Text style={{fontSize: 20, fontWeight: '600'}}>{coach.firstName} {coach.lastName}</Text>
+                        <Text style={{color: Colors.TextSecondary}}>{coach.position}</Text>
+                    </View>
                 </View>
                 <View style={{marginVertical: 3}}>
                     <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>School</Text>
@@ -47,7 +47,7 @@ const CoachDetailsScreen = ({route}) => {
                     </Text>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }
 

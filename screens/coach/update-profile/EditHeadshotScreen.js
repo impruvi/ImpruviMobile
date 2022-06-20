@@ -30,6 +30,8 @@ const EditHeadshotScreen = ({route}) => {
 
         if (!result.cancelled) {
             setHeadshot({uri: result.uri});
+        } else {
+            navigation.goBack();
         }
     };
 
