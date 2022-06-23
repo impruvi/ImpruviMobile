@@ -25,8 +25,7 @@ const EditEmailScreen = ({route}) => {
                 ...route.params.coach,
                 email: email,
             };
-            await httpClient.updateCoach(newCoach);
-            setCoach(newCoach)
+            setCoach(await httpClient.updateCoach(newCoach));
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

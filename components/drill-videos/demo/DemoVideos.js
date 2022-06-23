@@ -1,5 +1,5 @@
 import {ActivityIndicator, View} from "react-native";
-import {useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {DrillVideoAngle} from "../../../constants/drillVideoAngle";
 import {Video} from "expo-av";
 import {faForwardStep, faInfoCircle, faVideo} from "@fortawesome/pro-solid-svg-icons";
@@ -15,8 +15,12 @@ import SubmitButton from "../SubmitButton";
 import useAuth from "../../../hooks/useAuth";
 import {UserType} from "../../../constants/userType";
 import Footer from "../Footer";
+import {compareDates, getCurrentDate} from "../../../util/dateUtil";
+import NoSubmitPopup from "./NoSubmitPopup";
 
 const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
+
+    const [isShowingNoSubmitPopup, setIsShowingNoSubmitPopup] = useState(false);
 
     const [selectedAngle, setSelectedAngle] = useState(DrillVideoAngle.Front);
     const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -56,6 +60,17 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
             return !sideStatus.isLoaded || sideStatus.isBuffering;
         } else {
             return !closeStatus.isLoaded || closeStatus.isBuffering;
+        }
+    }
+
+    const onSubmitButtonPress = () => {
+        if (compareDates(session.date, getCurrentDate()) < 1) {
+            navigation.navigate(PlayerScreenNames.DrillSubmission, {
+                sessionNumber: session.sessionNumber,
+                drillId: drill.drillId
+            });
+        } else {
+            setIsShowingNoSubmitPopup(true);
         }
     }
 
@@ -150,16 +165,14 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
 
             <Footer>
                 {shouldShowSubmitButton() && (
-                    <SubmitButton onPress={() => navigation.navigate(PlayerScreenNames.DrillSubmission, {
-                        sessionNumber: session.sessionNumber,
-                        drillId: drill.drillId
-                    })} text={'Submit your video'} />
+                    <SubmitButton onPress={onSubmitButtonPress} text={'Submit your video'} />
                 )}
                 {!shouldShowSubmitButton() && !isLast && (
                     <NextDrillIndicator />
                 )}
             </Footer>
 
+            <NoSubmitPopup visible={isShowingNoSubmitPopup} close={() => setIsShowingNoSubmitPopup(false)}/>
             <InfoSheet isOpen={isInfoShowing} onClose={() => setIsInfoShowing(false)} drill={drill}/>
         </View>
     )

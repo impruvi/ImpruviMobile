@@ -1,6 +1,7 @@
 import apiClientFactory from 'aws-api-gateway-client';
 import {DrillVideoAngle} from "../constants/drillVideoAngle";
 import {UserType} from "../constants/userType";
+import pRetry from 'p-retry';
 
 const VideoTypes = {
     Submission: 'SUBMISSION',
@@ -39,7 +40,7 @@ class HttpClient {
     }
 
     updateCoach = async ({coachId, firstName, lastName, email, about, position, school, youthClub, headshot}) => {
-        if (!!headshot && !this.isRemoteMedia(headshot)) {
+        if (!!headshot && !!headshot.uri && !this.isRemoteMedia(headshot)) {
             await this.uploadHeadshot(UserType.Coach, coachId, headshot);
         }
         await this.#client.invokeApi({}, '/coach/update', 'POST', {},{
@@ -57,6 +58,7 @@ class HttpClient {
                 }
             }
         });
+        return await this.getCoach(coachId);
     }
 
     getCoach = async (coachId) => {
@@ -114,7 +116,6 @@ class HttpClient {
     }
 
     deleteDrill = async (drillId) => {
-        await this.stall();
         await this.#client.invokeApi({}, '/drills/delete', 'POST', {}, {
             drillId: drillId,
         });
@@ -167,54 +168,54 @@ class HttpClient {
     }
 
     createSubmission = async (playerId, sessionNumber, drillId, video) => {
-        const getVideoUploadUrlResponse = await this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
+        const getVideoUploadUrlResponse = await pRetry(this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
             videoType: VideoTypes.Submission,
             submissionParams: {
                 playerId: playerId,
                 sessionNumber: sessionNumber,
                 drillId: drillId
             }
-        });
+        }), {retries: 5});
 
-        await this.uploadFile(video, getVideoUploadUrlResponse.data.uploadUrl);
+        await pRetry(this.uploadFile(video, getVideoUploadUrlResponse.data.uploadUrl), {retries: 5});
 
         // update submission for drill
-        await this.#client.invokeApi({}, '/sessions/submission/create', 'POST', {}, {
+        await pRetry(this.#client.invokeApi({}, '/sessions/submission/create', 'POST', {}, {
             playerId: playerId,
             sessionNumber: sessionNumber,
             drillId: drillId,
-        });
+        }), {retries: 5});
     }
 
     createFeedback = async ({coachId, playerId, sessionNumber, drillId, video}) => {
-        const getVideoUploadUrlResponse = await this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
+        const getVideoUploadUrlResponse = await pRetry(this.#client.invokeApi({}, '/get-video-upload-url', 'POST', {}, {
             videoType: VideoTypes.Feedback,
             feedbackParams: {
                 playerId: playerId,
                 sessionNumber: sessionNumber,
                 drillId: drillId
             }
-        });
+        }), {retries: 5});
 
-        await this.uploadFile(video, getVideoUploadUrlResponse.data.uploadUrl);
+        await pRetry(this.uploadFile(video, getVideoUploadUrlResponse.data.uploadUrl), {retries: 5});
 
         // update submission for drill
-        await this.#client.invokeApi({}, '/sessions/feedback/create', 'POST', {}, {
+        await pRetry(this.#client.invokeApi({}, '/sessions/feedback/create', 'POST', {}, {
             coachId: coachId,
             playerId: playerId,
             sessionNumber: sessionNumber,
             drillId: drillId,
-        });
+        }), {retries: 5});
     }
 
     uploadDemoVideos = async ({drillId, frontVideo, sideVideo, closeVideo, frontVideoThumbnail, sideVideoThumbnail, closeVideoThumbnail}) => {
         await Promise.all([
-            !this.isRemoteMedia(frontVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Front, frontVideo) : Promise.resolve(),
-            !this.isRemoteMedia(sideVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Side, sideVideo) : Promise.resolve(),
-            !this.isRemoteMedia(closeVideo) ? this.uploadDemoVideo(drillId, DrillVideoAngle.Close, closeVideo) : Promise.resolve(),
-            !this.isRemoteMedia(frontVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Front, frontVideoThumbnail) : Promise.resolve(),
-            !this.isRemoteMedia(sideVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Side, sideVideoThumbnail) : Promise.resolve(),
-            !this.isRemoteMedia(closeVideo) ? this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Close, closeVideoThumbnail) : Promise.resolve(),
+            !this.isRemoteMedia(frontVideo) ? pRetry(this.uploadDemoVideo(drillId, DrillVideoAngle.Front, frontVideo), {retries: 5}) : Promise.resolve(),
+            !this.isRemoteMedia(sideVideo) ? pRetry(this.uploadDemoVideo(drillId, DrillVideoAngle.Side, sideVideo), {retries: 5})  : Promise.resolve(),
+            !this.isRemoteMedia(closeVideo) ? pRetry(this.uploadDemoVideo(drillId, DrillVideoAngle.Close, closeVideo), {retries: 5})  : Promise.resolve(),
+            !this.isRemoteMedia(frontVideo) ? pRetry(this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Front, frontVideoThumbnail), {retries: 5})  : Promise.resolve(),
+            !this.isRemoteMedia(sideVideo) ? pRetry(this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Side, sideVideoThumbnail), {retries: 5})  : Promise.resolve(),
+            !this.isRemoteMedia(closeVideo) ? pRetry(this.uploadDemoVideoThumbnail(drillId, DrillVideoAngle.Close, closeVideoThumbnail), {retries: 5})  : Promise.resolve(),
         ]);
     }
 
@@ -269,9 +270,9 @@ class HttpClient {
         await fetch(uploadUrl, { method: 'PUT', body: blob });
     }
 
-    isRemoteMedia = (video) => {
+    isRemoteMedia = (media) => {
         // TODO: not sure that this works in all cases
-        return video.uri.startsWith('https://');
+        return media.uri.startsWith('https://');
     }
 
     stall = async (stallTime = 2000) => {

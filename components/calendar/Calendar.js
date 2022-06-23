@@ -5,6 +5,7 @@ import SpaceBetweenComponent from "../SpaceBetweenComponent";
 import {useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../../screens/ScreenNames";
 import {
+    compareDates,
     getCurrentDayOfMonth,
     getCurrentDayOfWeek,
     getCurrentMonth,
@@ -77,23 +78,6 @@ const Calendar = ({sessions}) => {
         return sessionList.length > 0
             ? sessionList[0]
             : null
-    }
-
-    const compareDates = (a, b) => {
-        if ( a.year < b.year ) {
-            return -1;
-        } else if (a.year > b.year) {
-            return 1;
-        } else if ( a.month < b.month ) {
-            return -1;
-        } else if (a.month > b.month) {
-            return 1;
-        } else if ( a.day < b.day ) {
-            return -1;
-        } else if (a.day > b.day) {
-            return 1;
-        }
-        return 0;
     }
 
     const getNextMonth = (month) => {

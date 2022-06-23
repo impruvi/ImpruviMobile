@@ -27,8 +27,7 @@ const EditNameScreen = ({route}) => {
                 firstName: firstName,
                 lastName: lastName
             };
-            await httpClient.updateCoach(newCoach);
-            setCoach(newCoach)
+            setCoach(await httpClient.updateCoach(newCoach));
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

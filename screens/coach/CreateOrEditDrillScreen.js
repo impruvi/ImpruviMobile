@@ -303,6 +303,7 @@ const CreateOrEditDrillScreen = ({route}) => {
             <Confirmation isOpen={isDeleteModalOpen}
                           close={() => setIsDeleteModalOpen(false)}
                           prompt={'Are you sure you want to delete?'}
+                          confirmText={'Delete'}
                           confirm={onDelete}/>
         </View>
     )

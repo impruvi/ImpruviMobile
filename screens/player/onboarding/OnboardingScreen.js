@@ -5,7 +5,7 @@ import {OnboardingSlideNames} from "./onboardingSlideNames";
 import OnboardingSlide from "./OnboardingSlide";
 
 const OnboardingScreen = () => {
-    const {setIsOnboardingComplete} = useOnboarding();
+    const {markOnboardingComplete} = useOnboarding();
     const [currentIndex, setCurrentIndex] = useState(0);
     const slidesRef = useRef(null);
 
@@ -19,7 +19,7 @@ const OnboardingScreen = () => {
         if (currentIndex < OnboardingSlideNames.length - 1) {
             slidesRef.current.scrollToIndex({index: currentIndex + 1});
         } else {
-            setIsOnboardingComplete(true);
+            markOnboardingComplete();
         }
     }
 

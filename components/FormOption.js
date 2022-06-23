@@ -3,12 +3,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleRight, faCircleExclamation} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
 
-const FormOption = ({onPress, title, textValue, imageValue, placeholder, errorMessage}) => {
+const FormOption = ({onPress, title, textValue, imageValue, placeholder, errorMessage, titleColor, shouldHideArrow}) => {
 
     return (
         <TouchableHighlight onPress={onPress} underlayColor="#EFF3F4">
             <View style={styles.option} >
-                <Text style={{marginVertical: 10}}>{title}</Text>
+                <Text style={!!titleColor ? {marginVertical: 10, color: titleColor} : {marginVertical: 10}}>{title}</Text>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
                     {!!errorMessage && (
                         <View style={{alignItems: 'center', flexDirection: 'row'}}>
@@ -29,9 +29,11 @@ const FormOption = ({onPress, title, textValue, imageValue, placeholder, errorMe
                             )}
                         </>
                     )}
-                    <View style={{marginLeft: 10}}>
-                        <FontAwesomeIcon icon={faAngleRight} size={20}/>
-                    </View>
+                    {!shouldHideArrow && (
+                        <View style={{marginLeft: 10}}>
+                            <FontAwesomeIcon icon={faAngleRight} size={20}/>
+                        </View>
+                    )}
                 </View>
             </View>
         </TouchableHighlight>

@@ -25,8 +25,7 @@ const EditAboutScreen = ({route}) => {
                 ...route.params.coach,
                 about: about,
             };
-            await httpClient.updateCoach(newCoach);
-            setCoach(newCoach)
+            setCoach(await httpClient.updateCoach(newCoach));
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

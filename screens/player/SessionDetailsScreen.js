@@ -76,7 +76,7 @@ const SessionDetailsScreen = ({route}) => {
                         <View style={{flex: 1}}>
                             {session.drills.map(drill => (
                                 <View key={drill.drillId}>
-                                    <TouchableOpacity style={{backgroundColor: Colors.Primary, height: 80, justifyContent: 'center', paddingHorizontal: 20, borderRadius: 20, position: 'relative'}}
+                                    <TouchableOpacity style={{backgroundColor: doesDrillHaveSubmission(drill) ? '#66CF70' : Colors.Primary, height: 80, justifyContent: 'center', paddingHorizontal: 20, borderRadius: 20, position: 'relative'}}
                                                       onPress={() => startSession(drill.drillId)}>
                                         <SpaceBetweenComponent style={{alignItems: 'center'}}>
                                             <View>

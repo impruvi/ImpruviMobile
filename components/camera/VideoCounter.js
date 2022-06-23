@@ -12,10 +12,14 @@ const convertDurationToDisplay = (duration) => {
     return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
 }
 
-const VideoCounter = ({style}) => {
+const VideoCounter = ({style, maxDuration = 30, onTimeout}) => {
     const [counter, setCounter] = useState(0);
 
     useEffect(() => {
+        if (counter === maxDuration) {
+            onTimeout();
+        }
+
         const timer = setTimeout(() => {
             setCounter(counter + 1);
         }, 1000);

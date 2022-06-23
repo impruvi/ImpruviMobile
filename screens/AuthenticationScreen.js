@@ -22,7 +22,7 @@ const AuthenticationScreen = () => {
     const [invitationCode, setInvitationCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const {setUserType, setPlayer, setCoach} = useAuth();
+    const {setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
     const navigation = useNavigation();
 
@@ -35,10 +35,8 @@ const AuthenticationScreen = () => {
             const result = await httpClient.validateInviteCode(invitationCode);
             if (result.userType === UserType.Player) {
                 setPlayer(result.player);
-                setUserType(UserType.Player);
             } else {
                 setCoach(result.coach);
-                setUserType(UserType.Coach);
             }
         } catch (e) {
             console.log(e);

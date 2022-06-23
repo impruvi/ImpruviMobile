@@ -46,8 +46,7 @@ const EditHeadshotScreen = ({route}) => {
                 ...route.params.coach,
                 headshot: headshot,
             };
-            await httpClient.updateCoach(newCoach);
-            setCoach(await httpClient.getCoach(newCoach.coachId));
+            setCoach(await httpClient.updateCoach(newCoach));
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

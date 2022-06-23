@@ -5,7 +5,7 @@ import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-nati
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faPhotoFilm, faRotate, faStopwatch, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import VideoCounter from "./VideoCounter";
-import Countdown from "../Countdown";
+import Countdown from "./Countdown";
 import {useEffect, useRef, useState} from "react";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -23,7 +23,6 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
     const [hasPermission, setHasPermission] = useState(null);
     const [cameraState, setCameraState] = useState(CameraStates.Ready);
     const [countDown, setCountDown] = useState(initialCountdown);
-    const [image, setImage] = useState(null);
 
     useEffect(() => {
         (async () => {
@@ -100,7 +99,7 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
                     {cameraState === CameraStates.Recording && (
                         <View style={{position: 'absolute', top: 0, left: 0, width: '100%', alignItems: 'center', paddingTop: 10}}>
                             <View style={{paddingVertical: 5, paddingHorizontal: 15, backgroundColor: 'rgba(241, 42, 80, 1)', borderRadius: 10}}>
-                                <VideoCounter style={{color: 'white', fontSize: 25}} />
+                                <VideoCounter style={{color: 'white', fontSize: 25}} onTimeout={stopRecording}/>
                             </View>
                         </View>
                     )}

@@ -25,8 +25,7 @@ const EditPositionScreen = ({route}) => {
                 ...route.params.coach,
                 position: position,
             };
-            await httpClient.updateCoach(newCoach);
-            setCoach(newCoach)
+            setCoach(await httpClient.updateCoach(newCoach));
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

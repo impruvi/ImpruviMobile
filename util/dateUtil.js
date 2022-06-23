@@ -1,6 +1,14 @@
 // 0 = Sunday, 1 = Monday ...
 import {DayOfWeek} from "../constants/dayOfWeek";
 
+export const getCurrentDate = () => {
+    return {
+        year: getCurrentYear(),
+        month: getCurrentMonth(),
+        day: getCurrentDayOfMonth()
+    }
+}
+
 export const getCurrentDayOfWeek = () => {
     const d = new Date();
     const dayOfWeekNumber = d.getDay();
@@ -83,4 +91,21 @@ const convertToDayOfWeek = (dayOfWeekNumber) => {
     } else {
         return DayOfWeek.Saturday
     }
+}
+
+export const compareDates = (a, b) => {
+    if ( a.year < b.year ) {
+        return -1;
+    } else if (a.year > b.year) {
+        return 1;
+    } else if ( a.month < b.month ) {
+        return -1;
+    } else if (a.month > b.month) {
+        return 1;
+    } else if ( a.day < b.day ) {
+        return -1;
+    } else if (a.day > b.day) {
+        return 1;
+    }
+    return 0;
 }

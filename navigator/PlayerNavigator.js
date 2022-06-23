@@ -20,6 +20,7 @@ import EditNameScreen from "../screens/player/update-profile/EditNameScreen";
 import OnboardingScreen from "../screens/player/onboarding/OnboardingScreen";
 import useOnboarding from "../hooks/useOnboarding";
 import FAQScreen from "../screens/player/FAQScreen";
+import Loader from "../components/Loader";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -116,7 +117,13 @@ const SessionNavigator = () => {
 
 const PlayerNavigator = () => {
     const {width} = useWindowDimensions();
-    const {isOnboardingComplete} = useOnboarding();
+    const {isOnboardingComplete, isLoadingOnboarding} = useOnboarding();
+
+    if (isLoadingOnboarding) {
+        return <View style={{flex: 1}}>
+            <Loader text={'Loading...'}/>
+        </View>
+    }
 
     return (
         <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>

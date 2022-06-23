@@ -1,5 +1,5 @@
 import {FlatList, View} from "react-native";
-import {useCallback, useRef, useState} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import VideoBackIcon from "../../components/VideoBackIcon";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import SessionProgress from "../../components/SessionProgress";
@@ -12,8 +12,11 @@ import useHttpClient from "../../hooks/useHttpClient";
 import {doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
 import useAuth from "../../hooks/useAuth";
 import {PlayerScreenNames} from "../ScreenNames";
+import SubmitVideoPromptPopup from "../../components/drill-videos/demo/SubmitVideoPromptPopup";
 
 const SessionScreen = ({route}) => {
+
+    const [isShowingSubmitVideoPromptPopup, setIsShowingSubmitVideoPromptPopup] = useState(true);
 
     const [session, setSession] = useState(route.params.session);
 
@@ -84,6 +87,7 @@ const SessionScreen = ({route}) => {
             <DrillVideoTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
             <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
+            <SubmitVideoPromptPopup visible={isShowingSubmitVideoPromptPopup} close={() => setIsShowingSubmitVideoPromptPopup(false)} />
 
             <StatusBar style="light" />
         </View>

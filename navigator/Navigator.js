@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {UserType} from "../constants/userType";
 import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
+import Loader from "../components/Loader";
 
 
 const Stack = createStackNavigator();
@@ -28,6 +29,14 @@ const RootNavigator = () => {
             Animated.timing(errorAnimation, {toValue: -200, duration: 300, useNativeDriver: false}).start();
         }
     }, [error]);
+
+    const {isLoadingAuth} = useAuth();
+
+    if (isLoadingAuth) {
+        return <View style={{flex: 1}}>
+            <Loader text={'Loading...'}/>
+        </View>
+    }
 
     return (
         <View style={{flex: 1, position: 'relative'}}>

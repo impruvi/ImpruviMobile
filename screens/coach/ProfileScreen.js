@@ -2,17 +2,34 @@ import {Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "rea
 import {StatusBar} from "expo-status-bar";
 import useAuth from "../../hooks/useAuth";
 import HeaderCenter from "../../components/HeaderCenter";
-import {useNavigation} from "@react-navigation/native";
-import {CoachScreenNames} from "../ScreenNames";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {CoachScreenNames, PlayerScreenNames} from "../ScreenNames";
 import FormOption from "../../components/FormOption";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faUser} from "@fortawesome/pro-light-svg-icons";
+import {Colors} from "../../constants/colors";
+import Confirmation from "../../components/Confirmation";
+import {useState, useCallback} from "react";
+import {doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
+import useHttpClient from "../../hooks/useHttpClient";
 
 
 const ProfileScreen = () => {
 
-    const {coach} = useAuth();
+    const [isSignoutModalShowing, setIsSignoutModalShowing] = useState(false);
+    const [coach, setCoach] = useState(useAuth().coach);
+
+    const {signOut} = useAuth();
+    // const {coach} = useAuth();
     const navigation = useNavigation();
+    const {httpClient} = useHttpClient();
+
+    useFocusEffect(
+        useCallback(() => {
+            httpClient.getCoach(coach.coachId).then(setCoach);
+        }, [navigation])
+    );
+
 
     return (
         <SafeAreaView style={{flex: 1}}>
@@ -22,7 +39,7 @@ const ProfileScreen = () => {
                 <View style={{width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 20}}>
                     <View style={{width: 80, height: 80, borderRadius: 80, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ddd', overflow: 'hidden'}}>
                         {!!coach.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
-                            <Image source={{uri: coach.headshot.fileLocation}} style={{width: 80, height: 80}}/>
+                            <Image source={{uri: coach.headshot.fileLocation}} style={{width: 80, height: 80, resizeMode: 'cover'}}/>
                         )}
                         {(!coach.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
                             <FontAwesomeIcon icon={faUser} size={25}/>
@@ -86,7 +103,24 @@ const ProfileScreen = () => {
                             textValue={coach.youthClub}
                             placeholder={'Enter your youth club'}
                             errorMessage={null}/>
+                <FormOption title={'Sign out'}
+                            titleColor={Colors.Primary}
+                            onPress={() => setIsSignoutModalShowing(true)}
+                            textValue={''}
+                            placeholder={''}
+                            errorMessage={null}
+                            shouldHideArrow={true}/>
+
             </ScrollView>
+
+            <Confirmation isOpen={isSignoutModalShowing}
+                          close={() => setIsSignoutModalShowing(false)}
+                          prompt={'Are you sure you want to sign out?'}
+                          confirmText={'Confirm'}
+                          confirm={() => {
+                              setIsSignoutModalShowing(false);
+                              signOut();
+                          }}/>
 
             <StatusBar style="dark" />
         </SafeAreaView>

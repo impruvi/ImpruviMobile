@@ -129,6 +129,7 @@ const PlayerScreen = ({route}) => {
             <Confirmation isOpen={!!sessionToDelete}
                           close={() => setSessionToDelete(undefined)}
                           prompt={'Are you sure you want to delete?'}
+                          confirmText={'Delete'}
                           confirm={onDelete}/>
         </View>
     )

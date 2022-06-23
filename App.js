@@ -5,9 +5,7 @@ import {NavigationContainer} from "@react-navigation/native";
 import {ErrorProvider} from "./hooks/useError";
 import {OnboardingProvider} from "./hooks/useOnboarding";
 
-import {
-    BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
+import {BottomSheetModalProvider,} from '@gorhom/bottom-sheet';
 
 
 export default function App() {

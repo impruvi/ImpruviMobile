@@ -25,8 +25,7 @@ const EditYouthClubScreen = ({route}) => {
                 ...route.params.coach,
                 youthClub: youthClub,
             };
-            await httpClient.updateCoach(newCoach);
-            setCoach(newCoach)
+            setCoach(await httpClient.updateCoach(newCoach));
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {
