@@ -16,9 +16,6 @@ const SessionDrillItem = ({drill}) => {
                             {drill.name}
                         </Text>
                     </View>
-                    <Text style={{color: Colors.TextSecondary}}>
-                        {drill.estimatedDurationMinutes} minutes
-                    </Text>
                 </View>
                 <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>
                     {getCategoryDisplayValue(drill.category)}

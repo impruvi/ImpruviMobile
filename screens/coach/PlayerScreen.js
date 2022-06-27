@@ -1,4 +1,4 @@
-import {ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Box from "../../components/Box";
 import {CoachScreenNames} from "../ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
@@ -12,12 +12,11 @@ import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
 import DrillSubmissionStatus from "../../components/status/DrillSubmissionStatus";
 import DrillFeedbackStatus from "../../components/status/DrillFeedbackStatus";
-import Confirmation from "../../components/Confirmation";
+import {doesAnyDrillHaveSubmission, doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
 
 const PlayerScreen = ({route}) => {
 
     const [playerSessions, setPlayerSessions] = useState(route.params.playerSessions);
-    const [sessionToDelete, setSessionToDelete] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const navigation = useNavigation();
@@ -25,34 +24,39 @@ const PlayerScreen = ({route}) => {
     const {setError} = useError();
     const {coach} = useAuth();
 
-    const onDelete = async () => {
+    const onDelete = async (session) => {
         setIsDeleting(true);
         try {
             await httpClient.deleteSession({
                 playerId: playerSessions.player.playerId,
-                sessionNumber: sessionToDelete.sessionNumber
+                sessionNumber: session.sessionNumber
             });
             await getPlayerSessionsLazy();
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
         }
-        setSessionToDelete(undefined);
         setIsDeleting(false);
     }
 
     const getPlayerSessionsLazy = async () => {
         try {
-            if (!playerSessions) {
-                return;
-            }
             const allPlayerSessions = await httpClient.getCoachSessions(coach.coachId);
-            const playerSessions = allPlayerSessions.find(ps => ps.player.playerId === playerSessions.player.playerId);
+            const playerSessions = allPlayerSessions.find(ps => ps.player.playerId === route.params.playerSessions.player.playerId);
             setPlayerSessions(playerSessions);
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
         }
+    }
+
+    const canDeleteSession = (session) => {
+        return !doesAnyDrillHaveSubmission(session)
+            && session.sessionNumber === playerSessions.sessions[playerSessions.sessions.length - 1].sessionNumber;
+    }
+
+    const canEditSession = (session) => {
+        return !doesAnyDrillHaveSubmission(session);
     }
 
     useFocusEffect(
@@ -85,9 +89,23 @@ const PlayerScreen = ({route}) => {
                             <View style={{padding: 15}}>
                                 <View style={{width: '100%', justifyContent: 'space-between', flexDirection: 'row'}}>
                                     <Text style={{fontSize: 16, fontWeight: '500', marginBottom: 10}}>Session {session.sessionNumber}</Text>
-                                    <TouchableOpacity onPress={() => setSessionToDelete(session)}>
-                                        <Text>Delete</Text>
-                                    </TouchableOpacity>
+                                    {canDeleteSession(session) && (
+                                        <TouchableOpacity onPress={() => {
+                                            Alert.alert('Are you sure you want to delete?', '', [
+                                                {
+                                                    text: 'Delete',
+                                                    onPress: () => onDelete(session),
+                                                    style: 'destructive'
+                                                },
+                                                {
+                                                    text: 'Cancel',
+                                                    style: 'cancel',
+                                                },
+                                            ]);
+                                        }}>
+                                            <Text>Delete</Text>
+                                        </TouchableOpacity>
+                                    )}
                                 </View>
                                 {session.drills.map(drill => (
                                     <View style={{marginVertical: 10}} key={drill.drillId}>
@@ -100,13 +118,18 @@ const PlayerScreen = ({route}) => {
                                 ))}
                             </View>
                             <View style={{flexDirection: 'row', borderTopWidth: 1, borderColor: Colors.Border}}>
-                                <TouchableOpacity style={{width: '50%', justifyContent: 'center', alignItems: 'center', paddingVertical: 20, borderRightWidth: 1, borderColor: Colors.Border}}
-                                                  onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
-                                                      playerId: playerSessions.player.playerId,
-                                                      session: session
-                                                  })}>
-                                    <Text style={{fontWeight: '600'}}>Edit Session</Text>
-                                </TouchableOpacity>
+                                {canEditSession(session) &&(
+                                    <TouchableOpacity style={{width: '50%', justifyContent: 'center', alignItems: 'center', paddingVertical: 20, borderRightWidth: 1, borderColor: Colors.Border}}
+                                                      onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
+                                                          playerId: playerSessions.player.playerId,
+                                                          session: session
+                                                      })}>
+                                        <Text style={{fontWeight: '600'}}>Edit Session</Text>
+                                    </TouchableOpacity>
+                                )}
+                                {!canEditSession(session) && (
+                                    <View style={{width: '50%', borderRightWidth: 1, borderColor: Colors.Border}}/>
+                                )}
                                 <TouchableOpacity style={{width: '50%', justifyContent: 'center', alignItems: 'center', paddingVertical: 20}}
                                                   onPress={() => navigation.navigate(CoachScreenNames.Session, {
                                                       session: session
@@ -125,12 +148,6 @@ const PlayerScreen = ({route}) => {
                     <Text style={{fontSize: 15, fontWeight: '500', marginTop: 10}}>Deleting session...</Text>
                 </View>
             )}
-
-            <Confirmation isOpen={!!sessionToDelete}
-                          close={() => setSessionToDelete(undefined)}
-                          prompt={'Are you sure you want to delete?'}
-                          confirmText={'Delete'}
-                          confirm={onDelete}/>
         </View>
     )
 }

@@ -40,25 +40,22 @@ export const AuthProvider = ({children}) => {
     }
 
     const onSetCoach = async (coach) => {
-        setPlayer(coach)
+        setCoach(coach)
         await AsyncStorage.setItem('coach', JSON.stringify(coach));
         setUserType(UserType.Coach);
         await AsyncStorage.setItem('userType', UserType.Coach);
     }
 
     const signOut = async () => {
-        console.log('Signing out');
         try {
             if (userType === UserType.Coach) {
                 await AsyncStorage.removeItem('userType');
                 await AsyncStorage.removeItem('coach');
                 setUserType(undefined);
-                // setCoach(undefined);
             } else {
                 await AsyncStorage.removeItem('userType');
                 await AsyncStorage.removeItem('player');
                 setUserType(undefined);
-                // setPlayer(undefined);
             }
         } catch(exception) {
             console.error('An unexpected error occurred', exception);

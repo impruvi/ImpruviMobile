@@ -33,6 +33,7 @@ const DrillFeedbackScreen = ({route}) => {
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
+            setIsSubmitting(false);
         }
     }
 

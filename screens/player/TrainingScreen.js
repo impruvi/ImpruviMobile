@@ -10,6 +10,8 @@ import useHttpClient from "../../hooks/useHttpClient";
 import SessionCard from "../../components/on-demand/SessionCard";
 import HomeSlides from "../../components/home-slides/HomeSlides";
 import Calendar from "../../components/calendar/Calendar";
+import Loader from "../../components/Loader";
+import Reload from "../../components/Reload";
 
 const Tabs = {
     List: 'LIST',
@@ -21,7 +23,7 @@ const TrainingScreen = () => {
     const [sessions, setSessions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
-    const [selectedTab, setSelectedTab] = useState(Tabs.Calendar);
+    const [selectedTab, setSelectedTab] = useState(Tabs.List);
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
@@ -74,24 +76,44 @@ const TrainingScreen = () => {
 
                     <View style={{paddingHorizontal: 15, marginTop: 10}}>
                         <View style={{flexDirection: 'row', marginBottom: 15}}>
-                            <TouchableOpacity onPress={() => setSelectedTab(Tabs.Calendar)}
-                                              style={{paddingVertical: 6, paddingHorizontal: 10, flexDirection: 'row', borderBottomWidth: selectedTab === Tabs.Calendar ? 2 : 0, borderColor: Colors.Primary}}>
-                                <Text style={{fontWeight: '500', color: selectedTab === Tabs.Calendar ? Colors.Primary: 'black'}}>Calendar</Text>
-                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => setSelectedTab(Tabs.List)}
                                               style={{paddingVertical: 6, paddingHorizontal: 10, flexDirection: 'row', borderBottomWidth: selectedTab === Tabs.List ? 2 : 0, marginLeft: 10, borderColor: Colors.Primary}}>
                                 <Text style={{fontWeight: '500', color: selectedTab === Tabs.List ? Colors.Primary: 'black'}}>Sessions</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSelectedTab(Tabs.Calendar)}
+                                              style={{paddingVertical: 6, paddingHorizontal: 10, flexDirection: 'row', borderBottomWidth: selectedTab === Tabs.Calendar ? 2 : 0, borderColor: Colors.Primary}}>
+                                <Text style={{fontWeight: '500', color: selectedTab === Tabs.Calendar ? Colors.Primary: 'black'}}>Calendar</Text>
+                            </TouchableOpacity>
                         </View>
 
-                        {selectedTab === Tabs.List && sessions.map(session => (
-                            <SessionCard session={session} key={session.sessionNumber}/>
-                        ))}
-
-                        {selectedTab === Tabs.Calendar && (
-                            <Calendar sessions={sessions}/>
+                        {isLoading && (
+                            <View style={{marginTop: 100}}>
+                                <Loader />
+                            </View>
                         )}
+                        {!isLoading && (
+                            <>
+                                {hasError && (
+                                    <View style={{marginTop: 100}}>
+                                        <Reload onReload={getSessions}/>
+                                    </View>
+                                )}
+                                {!hasError && (
+                                    <>
+                                        {selectedTab === Tabs.Calendar && (
+                                            <Calendar sessions={sessions}/>
+                                        )}
+
+                                        {selectedTab === Tabs.List && sessions.map(session => (
+                                            <SessionCard session={session} key={session.sessionNumber}/>
+                                        ))}
+                                    </>
+                                )}
+                            </>
+                        )}
+
                     </View>
+
                 </ScrollView>
             </SafeAreaView>
 

@@ -1,19 +1,15 @@
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
+import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import useAuth from "../../hooks/useAuth";
 import HeaderCenter from "../../components/HeaderCenter";
 import FormOption from "../../components/FormOption";
-import {PlayerScreenNames, RootScreenNames} from "../ScreenNames";
+import {PlayerScreenNames} from "../ScreenNames";
 import {Colors} from "../../constants/colors";
 import {useNavigation} from "@react-navigation/native";
 import {convertDayOfWeekToAbbreviatedDisplayValue} from "../../constants/dayOfWeek";
-import Confirmation from "../../components/Confirmation";
-import {useState} from "react";
 
 
 const ProfileScreen = () => {
-
-    const [isSignoutModalShowing, setIsSignoutModalShowing] = useState(false);
 
     const {player} = useAuth();
     const navigation = useNavigation();
@@ -54,22 +50,24 @@ const ProfileScreen = () => {
                             errorMessage={null}/>
                 <FormOption title={'Sign out'}
                             titleColor={Colors.Primary}
-                            onPress={() => setIsSignoutModalShowing(true)}
+                            onPress={() => {
+                                Alert.alert('Are you sure you want to sign out?', '', [
+                                    {
+                                        text: 'Confirm',
+                                        onPress: signOut,
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        style: 'cancel',
+                                    },
+                                ]);
+                            }}
                             textValue={''}
                             placeholder={''}
                             errorMessage={null}
                             shouldHideArrow={true}/>
 
             </ScrollView>
-
-            <Confirmation isOpen={isSignoutModalShowing}
-                          close={() => setIsSignoutModalShowing(false)}
-                          prompt={'Are you sure you want to sign out?'}
-                          confirmText={'Confirm'}
-                          confirm={() => {
-                              setIsSignoutModalShowing(false);
-                              signOut();
-                          }}/>
 
             <StatusBar style="dark" />
         </SafeAreaView>

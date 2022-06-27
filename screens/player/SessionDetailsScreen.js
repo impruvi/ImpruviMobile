@@ -7,15 +7,21 @@ import {faCircleSmall} from "@fortawesome/pro-solid-svg-icons";
 import {Colors} from "../../constants/colors";
 import {getCategoryDisplayValue} from "../../constants/categoryType";
 import {getSessionEquipment} from "../../util/equipmentAggregator";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../ScreenNames";
 import HeaderCenter from "../../components/HeaderCenter";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
+import {useCallback, useState} from "react";
+import useHttpClient from "../../hooks/useHttpClient";
+import useAuth from "../../hooks/useAuth";
 
 const SessionDetailsScreen = ({route}) => {
 
+    const [session, setSession] = useState(route.params.session);
+
     const navigation = useNavigation();
-    const {session} = route.params;
+    const {httpClient} = useHttpClient();
+    const {player} = useAuth();
 
     const sessionEquipment = getSessionEquipment(session);
 
@@ -33,6 +39,15 @@ const SessionDetailsScreen = ({route}) => {
                 }
             });
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            httpClient.getPlayerSessions(player.playerId).then(sessions => {
+                const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
+                setSession(matchingSession);
+            });
+        }, [httpClient, navigation])
+    );
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>

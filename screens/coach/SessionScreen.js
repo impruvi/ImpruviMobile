@@ -14,7 +14,7 @@ import {LinearGradient} from "expo-linear-gradient";
 const SessionScreen = ({route}) => {
     const [session, setSession] = useState(route.params.session);
     const [currentDrillId, setCurrentDrillId] = useState();
-    const [selectedTab, setSelectedTab] = useState(DrillVideoTab.Submission);
+    const [selectedTab, setSelectedTab] = useState(DrillVideoTab.Demo);
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();

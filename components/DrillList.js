@@ -19,7 +19,7 @@ const DrillList = ({drills, onPressDrill}) => {
                 <TouchableOpacity style={{width: '32%', marginHorizontal: 2, marginBottom: 10}}
                                   activeOpacity={.6}
                                   onPress={() => onPressDrill(item)}>
-                    <Image source={{ uri: item.demos.frontThumbnail.fileLocation }} style={{width: imageDimension, height: imageDimension, borderRadius: 5}} />
+                    <Image source={{ uri: `${item.demos.frontThumbnail.fileLocation}?${Date.now()}` }} style={{width: imageDimension, height: imageDimension, borderRadius: 5}} />
                     <Text style={{fontWeight: '600', marginTop: 5}}>{item.name}</Text>
                     <Text style={{color: Colors.TextSecondary}}>{getCategoryDisplayValue(item.category)}</Text>
                 </TouchableOpacity>

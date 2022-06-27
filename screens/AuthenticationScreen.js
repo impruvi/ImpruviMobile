@@ -17,11 +17,14 @@ import {StatusBar} from "expo-status-bar";
 import {UserType} from "../constants/userType";
 import {useNavigation} from "@react-navigation/native";
 import {RootScreenNames} from "./ScreenNames";
+import useError from "../hooks/useError";
 
 const AuthenticationScreen = () => {
     const [invitationCode, setInvitationCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState('');
+    const [invalidCodeError, setInvalidCodeInvalidCodeError] = useState('');
+
+    const {setError} = useError();
     const {setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
     const navigation = useNavigation();
@@ -33,14 +36,18 @@ const AuthenticationScreen = () => {
         setIsSubmitting(true);
         try {
             const result = await httpClient.validateInviteCode(invitationCode);
-            if (result.userType === UserType.Player) {
-                setPlayer(result.player);
+            if (result.success) {
+                if (result.userType === UserType.Player) {
+                    setPlayer(result.player);
+                } else {
+                    setCoach(result.coach);
+                }
             } else {
-                setCoach(result.coach);
+                setInvalidCodeInvalidCodeError('Invalid code');
             }
         } catch (e) {
             console.log(e);
-            setError('Invalid code');
+            setError('Unable to validate code. Please check your internet connection');
         }
         setIsSubmitting(false);
     }
@@ -63,8 +70,8 @@ const AuthenticationScreen = () => {
                                 <Text style={styles.buttonText}>Continue</Text>
                             )}
                         </TouchableOpacity>
-                        {!!error && !isSubmitting && (
-                            <Text style={styles.error}>{error}</Text>
+                        {!!invalidCodeError && !isSubmitting && (
+                            <Text style={styles.error}>{invalidCodeError}</Text>
                         )}
 
                         <View style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15}}>

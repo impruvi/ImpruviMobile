@@ -1,4 +1,4 @@
-import {SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useState} from "react";
 import {Colors} from "../../constants/colors";
 import {CoachScreenNames} from "../ScreenNames";
@@ -34,6 +34,15 @@ const CreateOrEditSessionScreen = ({route}) => {
 
     const onSubmit = async () => {
         if (isSubmitting || drills.length === 0) {
+            Alert.alert('You must add at least 1 drill', '', [
+                {
+                    text: 'Ok',
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ]);
             return;
         }
 

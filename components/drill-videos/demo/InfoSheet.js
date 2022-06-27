@@ -37,11 +37,6 @@ const InfoSheet = ({isOpen, onClose, drill}) => {
                     <Text style={{fontWeight: '600', fontSize: 18}}>{drill.name}</Text>
                 </View>
                 <View style={{paddingHorizontal: 20, paddingBottom: 20}}>
-                    <View style={{marginBottom: 15, marginTop: 2}}>
-                        <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>
-                            {drill.estimatedDurationMinutes} minutes
-                        </Text>
-                    </View>
                     <View style={{marginBottom: 20}}>
                         <Text style={{fontWeight: '600', marginBottom: 5, fontSize: 15}}>Description</Text>
                         <Text>{drill.description}</Text>

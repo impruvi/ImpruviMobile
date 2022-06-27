@@ -25,7 +25,7 @@ const FormOption = ({onPress, title, textValue, imageValue, placeholder, errorMe
                                 <Text>{textValue.length > 33 ? `${textValue.substring(0,33).replace(/\n/g, ' ')}...` : textValue.replace('\n', ' ')}</Text>
                             )}
                             {!!imageValue && (
-                                <Image source={{uri: imageValue.uri}} style={{height: 60, width: 40}} />
+                                <Image source={{uri: `${imageValue.uri}?${Date.now()}`}} style={{height: 60, width: 40}} />
                             )}
                         </>
                     )}

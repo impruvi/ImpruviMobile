@@ -13,6 +13,7 @@ import {doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
 import useAuth from "../../hooks/useAuth";
 import {PlayerScreenNames} from "../ScreenNames";
 import SubmitVideoPromptPopup from "../../components/drill-videos/demo/SubmitVideoPromptPopup";
+import {UserType} from "../../constants/userType";
 
 const SessionScreen = ({route}) => {
 
@@ -23,6 +24,7 @@ const SessionScreen = ({route}) => {
     const [currentDrillId, setCurrentDrillId] = useState(route.params.drillId);
     const [selectedTab, setSelectedTab] = useState(DrillVideoTab.Demo);
 
+    const {userType} = useAuth();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {player} = useAuth();
@@ -45,6 +47,11 @@ const SessionScreen = ({route}) => {
             });
         }, [httpClient, navigation])
     );
+
+    const shouldShowVideoSubmitPrompt = () => {
+        return userType === UserType.Player
+            && !doesEveryDrillHaveSubmission(session);
+    }
 
     return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
@@ -87,7 +94,9 @@ const SessionScreen = ({route}) => {
             <DrillVideoTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
             <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
-            <SubmitVideoPromptPopup visible={isShowingSubmitVideoPromptPopup} close={() => setIsShowingSubmitVideoPromptPopup(false)} />
+            {shouldShowVideoSubmitPrompt() && (
+                <SubmitVideoPromptPopup visible={isShowingSubmitVideoPromptPopup} close={() => setIsShowingSubmitVideoPromptPopup(false)} />
+            )}
 
             <StatusBar style="light" />
         </View>

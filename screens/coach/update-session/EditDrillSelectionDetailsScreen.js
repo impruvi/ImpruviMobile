@@ -48,7 +48,7 @@ const EditDrillSelectionDetailsScreen = ({route}) => {
                     <View style={{flexDirection: 'row', padding: 15, borderBottomWidth: 1, borderColor: Colors.Border}}>
                         <View style={{flex: 1}}>
                             <TextInput multiline={true}
-                                       placeholder={'Enter notes'}
+                                       placeholder={'Enter notes (ex. include number of repetitions, duration, tips etc.)'}
                                        style={{height: 150, paddingRight: 10}}
                                        value={notes}
                                        onChangeText={setNotes}/>

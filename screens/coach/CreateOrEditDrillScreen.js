@@ -1,4 +1,4 @@
-import {ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import {ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {useState} from "react";
 import {useNavigation} from "@react-navigation/native";
@@ -11,7 +11,6 @@ import {RequirementType} from "../../constants/requirementType";
 import {getEquipmentTypeDisplayValue} from "../../constants/equipmentType";
 import useError from "../../hooks/useError";
 import FormOption from "../../components/FormOption";
-import Confirmation from "../../components/Confirmation";
 import HeaderCenter from "../../components/HeaderCenter";
 import {generateThumbnail} from "../../util/thumbnailUtil";
 
@@ -45,7 +44,6 @@ const CreateOrEditDrillScreen = ({route}) => {
     const [sideVideoThumbnail, setSideVideoThumbnail] = useState(!!drill ? {uri: drill.demos.sideThumbnail.fileLocation} : undefined);
     const [closeVideoThumbnail, setCloseVideoThumbnail] = useState(!!drill ? {uri: drill.demos.closeThumbnail.fileLocation} : undefined);
 
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -112,7 +110,6 @@ const CreateOrEditDrillScreen = ({route}) => {
 
     const onDelete = async () => {
         try {
-            setIsDeleteModalOpen(false);
             setIsDeleting(true);
             await httpClient.deleteDrill(drill.drillId);
             setIsDeleting(false);
@@ -278,7 +275,19 @@ const CreateOrEditDrillScreen = ({route}) => {
                                 )}
                             </TouchableOpacity>
                             {!!drill && (
-                                <TouchableOpacity style={styles.buttonSecondary} onPress={() => setIsDeleteModalOpen(true)}>
+                                <TouchableOpacity style={styles.buttonSecondary} onPress={() => {
+                                    Alert.alert('Are you sure you want to delete?', '', [
+                                        {
+                                            text: 'Delete',
+                                            onPress: onDelete,
+                                            style: 'destructive'
+                                        },
+                                        {
+                                            text: 'Cancel',
+                                            style: 'cancel',
+                                        },
+                                    ]);
+                                }}>
                                     <Text style={styles.buttonTextSecondary}>
                                         Delete this drill
                                     </Text>
@@ -299,12 +308,6 @@ const CreateOrEditDrillScreen = ({route}) => {
                     </Text>
                 </View>
             )}
-
-            <Confirmation isOpen={isDeleteModalOpen}
-                          close={() => setIsDeleteModalOpen(false)}
-                          prompt={'Are you sure you want to delete?'}
-                          confirmText={'Delete'}
-                          confirm={onDelete}/>
         </View>
     )
 }

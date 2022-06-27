@@ -16,7 +16,7 @@ const SubmitVideoPromptPopup = ({visible, close}) => {
                         </TouchableOpacity>
                     </View>
                     <View style={{paddingHorizontal: 20, paddingBottom: 20}}>
-                        <Text style={{color: 'white', textAlign: 'center'}}>During this drill submit a 30 second video to your coach!</Text>
+                        <Text style={{color: 'white', textAlign: 'center'}}>While doing each drill, submit a 30 second video to your coach!</Text>
                         <Text style={{color: 'white', textAlign: 'center', marginTop: 20}}>Take the video directly on the app, or upload one from your library</Text>
                     </View>
                 </View>

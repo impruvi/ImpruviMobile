@@ -57,12 +57,15 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
 
     const startRecording = async () => {
         setCameraState(CameraStates.Recording);
-        let video = await cameraRef.current.recordAsync();
-        setVideo(video);
+        setTimeout(async () => {
+            let video = await cameraRef.current.recordAsync();
+            setVideo(video);
+        }, 200);
     }
 
     const stopRecording = async () => {
         setCameraState(CameraStates.Ready);
+
         cameraRef.current.stopRecording();
     }
 
