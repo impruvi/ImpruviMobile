@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import useAuth from "../hooks/useAuth";
 import {useState} from "react";
-import usePush from '../hooks/useAuth';
+import usePush from '../hooks/usePush';
 import useHttpClient from "../hooks/useHttpClient";
 import {Colors} from "../constants/colors";
 import {StatusBar} from "expo-status-bar";
@@ -32,6 +32,7 @@ const AuthenticationScreen = () => {
     const navigation = useNavigation();
 
     console.log('push token: ' + expoPushToken);
+>>>>>>> 34c5d7f (send push with new token and update user)
 
     const submit = async () => {
         if (isSubmitting) {
