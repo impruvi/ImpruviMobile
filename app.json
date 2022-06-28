@@ -22,7 +22,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.impruvi.impruvimobileassets",
       "infoPlist": {
-        "NSCameraUsageDescription": "Using camera for recording drill and feedback videos"
+        "NSCameraUsageDescription": "Using camera for recording drill and feedback videos",
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
