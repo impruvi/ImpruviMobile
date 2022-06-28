@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import useAuth from "../hooks/useAuth";
 import {useState} from "react";
-import usePush from '../hooks/useAuth';
+import usePush from '../hooks/usePush';
 import useHttpClient from "../hooks/useHttpClient";
 import {Colors} from "../constants/colors";
 import {StatusBar} from "expo-status-bar";
@@ -23,6 +23,7 @@ const AuthenticationScreen = () => {
     const [error, setError] = useState('');
     const {setUserType, setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
+    const {expoPushToken} = usePush();
 
     const submit = async () => {
         if (isSubmitting) {
@@ -30,8 +31,7 @@ const AuthenticationScreen = () => {
         }
         setIsSubmitting(true);
         try {
-            const result = await httpClient.validateInviteCode(invitationCode);
-<<<<<<< HEAD
+            const result = await httpClient.validateInviteCode(invitationCode, expoPushToken);
             if (result.userType === UserType.Player) {
                 setPlayer(result.player);
                 setUserType(UserType.Player);
@@ -39,18 +39,12 @@ const AuthenticationScreen = () => {
                 setCoach(result.coach);
                 setUserType(UserType.Coach);
             }
-=======
-            setUserType(result.userType);
-            setUserId(result.player.playerId);
->>>>>>> b99e8b8 (added push)
         } catch (e) {
             console.log(e);
             setError('Invalid code');
         }
         setIsSubmitting(false);
     }
-    const {expoPushToken} = usePush();
-    console.log('push token: ' + expoPushToken);
 
     return (
         <SafeAreaView style={styles.safeAreaView}>
