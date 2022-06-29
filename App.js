@@ -3,8 +3,11 @@ import {HttpClientProvider} from "./hooks/useHttpClient";
 import Navigator from "./navigator/Navigator";
 import {NavigationContainer} from "@react-navigation/native";
 import {ErrorProvider} from "./hooks/useError";
+<<<<<<< HEAD
 import {OnboardingProvider} from "./hooks/useOnboarding";
 import {BottomSheetModalProvider,} from '@gorhom/bottom-sheet';
+=======
+>>>>>>> 34c5d7ffdb08a08a02e5b4c50047e60deb6bcc5a
 import {PushProvider} from "./hooks/usePush";
 import * as Notifications from 'expo-notifications';
 import React, { useRef, useEffect, } from 'react';
@@ -45,6 +48,7 @@ export default function App() {
 
   return (
       <NavigationContainer>
+<<<<<<< HEAD
           <BottomSheetModalProvider>
               <AuthProvider>
                   <ErrorProvider>
@@ -58,6 +62,17 @@ export default function App() {
                   </ErrorProvider>
               </AuthProvider>
           </BottomSheetModalProvider>
+=======
+          <AuthProvider>
+              <ErrorProvider>
+                  <HttpClientProvider>
+                      <PushProvider>
+                        <Navigator />
+                      </PushProvider>
+                  </HttpClientProvider>
+              </ErrorProvider>
+          </AuthProvider>
+>>>>>>> 34c5d7ffdb08a08a02e5b4c50047e60deb6bcc5a
       </NavigationContainer>
   );
 }

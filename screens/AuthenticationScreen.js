@@ -32,7 +32,6 @@ const AuthenticationScreen = () => {
     const navigation = useNavigation();
 
     console.log('push token: ' + expoPushToken);
->>>>>>> 34c5d7f (send push with new token and update user)
 
     const submit = async () => {
         if (isSubmitting) {
@@ -47,6 +46,11 @@ const AuthenticationScreen = () => {
                 } else {
                     setCoach(result.coach);
                 }
+=======
+            if (result.userType === UserType.Player) {
+                setPlayer(result.player);
+                setUserType(UserType.Player);
+>>>>>>> 34c5d7ffdb08a08a02e5b4c50047e60deb6bcc5a
             } else {
                 setInvalidCodeInvalidCodeError('Invalid code');
             }
