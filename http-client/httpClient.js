@@ -18,10 +18,12 @@ class HttpClient {
         secretKey: 'i+JX947fAdM4IkZEB6OZ+OtGK/nNspP5PQ3lLeEi',
     });
 
-    validateInviteCode = async (invitationCode) => {
+    validateInviteCode = async (invitationCode, expoPushToken) => {
         try {
+            console.log('token in http:' + expoPushToken)
             const response = await this.#client.invokeApi({}, '/validate-invitation-code', 'POST', {}, {
-                invitationCode: invitationCode.trim()
+                invitationCode: invitationCode.trim(),
+                expoPushToken: expoPushToken
             });
 
             return {
