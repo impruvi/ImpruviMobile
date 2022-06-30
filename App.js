@@ -18,8 +18,6 @@ Notifications.setNotificationHandler({
     }),
 });
 
-
-
 export default function App() {
     const notificationListener = useRef();
     const responseListener = useRef();
@@ -51,7 +49,7 @@ export default function App() {
                       <OnboardingProvider>
                           <HttpClientProvider>
                               <PushProvider>
-                                <Navigator />
+                                  <Navigator />
                               </PushProvider>
                           </HttpClientProvider>
                       </OnboardingProvider>
