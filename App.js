@@ -18,7 +18,6 @@ Notifications.setNotificationHandler({
     }),
 });
 
-
 export default function App() {
     const notificationListener = useRef();
     const responseListener = useRef();

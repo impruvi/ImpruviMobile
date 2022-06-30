@@ -28,8 +28,11 @@ const AuthenticationScreen = () => {
     const {setError} = useError();
     const {setPlayer, setCoach} = useAuth();
     const {httpClient} = useHttpClient();
+    const {expoPushToken} = usePush();
     const navigation = useNavigation();
     const {expoPushToken} = usePush();
+
+    console.log('push token: ' + expoPushToken);
 
     const submit = async () => {
         if (isSubmitting) {

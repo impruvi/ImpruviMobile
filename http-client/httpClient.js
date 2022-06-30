@@ -12,16 +12,18 @@ const VideoTypes = {
 class HttpClient {
 
     #client = apiClientFactory.newClient({
-        invokeUrl: 'https://k6l56vcom2.execute-api.us-west-2.amazonaws.com/prod',
+        invokeUrl: 'https://pmpq5sqn7f.execute-api.us-west-2.amazonaws.com/prod',
         region: 'us-west-2',
         accessKey: 'AKIAXTDBP63P4IWBNXM6',
         secretKey: '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',
     });
 
-    validateInviteCode = async (invitationCode) => {
+    validateInviteCode = async (invitationCode, expoPushToken) => {
         try {
+            console.log('token in http:' + expoPushToken)
             const response = await this.#client.invokeApi({}, '/validate-invitation-code', 'POST', {}, {
-                invitationCode: invitationCode.trim()
+                invitationCode: invitationCode.trim(),
+                expoPushToken: expoPushToken
             });
 
             return {
