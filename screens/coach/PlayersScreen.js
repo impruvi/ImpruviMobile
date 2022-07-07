@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
@@ -8,7 +8,6 @@ import Loader from "../../components/Loader";
 import Reload from "../../components/Reload";
 import {StatusBar} from "expo-status-bar";
 import HeaderText from "../../components/HeaderText";
-import PaddedScreen from "../../components/PaddedScreen";
 import Box from "../../components/Box";
 import {CoachScreenNames} from "../ScreenNames";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";

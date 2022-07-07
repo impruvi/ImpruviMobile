@@ -6,7 +6,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {CoachScreenNames} from "../ScreenNames";
 import FormOption from "../../components/FormOption";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faAngleLeft, faUser} from "@fortawesome/pro-light-svg-icons";
+import {faUser} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../../constants/colors";
 import {useCallback, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
