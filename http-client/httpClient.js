@@ -20,7 +20,6 @@ class HttpClient {
 
     validateInviteCode = async (invitationCode, expoPushToken) => {
         try {
-            console.log('token in http:' + expoPushToken)
             const response = await this.#client.invokeApi({}, '/validate-invitation-code', 'POST', {}, {
                 invitationCode: invitationCode.trim(),
                 expoPushToken: expoPushToken
@@ -40,6 +39,29 @@ class HttpClient {
 
             throw err
         }
+    }
+
+    getDrillsForPlayer = async (playerId) => {
+        const result = await this.#client.invokeApi({}, '/drills/player/get', 'POST', {}, {
+            playerId: playerId
+        });
+
+        return result.data.drills;
+    }
+
+    getInboxForPlayer = async (playerId) => {
+        const result = await this.#client.invokeApi({}, '/inbox/player/get', 'POST', {}, {
+            playerId: playerId
+        });
+
+        return result.data.entries;
+    }
+
+    markFeedbackAsViewed = async (sessionNumber, playerId) => {
+        await this.#client.invokeApi({}, '/sessions/feedback/view', 'POST', {}, {
+            playerId: playerId,
+            sessionNumber: sessionNumber
+        });
     }
 
     updatePlayer = async ({playerId, coachId, firstName, lastName, email, availability}) => {

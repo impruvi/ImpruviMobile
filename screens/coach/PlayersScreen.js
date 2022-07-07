@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
@@ -77,51 +77,55 @@ const PlayersScreen = () => {
     }
 
     return (
-        <PaddedScreen>
-            <HeaderText text={'Your players'}/>
-            {isLoading && <Loader/>}
-            {!isLoading && (
-                <>
-                    {hasError && <Reload onReload={getAllPlayerSessions}/>}
-                    {!hasError && (
-                        <ScrollView showsVerticalScrollIndicator={false}>
-                            {allPlayerSessions.length === 0 && (
-                                <View>
-                                    <Text>No players</Text>
-                                </View>
-                            )}
-                            {allPlayerSessions.map(playerSessions => (
-                                <TouchableOpacity activeOpacity={.6} key={playerSessions.player.playerId} style={{marginTop: 10}} onPress={() => navigation.navigate(CoachScreenNames.Player, {
-                                    playerSessions: playerSessions
-                                })}>
-                                    <Box key={playerSessions.player.playerId}>
-                                        <View style={{padding: 10}}>
-                                            <Text style={styles.subHeader}>{playerSessions.player.firstName} {playerSessions.player.lastName}</Text>
-                                        </View>
-                                        <View style={{flexDirection: 'row', marginBottom: 10}}>
-                                            <View style={styles.sessionStat}>
-                                                <Text style={styles.sessionStatValue}>{getCompletedSessions(playerSessions).length}</Text>
-                                                <Text style={styles.sessionStatText}>Completed sessions</Text>
+        <View style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1}}>
+                <View style={{paddingHorizontal: 15}}>
+                    <HeaderText text={'Your players'}/>
+                </View>
+                {isLoading && <Loader/>}
+                {!isLoading && (
+                    <>
+                        {hasError && <Reload onReload={getAllPlayerSessions}/>}
+                        {!hasError && (
+                            <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 15}}>
+                                {allPlayerSessions.length === 0 && (
+                                    <View>
+                                        <Text>No players</Text>
+                                    </View>
+                                )}
+                                {allPlayerSessions.map(playerSessions => (
+                                    <TouchableOpacity activeOpacity={.6} key={playerSessions.player.playerId} style={{marginTop: 10}} onPress={() => navigation.navigate(CoachScreenNames.Player, {
+                                        playerSessions: playerSessions
+                                    })}>
+                                        <Box key={playerSessions.player.playerId}>
+                                            <View style={{padding: 10}}>
+                                                <Text style={styles.subHeader}>{playerSessions.player.firstName} {playerSessions.player.lastName}</Text>
                                             </View>
-                                            <View style={styles.sessionStat}>
-                                                <Text style={styles.sessionStatValue}>{getNotStartedSessions(playerSessions).length}</Text>
-                                                <Text style={styles.sessionStatText}>Not started sessions</Text>
+                                            <View style={{flexDirection: 'row', marginBottom: 10}}>
+                                                <View style={styles.sessionStat}>
+                                                    <Text style={styles.sessionStatValue}>{getCompletedSessions(playerSessions).length}</Text>
+                                                    <Text style={styles.sessionStatText}>Completed sessions</Text>
+                                                </View>
+                                                <View style={styles.sessionStat}>
+                                                    <Text style={styles.sessionStatValue}>{getNotStartedSessions(playerSessions).length}</Text>
+                                                    <Text style={styles.sessionStatText}>Not started sessions</Text>
+                                                </View>
+                                                <View style={styles.sessionStat}>
+                                                    <Text style={styles.sessionStatValue}>{getSessionsPendingFeedback(playerSessions).length}</Text>
+                                                    <Text style={styles.sessionStatText}>Sessions pending feedback</Text>
+                                                </View>
                                             </View>
-                                            <View style={styles.sessionStat}>
-                                                <Text style={styles.sessionStatValue}>{getSessionsPendingFeedback(playerSessions).length}</Text>
-                                                <Text style={styles.sessionStatText}>Sessions pending feedback</Text>
-                                            </View>
-                                        </View>
-                                    </Box>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    )}
-                </>
-            )}
+                                        </Box>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        )}
+                    </>
+                )}
+            </SafeAreaView>
 
             <StatusBar style="dark" />
-        </PaddedScreen>
+        </View>
     )
 }
 

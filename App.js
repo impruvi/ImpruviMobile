@@ -1,13 +1,14 @@
 import {AuthProvider} from "./hooks/useAuth";
+import {InboxViewDateProvider} from "./hooks/useInboxViewDate";
 import {HttpClientProvider} from "./hooks/useHttpClient";
 import Navigator from "./navigator/Navigator";
-import {NavigationContainer} from "@react-navigation/native";
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {ErrorProvider} from "./hooks/useError";
 import {OnboardingProvider} from "./hooks/useOnboarding";
 import {BottomSheetModalProvider,} from '@gorhom/bottom-sheet';
 import {PushProvider} from "./hooks/usePush";
 import * as Notifications from 'expo-notifications';
-import React, { useRef, useEffect, } from 'react';
+import React, {useEffect, useRef,} from 'react';
 
 
 Notifications.setNotificationHandler({
@@ -42,19 +43,27 @@ export default function App() {
 
 
   return (
-      <NavigationContainer>
+      <NavigationContainer theme={{
+          ...DefaultTheme,
+          colors: {
+              ...DefaultTheme.colors,
+              background: 'white'
+          },
+      }}>
           <BottomSheetModalProvider>
-              <AuthProvider>
-                  <ErrorProvider>
-                      <OnboardingProvider>
-                          <HttpClientProvider>
-                              <PushProvider>
-                                  <Navigator />
-                              </PushProvider>
-                          </HttpClientProvider>
-                      </OnboardingProvider>
-                  </ErrorProvider>
-              </AuthProvider>
+              <InboxViewDateProvider>
+                  <AuthProvider>
+                      <ErrorProvider>
+                          <OnboardingProvider>
+                              <HttpClientProvider>
+                                  <PushProvider>
+                                      <Navigator />
+                                  </PushProvider>
+                              </HttpClientProvider>
+                          </OnboardingProvider>
+                      </ErrorProvider>
+                  </AuthProvider>
+              </InboxViewDateProvider>
           </BottomSheetModalProvider>
       </NavigationContainer>
   );

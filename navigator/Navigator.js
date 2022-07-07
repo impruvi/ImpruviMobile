@@ -5,8 +5,8 @@ import AuthenticationScreen from "../screens/AuthenticationScreen";
 
 import {RootScreenNames} from '../screens/ScreenNames';
 import useAuth from "../hooks/useAuth";
-import PlayerNavigator from "./PlayerNavigator";
-import CoachNavigator from "./CoachNavigator";
+import PlayerNavigator from "./player/PlayerNavigator";
+import CoachNavigator from "./coach/CoachNavigator";
 import useError from "../hooks/useError";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";

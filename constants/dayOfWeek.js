@@ -1,28 +1,28 @@
 export const DayOfWeek = {
+    Sunday: 'SUNDAY',
     Monday: 'MONDAY',
     Tuesday: 'TUESDAY',
     Wednesday: 'WEDNESDAY',
     Thursday: 'THURSDAY',
     Friday: 'FRIDAY',
     Saturday: 'SATURDAY',
-    Sunday: 'SUNDAY'
 }
 
 export const convertDayOfWeekToAbbreviatedDisplayValue = (dayOfWeek) => {
     switch (dayOfWeek) {
         case DayOfWeek.Monday:
-            return 'Mon';
+            return 'Mo';
         case DayOfWeek.Tuesday:
-            return 'Tue';
+            return 'Tu';
         case DayOfWeek.Wednesday:
-            return 'Wed';
+            return 'We';
         case DayOfWeek.Thursday:
-            return 'Thu';
+            return 'Th';
         case DayOfWeek.Friday:
-            return 'Fri';
+            return 'Fr';
         case DayOfWeek.Saturday:
-            return 'Sat';
+            return 'Sa';
         default:
-            return 'Sun'
+            return 'Su'
     }
 }

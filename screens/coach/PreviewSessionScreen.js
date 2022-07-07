@@ -2,7 +2,6 @@ import {useCallback, useRef, useState} from "react";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../hooks/useHttpClient";
 import {FlatList, useWindowDimensions, View} from "react-native";
-import SessionProgress from "../../components/SessionProgress";
 import VideoBackIcon from "../../components/VideoBackIcon";
 import {StatusBar} from "expo-status-bar";
 import DemoVideos from "../../components/drill-videos/demo/DemoVideos";
@@ -14,7 +13,7 @@ const PreviewSessionScreen = ({route}) => {
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-    const {height, width} = useWindowDimensions();
+    const {height} = useWindowDimensions();
 
     useFocusEffect(
         useCallback(() => {
@@ -51,7 +50,6 @@ const PreviewSessionScreen = ({route}) => {
                 )}
             />
 
-            <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
 
             <StatusBar style="light" />

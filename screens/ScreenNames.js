@@ -41,24 +41,25 @@ export const CoachScreenNames = {
 
 export const PlayerScreenNames = {
     TabNavigator: 'PlayerTabNavigator',
-    TrainingNavigator: 'PlayerTrainingNavigator',
-    SessionNavigator: 'PlayerSessionNavigator',
+    Home: 'PlayerHome',
+    Drills: 'PlayerDrills',
+    Inbox: 'PlayerInbox',
 
-    Training: 'PlayerTraining',
-    Profile: 'PlayerProfile',
-    Progress: 'PlayerProgress',
-
-    SessionDetails: 'PlayerSessionDetails',
     Session: 'PlayerSession',
     DrillSubmission: 'PlayerDrillSubmission',
     SessionComplete: 'PlayerSessionComplete',
 
-    CoachDetails: 'PlayerCoachDetails',
+    Drill: 'PlayerDrill',
 
+    SettingsNavigator: 'PlayerSettingsNavigator',
+    Settings: 'PlayerSettings',
     EditAvailability: 'PlayerEditAvailability',
     EditEmail: 'PlayerEditEmail',
     EditName: 'PlayerEditName',
 
+    Coach: 'PlayerCoach',
+
     Onboarding: 'PlayerOnboarding',
+
     FAQ: 'PlayerFAQ',
 }

@@ -1,17 +1,18 @@
-import {useRef, useState} from "react";
-import {ActivityIndicator, Text, View} from "react-native";
+import React, {useRef, useState} from "react";
+import {ActivityIndicator, Image, Text, View} from "react-native";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../../util/drillUtil";
 import {Video} from "expo-av";
 import {LinearGradient} from "expo-linear-gradient";
 import Footer from "../Footer";
-import NextDrillIndicator from "../NextDrillIndicator";
 import SubmitButton from "../SubmitButton";
 import {CoachScreenNames} from "../../../screens/ScreenNames";
 import {useNavigation} from "@react-navigation/native";
 import useAuth from "../../../hooks/useAuth";
 import {UserType} from "../../../constants/userType";
+import {isLastDrillInSession} from "../../../util/sessionUtil";
+import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 
-const SubmissionVideo = ({isVisible, shouldHide, drill, session, isLast}) => {
+const SubmissionVideo = ({isVisible, drill, session}) => {
 
     const [submissionStatus, setSubmissionStatus] = useState({});
 
@@ -37,16 +38,16 @@ const SubmissionVideo = ({isVisible, shouldHide, drill, session, isLast}) => {
     }
 
     return (
-        <View key={drill.drillId} style={shouldHide ? {display: 'none'} : {flex: 1, position: 'relative'}}>
+        <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {(isVisible || submissionStatus.isLoaded) && doesDrillHaveSubmission(drill) && (
                 <Video
                     ref={submissionRef}
-                    style={shouldHide ? {display: 'none'} : {flex: 1}}
+                    style={!isVisible ? {display: 'none'} : {flex: 1}}
                     source={{
                         uri: drill.submission.fileLocation,
                     }}
                     resizeMode="cover"
-                    shouldPlay={isVisible && !shouldHide}
+                    shouldPlay={isVisible}
                     isLooping
                     onPlaybackStatusUpdate={status => setSubmissionStatus(() => status)}
                 />
@@ -63,21 +64,28 @@ const SubmissionVideo = ({isVisible, shouldHide, drill, session, isLast}) => {
             )}
 
             <LinearGradient
-                colors={['rgba(0, 0, 0, .4)', 'transparent']}
+                colors={['rgba(0, 0, 0, .6)', 'transparent']}
                 start={{ x: 0, y: 1 }}
                 end={{ x: 0, y: 0 }}
-                style={{width: '100%', height: 175, position: 'absolute', bottom: 0, left: 0}} />
+                style={{width: '100%', height: 400, position: 'absolute', bottom: 0, left: 0}} />
 
             <Footer>
-                {shouldShowSubmitButton() && (
-                    <SubmitButton onPress={() => navigation.navigate(CoachScreenNames.DrillFeedback, {
-                        session: session,
-                        drillId: drill.drillId
-                    })} text={'Submit feedback'} />
-                )}
-                {!shouldShowSubmitButton() && !isLast && (
-                    <NextDrillIndicator />
-                )}
+                <View style={{width: '100%'}}>
+                    {!isLastDrillInSession(drill, session) && (
+                        <View style={{marginBottom: 20, alignItems: 'center', width: 60}}>
+                            <Image source={SwipeIconYellow} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                            <Text style={{color: 'white', textAlign: 'center', fontSize: 12}}>Swipe up for next drill</Text>
+                        </View>
+                    )}
+                </View>
+                <View style={{width: '100%', alignItems: 'center'}}>
+                    {shouldShowSubmitButton() && (
+                        <SubmitButton onPress={() => navigation.navigate(CoachScreenNames.DrillFeedback, {
+                            session: session,
+                            drillId: drill.drillId
+                        })} text={'Submit feedback'} />
+                    )}
+                </View>
             </Footer>
         </View>
     )

@@ -30,9 +30,6 @@ const AuthenticationScreen = () => {
     const {httpClient} = useHttpClient();
     const {expoPushToken} = usePush();
     const navigation = useNavigation();
-    const {expoPushToken} = usePush();
-
-    console.log('push token: ' + expoPushToken);
 
     const submit = async () => {
         if (isSubmitting) {

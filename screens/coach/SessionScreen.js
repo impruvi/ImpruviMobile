@@ -2,12 +2,11 @@ import {FlatList, View} from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useRef, useState} from "react";
 import DrillVideos from "../../components/drill-videos/DrillVideos";
-import SessionProgress from "../../components/SessionProgress";
 import VideoBackIcon from "../../components/VideoBackIcon";
 import {DrillVideoTab} from "../../constants/drillVideoTab";
 import useHttpClient from "../../hooks/useHttpClient";
 import {StatusBar} from "expo-status-bar";
-import DrillVideoTabs from "../../components/DrillVideoTabs";
+import DrillVideoTabs from "../../components/drill-videos/DrillVideoTabs";
 import {LinearGradient} from "expo-linear-gradient";
 
 
@@ -48,7 +47,6 @@ const SessionScreen = ({route}) => {
                         <DrillVideos
                             session={session}
                             drill={item}
-                            isLast={currentDrillId === session.drills[session.drills.length - 1].drillId}
                             isVisible={currentDrillId === item.drillId}
                             selectedTab={selectedTab}/>
                         <LinearGradient
@@ -66,7 +64,6 @@ const SessionScreen = ({route}) => {
             />
 
             <DrillVideoTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-            <SessionProgress session={session} currentDrillId={currentDrillId}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
 
             <StatusBar style="light" />

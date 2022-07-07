@@ -3,9 +3,7 @@ import {StyleSheet, View} from 'react-native';
 const Footer = ({children}) => {
     return (
         <View style={styles.container}>
-            <View style={styles.containerInner}>
-                {children}
-            </View>
+            {children}
         </View>
     )
 }
@@ -13,17 +11,16 @@ const Footer = ({children}) => {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        width: '100%',
         bottom: 0,
-        left: 0
-    },
-    containerInner: {
-        flex: 1,
-        alignItems: 'center',
+        left: 0,
+        width: '100%',
         flexDirection: 'row',
-        justifyContent: 'center',
-        marginBottom: 40
-    }
+        flexWrap: 'wrap',
+        alignItems: 'flex-end',
+        paddingTop: 15,
+        paddingBottom: 35,
+        paddingHorizontal: 10
+    },
 });
 
 export default Footer;

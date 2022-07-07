@@ -1,23 +1,21 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 
-const Box = ({children, style}) => {
+const Box = ({children}) => {
     return (
-        <View style={{...styles.container, ...style}}>
+        <View style={{
+            marginTop: 10,
+            width: '100%',
+            shadowColor: 'black',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: .15,
+            shadowRadius: 4,
+            padding: 20,
+            borderRadius: 15,
+            backgroundColor: 'white'
+        }}>
             {children}
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        height: '100%',
-        width: '100%',
-        backgroundColor: '#f6F9FA',
-        marginBottom: 7,
-        borderRadius: 15,
-        position: 'relative'
-    }
-});
 
 export default Box;

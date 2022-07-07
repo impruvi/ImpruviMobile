@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from 'react-native';
 import {useCallback, useEffect, useState} from "react";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../hooks/useHttpClient";
@@ -83,55 +83,59 @@ const HomeScreen = () => {
     );
 
     return (
-        <PaddedScreen>
-            <HeaderText text={'Sessions to review'}/>
-            {isLoading && <Loader/>}
-            {!isLoading && (
-                <>
-                    {hasError && <Reload onReload={getIncompletePlayerSessions}/>}
-                    {!hasError && (
-                        <ScrollView showsVerticalScrollIndicator={false}>
-                            {incompletePlayerSessions.length === 0 && (
-                                <View>
-                                    <Text>No sessions to review</Text>
-                                </View>
-                            )}
-                            {incompletePlayerSessions.length > 0 && incompletePlayerSessions.map(playerSessions => (
-                                <View key={playerSessions.player.playerId}>
-                                    <Text style={styles.subHeader}>{playerSessions.player.firstName} {playerSessions.player.lastName}</Text>
-                                    {playerSessions.sessions.map(session => (
-                                        <TouchableOpacity activeOpacity={.6}
-                                                          key={session.sessionNumber}
-                                                          onPress={() => navigation.navigate(CoachScreenNames.Session, {
-                                                              session: session
-                                                          })}>
-                                            <Box style={{padding: 15}}>
-                                                <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, justifyContent: 'space-between'}}>
-                                                    <Text style={{fontSize: 24, fontWeight: '500',  marginRight: 10}}>Session {session.sessionNumber}</Text>
-                                                    <Text style={{fontSize: 12, width: 120, color: Colors.TextSecondary, textAlign: 'right'}}>{getTimeToProvideFeedback(session)}</Text>
-                                                </View>
-                                                {session.drills.map(drill => (
-                                                    <View style={{marginVertical: 10}} key={drill.drillId}>
-                                                        <Text style={styles.drillName}>
-                                                            {drill.name}
-                                                        </Text>
-
-                                                        <DrillSubmissionStatus drill={drill}/>
-                                                        <DrillFeedbackStatus drill={drill}/>
+        <View style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1}}>
+                <View style={{paddingHorizontal: 15}}>
+                    <HeaderText text={'Sessions to review'}/>
+                </View>
+                {isLoading && <Loader/>}
+                {!isLoading && (
+                    <>
+                        {hasError && <Reload onReload={getIncompletePlayerSessions}/>}
+                        {!hasError && (
+                            <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 15}}>
+                                {incompletePlayerSessions.length === 0 && (
+                                    <View>
+                                        <Text>No sessions to review</Text>
+                                    </View>
+                                )}
+                                {incompletePlayerSessions.length > 0 && incompletePlayerSessions.map(playerSessions => (
+                                    <View key={playerSessions.player.playerId}>
+                                        <Text style={styles.subHeader}>{playerSessions.player.firstName} {playerSessions.player.lastName}</Text>
+                                        {playerSessions.sessions.map(session => (
+                                            <TouchableOpacity activeOpacity={.6}
+                                                              key={session.sessionNumber}
+                                                              onPress={() => navigation.navigate(CoachScreenNames.Session, {
+                                                                  session: session
+                                                              })}>
+                                                <Box>
+                                                    <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 10, justifyContent: 'space-between'}}>
+                                                        <Text style={{fontSize: 24, fontWeight: '500',  marginRight: 10}}>Session {session.sessionNumber}</Text>
+                                                        <Text style={{fontSize: 12, width: 120, color: Colors.TextSecondary, textAlign: 'right'}}>{getTimeToProvideFeedback(session)}</Text>
                                                     </View>
-                                                ))}
-                                            </Box>
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            ))}
-                        </ScrollView>
-                    )}
-                </>
-            )}
+                                                    {session.drills.map(drill => (
+                                                        <View style={{marginVertical: 10}} key={drill.drillId}>
+                                                            <Text style={styles.drillName}>
+                                                                {drill.name}
+                                                            </Text>
+
+                                                            <DrillSubmissionStatus drill={drill}/>
+                                                            <DrillFeedbackStatus drill={drill}/>
+                                                        </View>
+                                                    ))}
+                                                </Box>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        )}
+                    </>
+                )}
+            </SafeAreaView>
 
             <StatusBar style="dark" />
-        </PaddedScreen>
+        </View>
     )
 }
 

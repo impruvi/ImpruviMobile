@@ -4,7 +4,7 @@ import DemoVideos from "./demo/DemoVideos";
 import SubmissionVideo from "./submission/SubmissionVideo";
 import FeedbackVideo from "./feedback/FeedbackVideo";
 
-const DrillVideos = ({session, drill, isVisible, isLast, selectedTab}) => {
+const DrillVideos = ({session, drill, isVisible, selectedTab, isFirstSession, canSubmit}) => {
 
     const {height} = useWindowDimensions();
 
@@ -12,21 +12,17 @@ const DrillVideos = ({session, drill, isVisible, isLast, selectedTab}) => {
         <View key={drill.drillId} style={{height: height, position: 'relative'}}>
             <DemoVideos session={session}
                         drill={drill}
-                        isVisible={isVisible}
-                        shouldHide={!isVisible || selectedTab !== DrillVideoTab.Demo}
-                        isLast={isLast}/>
+                        isVisible={isVisible && selectedTab === DrillVideoTab.Demo}
+                        isFirstSession={isFirstSession}
+                        canSubmit={canSubmit}/>
 
             <SubmissionVideo session={session}
                              drill={drill}
-                             isVisible={isVisible}
-                             shouldHide={!isVisible || selectedTab !== DrillVideoTab.Submission}
-                             isLast={isLast}/>
+                             isVisible={isVisible && selectedTab === DrillVideoTab.Submission}/>
 
-            <FeedbackVideo drill={drill}
-                           isVisible={isVisible}
-                           shouldHide={!isVisible || selectedTab !== DrillVideoTab.Feedback}
-                           isLast={isLast}/>
-
+            <FeedbackVideo session={session}
+                           drill={drill}
+                           isVisible={isVisible && selectedTab === DrillVideoTab.Feedback}/>
         </View>
     )
 }

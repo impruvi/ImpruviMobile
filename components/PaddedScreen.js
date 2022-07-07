@@ -13,7 +13,6 @@ const PaddedScreen = ({children, style}) => {
 const styles = StyleSheet.create({
     safeAreaView: {
         flex: 1,
-        backgroundColor: '#EFF3F4'
     },
     container: {
         flex: 1,

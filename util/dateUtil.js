@@ -15,6 +15,17 @@ export const getCurrentDayOfWeek = () => {
     return convertToDayOfWeek(dayOfWeekNumber);
 }
 
+export const incrementDate = (date, incr) => {
+    const d = new Date(date.year, date.month - 1, date.day);
+    d.setDate(d.getDate() + incr);
+
+    return {
+        year: d.getFullYear(),
+        month: d.getMonth() + 1,
+        day: d.getDate()
+    }
+}
+
 export const getDayOfWeekNumber = (year, month, day) => {
     return new Date(year, month - 1, day).getDay();
 }
@@ -72,6 +83,25 @@ export const getMonthDisplayName = (monthNumber) => {
         return 'November';
     } else if (monthNumber === 12) {
         return 'December';
+    }
+}
+
+export const convertDayOfWeekToNumber = (dayOfWeek) => {
+    switch (dayOfWeek) {
+        case DayOfWeek.Sunday:
+            return 0;
+        case DayOfWeek.Monday:
+            return 1;
+        case DayOfWeek.Tuesday:
+            return 2;
+        case DayOfWeek.Wednesday:
+            return 3;
+        case DayOfWeek.Thursday:
+            return 4;
+        case DayOfWeek.Friday:
+            return 5;
+        case DayOfWeek.Saturday:
+            return 6;
     }
 }
 

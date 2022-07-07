@@ -1,12 +1,9 @@
-import {StyleSheet, Text, TouchableOpacity} from "react-native";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
+import {Image, StyleSheet, Text, TouchableOpacity} from "react-native";
 
-const SideOption = ({icon, text, onPress, color = 'white'}) => {
+const SideOption = ({icon, text, onPress, color = 'white', marginBottom = 15}) => {
     return (
-        <TouchableOpacity onPress={onPress} style={styles.container}>
-            <FontAwesomeIcon icon={icon}
-                             style={{...styles.icon, color: color}}
-                             size={30}/>
+        <TouchableOpacity onPress={onPress} style={{...styles.container, marginBottom: marginBottom}}>
+            <Image source={icon} style={{width: 30, height: 30, resizeMode: 'contain'}}/>
             <Text style={styles.text}>{text}</Text>
         </TouchableOpacity>
     )
@@ -19,7 +16,6 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 20,
-        marginBottom: 15,
     },
     icon: {
         color: 'white',

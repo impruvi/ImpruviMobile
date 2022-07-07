@@ -1,26 +1,30 @@
-import {ActivityIndicator, View} from "react-native";
-import React, {useRef, useState} from "react";
+import {ActivityIndicator, Alert, Image, Text, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
 import {DrillVideoAngle} from "../../../constants/drillVideoAngle";
 import {Video} from "expo-av";
-import {faForwardStep, faInfoCircle, faVideo} from "@fortawesome/pro-solid-svg-icons";
 import {doesDrillHaveSubmission} from "../../../util/drillUtil";
 import {useNavigation} from "@react-navigation/native";
-import {Colors} from "../../../constants/colors";
 import SideOption from "./SideOption";
 import {LinearGradient} from "expo-linear-gradient";
 import {PlayerScreenNames} from '../../../screens/ScreenNames';
 import InfoSheet from './InfoSheet';
-import NextDrillIndicator from "../NextDrillIndicator";
 import SubmitButton from "../SubmitButton";
 import useAuth from "../../../hooks/useAuth";
 import {UserType} from "../../../constants/userType";
+import SlowIconWhite from '../../../assets/icons/PlayWhite.png';
+import VideoIconWhite from '../../../assets/icons/VideoWhite.png';
+import VideoIconRed from '../../../assets/icons/VideoRed.png';
+import HelpIconWhite from '../../../assets/icons/HelpWhite.png';
+import SwipeIconYellow from '../../../assets/icons/SwipeYellow.png';
+import HelpPopup from "./help/HelpPopup";
+import {doesAnyDrillHaveSubmission, isFirstDrillInSession, isLastDrillInSession} from "../../../util/sessionUtil";
 import Footer from "../Footer";
-import {compareDates, getCurrentDate} from "../../../util/dateUtil";
-import NoSubmitPopup from "./NoSubmitPopup";
 
-const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
 
-    const [isShowingNoSubmitPopup, setIsShowingNoSubmitPopup] = useState(false);
+const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
+
+    const [hasAutoOpenedHelpPopup, setHasAutoOpenedHelpPopup] = useState(false);
+    const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
 
     const [selectedAngle, setSelectedAngle] = useState(DrillVideoAngle.Front);
     const [playbackRate, setPlaybackRate] = useState(1.0);
@@ -45,15 +49,18 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
     }
 
     const shouldShowSubmitButton = () => {
-        return userType === UserType.Player
+        return !!session
+            && userType === UserType.Player
             && !doesDrillHaveSubmission(drill);
     }
 
-    const shouldShowActivityIndicator = () => {
-        if (!isVisible) {
-            return false;
-        }
+    const shouldShowSubmittedButton = () => {
+        return !!session
+            && userType === UserType.Player
+            && doesDrillHaveSubmission(drill);
+    }
 
+    const isLoading = () => {
         if (selectedAngle === DrillVideoAngle.Front) {
             return !frontStatus.isLoaded || frontStatus.isBuffering;
         } else if (selectedAngle === DrillVideoAngle.Side) {
@@ -63,19 +70,38 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
         }
     }
 
+    const shouldShowActivityIndicator = () => {
+        return isVisible && isLoading();
+    }
+
     const onSubmitButtonPress = () => {
-        if (compareDates(session.date, getCurrentDate()) < 1) {
+        if (canSubmit) {
             navigation.navigate(PlayerScreenNames.DrillSubmission, {
                 sessionNumber: session.sessionNumber,
                 drillId: drill.drillId
             });
         } else {
-            setIsShowingNoSubmitPopup(true);
+            Alert.alert('Please complete your previous sessions',
+                'Submit videos and receive feedback for all of the training sessions preceding this session.', [
+                {
+                    text: 'Ok',
+                },
+            ]);
         }
     }
 
+    useEffect(() => {
+        if (!session) {
+            return;
+        }
+        if (!hasAutoOpenedHelpPopup && isVisible && isFirstDrillInSession(drill, session) && isFirstSession && !isLoading() && !doesAnyDrillHaveSubmission(session)) {
+            setIsHelpPopupOpen(isFirstSession);
+            setHasAutoOpenedHelpPopup(true);
+        }
+    }, [isVisible, isFirstSession, frontStatus, sideStatus, closeStatus]);
+
     return (
-        <View key={drill.drillId} style={shouldHide ? {display: 'none'} : {flex: 1, position: 'relative'}}>
+        <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {((isVisible && selectedAngle === DrillVideoAngle.Front) || frontStatus.isLoaded) && (
                 <Video
                     ref={frontRef}
@@ -129,51 +155,66 @@ const DemoVideos = ({session, drill, isVisible, isLast, shouldHide}) => {
             )}
 
             <LinearGradient
-                colors={['rgba(0, 0, 0, .4)', 'transparent']}
+                colors={['rgba(0, 0, 0, .6)', 'transparent']}
                 start={{ x: 0, y: 1 }}
                 end={{ x: 0, y: 0 }}
-                style={{width: '100%', height: 175, position: 'absolute', bottom: 0, left: 0}} />
-
-            <LinearGradient
-                colors={['rgba(0, 0, 0, .3)', 'transparent']}
-                start={{ x: 1, y: 0 }}
-                end={{ x: 0, y: 0 }}
-                style={{width: 175, height: '100%', position: 'absolute', top: 0, right: 0}} />
-
-            <View style={{position: 'absolute', bottom: 0, right: 0}}>
-                <View style={{paddingBottom: 80, paddingRight: 10}}>
-                    <SideOption icon={faInfoCircle}
-                                text={'Info'}
-                                onPress={() => setIsInfoShowing(true)}/>
-                    <SideOption icon={faForwardStep}
-                                text={playbackRate !== 1 ? `.${playbackRate.toString().split('.')[1]}x` : `${playbackRate}x`}
-                                onPress={onChangePlaybackRate}/>
-                    <SideOption icon={faVideo}
-                                text={'Front'}
-                                color={DrillVideoAngle.Front === selectedAngle ? Colors.Primary : 'white'}
-                                onPress={() => setSelectedAngle(DrillVideoAngle.Front)}/>
-                    <SideOption icon={faVideo}
-                                text={'Side'}
-                                color={DrillVideoAngle.Side === selectedAngle ? Colors.Primary : 'white'}
-                                onPress={() => setSelectedAngle(DrillVideoAngle.Side)}/>
-                    <SideOption icon={faVideo}
-                                text={'Close'}
-                                color={DrillVideoAngle.Close === selectedAngle ? Colors.Primary : 'white'}
-                                onPress={() => setSelectedAngle(DrillVideoAngle.Close)}/>
-                </View>
-            </View>
+                style={{width: '100%', height: 400, position: 'absolute', bottom: 0, left: 0}} />
 
             <Footer>
-                {shouldShowSubmitButton() && (
-                    <SubmitButton onPress={onSubmitButtonPress} text={'Submit your video'} />
-                )}
-                {!shouldShowSubmitButton() && !isLast && (
-                    <NextDrillIndicator />
+                <View style={{flex: 1, paddingHorizontal: 5}}>
+                    {!!session && !isLastDrillInSession(drill, session) && (
+                        <View style={{marginBottom: 20, alignItems: 'center', width: 60}}>
+                            <Image source={SwipeIconYellow} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
+                            <Text style={{color: 'white', textAlign: 'center', fontSize: 12}}>Swipe up for next drill</Text>
+                        </View>
+                    )}
+
+                    <Text style={{color: 'white', fontWeight: '600', marginBottom: 5, fontSize: 16}}>
+                        {drill.name} {!!session && `(drill ${session.drills.indexOf(drill) + 1}/${session.drills.length})`}
+                    </Text>
+                    <Text style={{color: 'white'}}>
+                        {drill.description.replace(/\n|\r/g, "")}
+                    </Text>
+                    <TouchableOpacity style={{paddingVertical: 5}} onPress={() => setIsInfoShowing(true)}>
+                        <Text style={{color: 'white', textDecorationLine: 'underline'}}>See more</Text>
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <SideOption icon={SlowIconWhite}
+                                text={playbackRate !== 1 ? `.${playbackRate.toString().split('.')[1]}x` : `${playbackRate}x`}
+                                onPress={onChangePlaybackRate}/>
+                    <SideOption icon={DrillVideoAngle.Front === selectedAngle ? VideoIconRed : VideoIconWhite}
+                                text={'Front'}
+                                onPress={() => setSelectedAngle(DrillVideoAngle.Front)}/>
+                    <SideOption icon={DrillVideoAngle.Side === selectedAngle ? VideoIconRed : VideoIconWhite}
+                                text={'Side'}
+                                onPress={() => setSelectedAngle(DrillVideoAngle.Side)}/>
+                    <SideOption icon={DrillVideoAngle.Close === selectedAngle ? VideoIconRed : VideoIconWhite}
+                                text={'Close'}
+                                onPress={() => setSelectedAngle(DrillVideoAngle.Close)}/>
+                </View>
+                {!!session && (
+                    <View style={{width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}} />
+                        {shouldShowSubmitButton() && (
+                            <SubmitButton onPress={onSubmitButtonPress} text={'Submit your video'} />
+                        )}
+                        {shouldShowSubmittedButton() && (
+                            <Text style={{color: 'white', fontWeight: '600'}}>Your video is submitted!</Text>
+                        )}
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+                            <SideOption icon={HelpIconWhite}
+                                        text={'Help'}
+                                        onPress={() => setIsHelpPopupOpen(true)}
+                                        marginBottom={0}/>
+                        </View>
+                    </View>
                 )}
             </Footer>
 
-            <NoSubmitPopup visible={isShowingNoSubmitPopup} close={() => setIsShowingNoSubmitPopup(false)}/>
             <InfoSheet isOpen={isInfoShowing} onClose={() => setIsInfoShowing(false)} drill={drill}/>
+            <HelpPopup visible={isHelpPopupOpen} close={() => setIsHelpPopupOpen(false)} shouldIncludeWelcome={isFirstSession && !doesAnyDrillHaveSubmission(session)}/>
+
         </View>
     )
 }

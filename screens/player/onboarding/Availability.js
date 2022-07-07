@@ -42,7 +42,7 @@ const Availability = ({onNextSlide}) => {
     return (
         <Container style={{backgroundColor: 'white'}}>
             <Title text={'What days are you available to train?'} style={{color: 'black'}}/>
-            <Description text={'Updating your availability will add the training sessions to these days in your calendar. This can be changed at any point in the future.'}
+            <Description text={'Updating your availability will add the training sessions to these days in your month. This can be changed at any point in the future.'}
                          style={{color: Colors.TextSecondary}}/>
 
             <AvailabilitySelector availability={availability} setAvailability={setAvailability}/>

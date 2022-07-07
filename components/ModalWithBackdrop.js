@@ -1,9 +1,24 @@
 import {Modal, View} from "react-native";
+import {useEffect, useState} from "react";
 
 const ModalWithBackdrop = ({children, visible, close, onBackdropPress}) => {
+
+    const [isBackVisible, setIsBackVisible] = useState(visible);
+
+    useEffect(() => {
+        if (!visible) {
+            setTimeout(() => {
+                setIsBackVisible(false);
+            }, 200);
+        } else {
+            setIsBackVisible(true);
+        }
+    }, [visible]);
+
+
     return (
         <Modal animationType="none"
-               visible={visible}
+               visible={isBackVisible}
                transparent={true}>
             {visible && (
                 <View style={{position: 'absolute', height: '100%', width: '100%', backgroundColor: 'rgba(0, 0, 0, .2)'}}

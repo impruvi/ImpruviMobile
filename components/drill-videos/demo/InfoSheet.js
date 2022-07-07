@@ -1,6 +1,5 @@
 import {BottomSheetModal, BottomSheetView, useBottomSheetTimingConfigs} from "@gorhom/bottom-sheet";
 import {Image, Text, View} from "react-native";
-import {Colors} from "../../../constants/colors";
 import {useEffect, useRef} from 'react';
 
 const InfoSheet = ({isOpen, onClose, drill}) => {

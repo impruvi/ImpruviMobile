@@ -13,7 +13,7 @@ const SessionCompleteScreen = () => {
         <SafeAreaView style={{flex: 1, backgroundColor: Colors.Primary}}>
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20}}>
                 <TouchableOpacity style={{position: 'absolute', top: 0, left: 0, padding: 20}}
-                                  onPress={() => navigation.navigate(PlayerScreenNames.Training)} >
+                                  onPress={() => navigation.navigate(PlayerScreenNames.Home)} >
                     <FontAwesomeIcon icon={faXmarkLarge} size={25} style={{color: 'white'}}/>
                 </TouchableOpacity>
 

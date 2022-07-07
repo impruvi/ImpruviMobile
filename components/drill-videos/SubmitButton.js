@@ -11,7 +11,7 @@ const SubmitButton = ({onPress, text}) => {
 
 const styles = StyleSheet.create({
     submitButton: {
-        paddingVertical: 12,
+        paddingVertical: 14,
         paddingHorizontal: 20,
         backgroundColor: Colors.Primary,
         borderRadius: 40,
@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
     },
     submitButtonText: {
         color: 'white',
-        fontSize: 15
+        fontSize: 15,
+        fontWeight: '500'
     }
 });
 

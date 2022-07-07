@@ -12,7 +12,7 @@ import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
 import DrillSubmissionStatus from "../../components/status/DrillSubmissionStatus";
 import DrillFeedbackStatus from "../../components/status/DrillFeedbackStatus";
-import {doesAnyDrillHaveSubmission, doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
+import {doesAnyDrillHaveSubmission} from "../../util/sessionUtil";
 
 const PlayerScreen = ({route}) => {
 
