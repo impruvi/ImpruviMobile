@@ -2,7 +2,7 @@
   "expo": {
     "name": "Impruvi",
     "slug": "impruvi-mobile-assets",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/impruvi-icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "13",
+      "buildNumber": "14",
       "supportsTablet": true,
       "bundleIdentifier": "com.impruvi.impruvimobileassets",
       "infoPlist": {

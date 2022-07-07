@@ -131,6 +131,7 @@ const InboxScreen = () => {
                             <FlatList keyExtractor={(item, index) => `${index}`}
                                       data={entries}
                                       contentContainerStyle={{marginTop: 10}}
+                                      showsVerticalScrollIndicator={false}
                                       renderItem={({item}) => (
                                           <TouchableOpacity style={{flexDirection: 'row', marginBottom: 20, alignItems: 'center'}} onPress={() => navigateToSession(item.metadata.sessionNumber)}>
                                               <Image source={{uri: item.actor.image}} style={{width: 45, height: 45, borderRadius: 45, marginRight: 15}}/>
