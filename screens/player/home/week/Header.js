@@ -8,8 +8,8 @@ import {
     incrementDate
 } from "../../../../util/dateUtil";
 import {doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
-import TriangleBlack from "../../../../assets/icons/TriangleBlack.png";
-import TriangleRed from "../../../../assets/icons/TriangleRed.png";
+import TriangleWhiteChoppedShadow from "../../../../assets/icons/TriangleWhiteChoppedShadow.png";
+
 import {useEffect, useRef, useState} from 'react';
 import {Colors} from "../../../../constants/colors";
 
@@ -25,31 +25,31 @@ const Header = ({currentSession, sessions, setCurrentSession}) => {
     }
 
     const getSessionForDate = (date) => {
-        return sessions.find(session => compareDates(date, session.date) === 0);
+        return sessions.find(session => compareDates(date, session.scheduledDate) === 0);
     }
 
     const currentDate = getCurrentDate();
-    const currentSessionDayOfWeek = getDayOfWeek(currentSession.date.year, currentSession.date.month, currentSession.date.day);
+    const currentSessionDayOfWeek = getDayOfWeek(currentSession.scheduledDate.year, currentSession.scheduledDate.month, currentSession.scheduledDate.day);
     const currentSessionIdx = convertDayOfWeekToNumber(currentSessionDayOfWeek);
 
     useEffect(() => {
-        const currentSessionDayOfWeek = getDayOfWeek(currentSession.date.year, currentSession.date.month, currentSession.date.day);
+        const currentSessionDayOfWeek = getDayOfWeek(currentSession.scheduledDate.year, currentSession.scheduledDate.month, currentSession.scheduledDate.day);
         const currentSessionIdx = convertDayOfWeekToNumber(currentSessionDayOfWeek);
 
         const gap = (width - (7 * 44)) / 6;
-        moveTriangle(currentSessionIdx * (width + gap) / 7 - 10 + 22);
+        moveTriangle(currentSessionIdx * (width + gap) / 7 - 15 + 22);
     }, [currentSession, width]);
 
     return (
-        <View style={{marginBottom: -15, marginTop: 10, paddingHorizontal: 15, width: '100%'}}>
-            <View style={{width: '100%'}}>
+        <View style={{marginBottom: -17, marginTop: 10, paddingHorizontal: 15, width: '100%'}}>
+            <View style={{width: '100%', position: 'relative'}}>
                 <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between'}} onLayout={(event) => {
                     const {width} = event.nativeEvent.layout;
                     setWidth(width);
                 }}>
                     {Object.entries(DayOfWeek).map(([_, dayOfWeek], idx) => {
 
-                        const date = incrementDate(currentSession.date, (idx - currentSessionIdx));
+                        const date = incrementDate(currentSession.scheduledDate, (idx - currentSessionIdx));
                         const isCurrentDay = compareDates(currentDate, date) === 0;
                         const dayOfMonth = !!currentSession ? date.day : undefined;
 
@@ -82,8 +82,8 @@ const Header = ({currentSession, sessions, setCurrentSession}) => {
 
                 </View>
 
-                <Animated.View style={{marginLeft: triangleAnim}}>
-                    <Image source={doesEveryDrillHaveSubmission(currentSession) ? TriangleBlack : TriangleRed} style={styles.triangle}/>
+                <Animated.View style={{marginLeft: triangleAnim, marginTop: -8}}>
+                    <Image source={TriangleWhiteChoppedShadow} style={styles.triangle}/>
                 </Animated.View>
             </View>
         </View>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     },
     containerInner: {
         alignItems: 'center',
-        padding: 10,
+        padding: 8,
         borderRadius: 30,
         width: 44
     },
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
     dayText: {
-        fontSize: 18,
+        fontSize: 16,
         marginTop: 5,
         fontWeight: '500'
     },
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     triangle: {
-        height: 20,
-        width: 20,
+        height: 30,
+        width: 30,
         marginTop: 5,
         resizeMode: 'contain'
     }

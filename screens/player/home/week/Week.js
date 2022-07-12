@@ -1,5 +1,5 @@
 import {FlatList, View} from "react-native";
-import {doesEveryDrillHaveSubmission, isLastSession, isNextSession} from "../../../../util/sessionUtil";
+import {doesEveryDrillHaveSubmission, isNextSession} from "../../../../util/sessionUtil";
 import Session from "./Session";
 import {useEffect, useRef, useState} from "react";
 import Header from "./Header";
@@ -48,10 +48,7 @@ const Week = ({sessions, visible}) => {
     }
 
     return (
-        <View style={visible ? {} : {display: 'none'}}>
-            <Header currentSession={currentSession}
-                    sessions={sessions}
-                    setCurrentSession={onSetCurrentSession}/>
+        <View style={visible ? {flexDirection: 'column-reverse'} : {display: 'none'}}>
             <FlatList ref={listRef}
                       initialScrollIndex={currentSessionIndex}
                       onScrollToIndexFailed={info => {
@@ -65,13 +62,17 @@ const Week = ({sessions, visible}) => {
                       data={sessions}
                       horizontal
                       pagingEnabled
+                      contentContainerStyle={{marginTop: 20}}
                       keyExtractor={(item) => item.sessionNumber}
                       showsHorizontalScrollIndicator={false}
                       renderItem={({item, index}) => (
                           <Session session={item}
-                                   isNextSession={isNextSession(sessions, item)}
-                                   isLastSession={isLastSession(sessions, item)}/>
+                                   sessions={sessions}/>
                       )} />
+            {/*<Header currentSession={currentSession}*/}
+            {/*        sessions={sessions}*/}
+            {/*        setCurrentSession={onSetCurrentSession}/>*/}
+
         </View>
     );
 }

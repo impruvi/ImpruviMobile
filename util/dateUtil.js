@@ -58,6 +58,11 @@ export const getNumberOfDaysInMonth = (year, month) => {
     return new Date(year, month, 0).getDate();
 }
 
+export const getHumanReadableDate = (date) => {
+    const dayOfWeek = getDayOfWeek(date.year, date.month, date.day);
+    return `${getDayOfWeekDisplayName(dayOfWeek)}, ${getMonthDisplayName(date.month)} ${date.day}`
+}
+
 export const getMonthDisplayName = (monthNumber) => {
     if (monthNumber === 1) {
         return 'January';
@@ -102,6 +107,25 @@ export const convertDayOfWeekToNumber = (dayOfWeek) => {
             return 5;
         case DayOfWeek.Saturday:
             return 6;
+    }
+}
+
+const getDayOfWeekDisplayName = (dayOfWeek) => {
+    switch (dayOfWeek) {
+        case DayOfWeek.Sunday:
+            return 'Sunday';
+        case DayOfWeek.Monday:
+            return 'Monday';
+        case DayOfWeek.Tuesday:
+            return 'Tuesday';
+        case DayOfWeek.Wednesday:
+            return 'Wednesday';
+        case DayOfWeek.Thursday:
+            return 'Thursday';
+        case DayOfWeek.Friday:
+            return 'Friday';
+        case DayOfWeek.Saturday:
+            return 'Saturday';
     }
 }
 

@@ -74,9 +74,9 @@ const Month = ({sessions, visible}) => {
 
     const getSessionForDay = (year, month, day) => {
         const sessionList = sessions.filter(session =>
-            session.date.year === year &&
-            session.date.month === month &&
-            session.date.day === day
+            session.scheduledDate.year === year &&
+            session.scheduledDate.month === month &&
+            session.scheduledDate.day === day
         );
         return sessionList.length > 0
             ? sessionList[0]
@@ -108,8 +108,8 @@ const Month = ({sessions, visible}) => {
             const months = [];
             const firstSession = sessionsSorted[0];
             const lastSession = sessionsSorted[sessionsSorted.length - 1];
-            const firstMonth = {month: firstSession.date.month, year: firstSession.date.year}
-            const lastMonth = {month: lastSession.date.month, year: lastSession.date.year}
+            const firstMonth = {month: firstSession.scheduledDate.month, year: firstSession.scheduledDate.year}
+            const lastMonth = {month: lastSession.scheduledDate.month, year: lastSession.scheduledDate.year}
             let currentMonth = firstMonth;
             while (compareDates(currentMonth, lastMonth) < 1) {
                 months.push(currentMonth);

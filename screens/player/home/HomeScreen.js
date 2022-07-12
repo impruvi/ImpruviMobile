@@ -78,7 +78,7 @@ const HomeScreen = () => {
                         {!hasError && (
                             <>
                                 <Week sessions={sessions} visible={selectedTab === HomeTab.Week}/>
-                                <Month sessions={sessions} visible={selectedTab === HomeTab.Month}/>
+                                {/*<Month sessions={sessions} visible={selectedTab === HomeTab.Month}/>*/}
 
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15}}>
                                     <View style={{flexDirection: 'row', flex: 1}}>
@@ -87,7 +87,7 @@ const HomeScreen = () => {
                                             swipe to view past and future {selectedTab === HomeTab.Month ? 'months' : 'trainings'}
                                         </Text>
                                     </View>
-                                    <Toggle setSelectedTab={setSelectedTab} selectedTab={selectedTab}/>
+                                    {/*<Toggle setSelectedTab={setSelectedTab} selectedTab={selectedTab}/>*/}
                                 </View>
 
                                 <Progress sessions={sessions}/>

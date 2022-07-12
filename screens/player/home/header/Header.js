@@ -33,7 +33,7 @@ const Header = () => {
     }, []);
 
     return (
-        <View style={{paddingHorizontal: 15, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 130}}>
+        <View style={{paddingHorizontal: 15, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 140}}>
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity onPress={navigateToCoach}>
                     {!!coach && <Image source={{uri: coach?.headshot.fileLocation}} style={{width: 55, height: 55, borderRadius: 55, resizeMode: 'contain'}} />}
