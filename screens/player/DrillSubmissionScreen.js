@@ -34,7 +34,7 @@ const DrillSubmissionScreen = ({route}) => {
     return (
         <View style={styles.container}>
             {!video && (
-                <VideoCamera setVideo={setVideo}/>
+                <VideoCamera setVideo={setVideo} maximumDurationInSeconds={30}/>
             )}
             {!!video && (
                 <VideoPreview

@@ -47,21 +47,21 @@ export const getLastSession = (sessions) => {
     return sessions.find(sess => sess.sessionNumber === lastSessionNumber);
 }
 
-export const isNextSession = (sessions, session) => {
-    if (!session) {
-        return false;
-    }
-    const nextSession = getNextSession(sessions);
-    return !!nextSession && nextSession.sessionNumber === session.sessionNumber;
-}
-
-export const isLastSession = (sessions, session) => {
-    if (!session) {
-        return false;
-    }
-    const lastSession = getLastSession(sessions);
-    return !!lastSession && lastSession.sessionNumber === session.sessionNumber;
-}
+// export const isNextSession = (sessions, session) => {
+//     if (!session) {
+//         return false;
+//     }
+//     const nextSession = getNextSession(sessions);
+//     return !!nextSession && nextSession.sessionNumber === session.sessionNumber;
+// }
+//
+// export const isLastSession = (sessions, session) => {
+//     if (!session) {
+//         return false;
+//     }
+//     const lastSession = getLastSession(sessions);
+//     return !!lastSession && lastSession.sessionNumber === session.sessionNumber;
+// }
 
 export const canSubmitForSession = (sessions, session) => {
     if (!session || !sessions || sessions.length === 0) {
@@ -74,4 +74,22 @@ export const canSubmitForSession = (sessions, session) => {
 
     const lastSession = getLastSession(sessions);
     return !lastSession || doesAnyDrillHaveFeedback(lastSession);
+}
+
+export const getNumberOfCompletedFeedbacks = (session) => {
+    if (!session || !session.drills) {
+        return 0;
+    }
+
+    return session.drills.filter(doesDrillHaveFeedback).length;
+}
+
+export const getCompletedDateEpochMillis = (session) => {
+    if (!doesEveryDrillHaveSubmission(session)) {
+        return -1;
+    }
+
+    return Math.max(...session.drills.map(drill =>
+        !!drill.submission ? drill.submission.uploadDateEpochMillis : -1
+    ));
 }

@@ -1,6 +1,7 @@
 import {BottomSheetModal, BottomSheetView, useBottomSheetTimingConfigs} from "@gorhom/bottom-sheet";
-import {Image, Text, View} from "react-native";
+import {Text, View} from "react-native";
 import {useEffect, useRef} from 'react';
+import CachedImage from "../../CachedImage";
 
 const InfoSheet = ({isOpen, onClose, drill}) => {
 
@@ -45,7 +46,7 @@ const InfoSheet = ({isOpen, onClose, drill}) => {
                         <Text>{drill.notes}</Text>
                     </View>
                     {!!drill.diagramFileLocation && (
-                        <Image source={{uri: drill.diagramFileLocation}} style={{width: '100%', minHeight: 280, marginTop: 10, resizeMode: 'contain'}}/>
+                        <CachedImage source={{uri: drill.diagramFileLocation}} style={{width: '100%', minHeight: 280, marginTop: 10, resizeMode: 'contain'}} />
                     )}
                 </View>
             </BottomSheetView>

@@ -5,6 +5,7 @@ import {useNavigation} from "@react-navigation/native";
 import {useEffect, useState} from "react";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useAuth from "../../../../hooks/useAuth";
+import HeadshotChip from "../../../../components/HeadshotChip";
 
 const Header = () => {
 
@@ -36,14 +37,14 @@ const Header = () => {
         <View style={{paddingHorizontal: 15, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 140}}>
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity onPress={navigateToCoach}>
-                    {!!coach && <Image source={{uri: coach?.headshot.fileLocation}} style={{width: 55, height: 55, borderRadius: 55, resizeMode: 'contain'}} />}
+                    {!!coach && <HeadshotChip image={coach.headshot} firstName={coach.firstName} lastName={coach.lastName} size={55}/>}
                 </TouchableOpacity>
                 <View style={{marginLeft: 10}}>
                     <Text style={{fontSize: 16, fontWeight: '600'}}>Hey {player.firstName}👋</Text>
                     <Text style={{fontSize: 27, fontWeight: '700'}}>Welcome back</Text>
                 </View>
             </View>
-            <TouchableOpacity onPress={navigateToSettings}>
+            <TouchableOpacity onPress={navigateToSettings} style={{paddingVertical: 10, paddingLeft: 10}}>
                 <Image source={Settings} style={{height: 23, width: 23, resizeMode: 'contain'}}/>
             </TouchableOpacity>
         </View>

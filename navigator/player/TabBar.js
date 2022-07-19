@@ -1,4 +1,4 @@
-import {Image, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
+import {Image, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
 import {PlayerScreenNames} from "../../screens/ScreenNames";
 import HomeActiveDark from "../../assets/icons/navigation/HomeActiveDark.png";
 import HomeDark from "../../assets/icons/navigation/HomeDark.png";
@@ -11,6 +11,7 @@ import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import useInboxViewDate from "../../hooks/useInboxViewDate";
 import {Colors} from "../../constants/colors";
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const TabBar = ({ state, descriptors, navigation }) => {
 
@@ -30,8 +31,8 @@ const TabBar = ({ state, descriptors, navigation }) => {
     }, [state, descriptors, navigation]);
 
     return (
-        <View style={{paddingTop: 7}}>
-            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <SafeAreaView edges={['bottom', 'left', 'right']}>
+            <View style={{paddingTop: 7, flexDirection: 'row', justifyContent: 'center'}}>
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key];
                     const label =
@@ -97,7 +98,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
                                         <Image source={InboxActiveDark} style={styles.icon}/>
                                         <Text style={styles.iconText}>Inbox</Text>
                                         {numberOfUnreadInboxEntries > 0 && (
-                                            <View style={{backgroundColor: Colors.Primary, height: 20, paddingHorizontal: 6, borderRadius: 30, position: 'absolute', top: -5, left: 40, alignItems: 'center', justifyContent: 'center'}}>
+                                            <View style={{backgroundColor: Colors.Primary, height: 18, paddingHorizontal: 6, borderRadius: 30, position: 'absolute', top: -5, left: 42, alignItems: 'center', justifyContent: 'center'}}>
                                                 <Text style={{color: 'white', fontWeight: '500', fontSize: 11}}>{numberOfUnreadInboxEntries}</Text>
                                             </View>
                                         )}
@@ -108,7 +109,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
                                         <Image source={InboxDark} style={styles.icon}/>
                                         <Text style={styles.iconText}>Inbox</Text>
                                         {numberOfUnreadInboxEntries > 0 && (
-                                            <View style={{backgroundColor: Colors.Primary, height: 20, paddingHorizontal: 6, borderRadius: 30, position: 'absolute', top: -5, left: 40, alignItems: 'center', justifyContent: 'center'}}>
+                                            <View style={{backgroundColor: Colors.Primary, height: 18, paddingHorizontal: 6, borderRadius: 30, position: 'absolute', top: -5, left: 42, alignItems: 'center', justifyContent: 'center'}}>
                                                 <Text style={{color: 'white', fontWeight: '500', fontSize: 11}}>{numberOfUnreadInboxEntries}</Text>
                                             </View>
                                         )}
@@ -118,8 +119,8 @@ const TabBar = ({ state, descriptors, navigation }) => {
                         </TouchableWithoutFeedback>
                     );
                 })}
-            </SafeAreaView>
-        </View>
+            </View>
+        </SafeAreaView>
     );
 };
 

@@ -1,9 +1,10 @@
-import {Image, SafeAreaView, ScrollView, Text, View} from 'react-native';
+import {SafeAreaView, ScrollView, Text, View} from 'react-native';
 import {Colors} from "../../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faAngleLeft, faUser} from "@fortawesome/pro-light-svg-icons";
+import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import HeaderCenter from "../../../components/HeaderCenter";
 import {useNavigation} from "@react-navigation/native";
+import HeadshotChip from "../../../components/HeadshotChip";
 
 const CoachScreen = ({route}) => {
 
@@ -19,14 +20,7 @@ const CoachScreen = ({route}) => {
 
             <ScrollView style={{flex: 1, paddingHorizontal: 15}}>
                 <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{width: 120, height: 120, borderRadius: 120, overflow: 'hidden', backgroundColor: Colors.Border, alignItems: 'center', justifyContent: 'center'}}>
-                        {!!coach.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
-                            <Image source={{uri: coach.headshot.fileLocation}} style={{width: 120, height: 120, resizeMode: 'cover'}}/>
-                        )}
-                        {(!coach.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
-                            <FontAwesomeIcon icon={faUser} size={40}/>
-                        )}
-                    </View>
+                    <HeadshotChip image={coach.headshot} firstName={coach.firstName} lastName={coach.lastName} size={120}/>
                     <View style={{marginVertical: 10, alignItems: 'center'}}>
                         <Text style={{fontSize: 20, fontWeight: '600'}}>{coach.firstName} {coach.lastName}</Text>
                         <Text style={{color: Colors.TextSecondary}}>{coach.position}</Text>

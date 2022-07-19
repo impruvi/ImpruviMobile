@@ -7,7 +7,7 @@ import SettingsScreen from "../../screens/player/settings/SettingsScreen";
 import DrillsScreen from "../../screens/player/drills/DrillsScreen";
 import DrillSubmissionScreen from "../../screens/player/DrillSubmissionScreen";
 import SessionCompleteScreen from "../../screens/player/SessionCompleteScreen";
-import SessionScreen from "../../screens/player/home/SessionScreen";
+import SessionScreen from "../../screens/player/SessionScreen";
 import React from "react";
 import CoachScreen from "../../screens/player/coach/CoachScreen";
 import EditAvailabilityScreen from "../../screens/player/settings/edit/EditAvailabilityScreen";
@@ -20,6 +20,8 @@ import Loader from "../../components/Loader";
 import TabBar from './TabBar';
 import InboxScreen from "../../screens/player/inbox/InboxScreen";
 import DrillScreen from "../../screens/player/drills/DrillScreen";
+import EditHeadshotScreen from "../../screens/player/settings/edit/EditHeadshotScreen";
+import TrainingPlanCompleteScreen from "../../screens/player/TrainingPlanCompleteScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,6 +46,7 @@ const SettingsNavigator = () => {
             <Stack.Screen name={PlayerScreenNames.EditName} component={EditNameScreen} options={{gestureResponseDistance: width}}/>
             <Stack.Screen name={PlayerScreenNames.EditEmail} component={EditEmailScreen} options={{gestureResponseDistance: width}}/>
             <Stack.Screen name={PlayerScreenNames.EditAvailability} component={EditAvailabilityScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={PlayerScreenNames.EditHeadshot} component={EditHeadshotScreen} options={{gestureResponseDistance: width}}/>
         </Stack.Navigator>
     )
 }
@@ -71,7 +74,19 @@ const PlayerNavigator = () => {
                                           gestureDirection: 'vertical',
                                           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
                                       }}/>
-                        <Stack.Screen name={PlayerScreenNames.SessionComplete} component={SessionCompleteScreen} options={{gestureResponseDistance: 0}} />
+                        <Stack.Screen name={PlayerScreenNames.SessionComplete}
+                                      component={SessionCompleteScreen}
+                                      options={{
+                                          gestureDirection: 'vertical',
+                                          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+                                      }}/>
+                        <Stack.Screen name={PlayerScreenNames.TrainingPlanComplete}
+                                      component={TrainingPlanCompleteScreen}
+                                      options={{
+                                          gestureDirection: 'vertical',
+                                          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
+                                      }}/>
+
                         <Stack.Screen name={PlayerScreenNames.Session} component={SessionScreen} options={{gestureResponseDistance: width}}/>
                         <Stack.Screen name={PlayerScreenNames.Drill} component={DrillScreen} options={{gestureResponseDistance: width}}/>
                         <Stack.Screen name={PlayerScreenNames.SettingsNavigator} component={SettingsNavigator} options={{gestureResponseDistance: width}} />

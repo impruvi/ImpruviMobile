@@ -25,8 +25,11 @@ const Progress = ({sessions}) => {
                 borderRadius: 15,
                 backgroundColor: 'white'
             }}>
-                <Text style={{fontWeight: '600', fontSize: 18, marginBottom: 20}}>Progress this month</Text>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
+                <Text style={{fontWeight: '600', fontSize: 18}}>Progress this month</Text>
+                {totalNumberOfDrills > 0 && numberOfDrillsCompleted === totalNumberOfDrills && (
+                    <Text style={{marginTop: 5, color: '#6B6B6B', fontSize: 12,}}>🎉 You've completed all of your trainings for this month. You will receive new trainings once your subscription is renewed</Text>
+                )}
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 20}}>
                     <View style={{alignItems: 'center', justifyContent: 'flex-end', width: '45%'}}>
                         <Text style={{fontSize: 14, fontWeight: '600', textAlign: 'center'}}>Completed trainings</Text>
                         <Text style={{fontSize: 35, marginTop: 8, fontWeight: '600'}}>{numberOfSessionsCompleted}

@@ -1,19 +1,22 @@
-import {ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Text, TouchableOpacity, View} from "react-native";
 import {Video} from "expo-av";
 import {Colors} from "../../constants/colors";
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const VideoPreview = ({video, onCancel, onSubmit, isSubmitting}) => {
 
     return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
-            <SafeAreaView style={{flex: 1}}>
+            <SafeAreaView edges={['bottom', 'left', 'right', 'top']} style={{flex: 1}}>
                 <View style={{flex: 1, position: 'relative'}}>
-                    <Video
-                        style={{flex: 1}}
-                        source={video}
-                        resizeMode="cover"
-                        shouldPlay={true}
-                        isLooping/>
+                    <View style={{flex: 1}}>
+                        <Video
+                            style={{flex: 1}}
+                            source={video}
+                            resizeMode="cover"
+                            shouldPlay={true}
+                            isLooping/>
+                    </View>
 
                     <View style={{width: '100%', alignItems: 'flex-end', padding: 15, flexDirection: 'row', justifyContent: 'space-between'}}>
                         <TouchableOpacity

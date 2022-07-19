@@ -9,7 +9,12 @@ import {BottomSheetModalProvider,} from '@gorhom/bottom-sheet';
 import {PushProvider} from "./hooks/usePush";
 import * as Notifications from 'expo-notifications';
 import React, {useEffect, useRef,} from 'react';
+import {LogBox} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
+LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -50,21 +55,23 @@ export default function App() {
               background: 'white'
           },
       }}>
-          <BottomSheetModalProvider>
-              <InboxViewDateProvider>
-                  <AuthProvider>
-                      <ErrorProvider>
-                          <OnboardingProvider>
-                              <HttpClientProvider>
-                                  <PushProvider>
-                                      <Navigator />
-                                  </PushProvider>
-                              </HttpClientProvider>
-                          </OnboardingProvider>
-                      </ErrorProvider>
-                  </AuthProvider>
-              </InboxViewDateProvider>
-          </BottomSheetModalProvider>
+          <SafeAreaProvider>
+              <BottomSheetModalProvider>
+                  <InboxViewDateProvider>
+                      <AuthProvider>
+                          <ErrorProvider>
+                              <OnboardingProvider>
+                                  <HttpClientProvider>
+                                      <PushProvider>
+                                          <Navigator />
+                                      </PushProvider>
+                                  </HttpClientProvider>
+                              </OnboardingProvider>
+                          </ErrorProvider>
+                      </AuthProvider>
+                  </InboxViewDateProvider>
+              </BottomSheetModalProvider>
+          </SafeAreaProvider>
       </NavigationContainer>
   );
 }

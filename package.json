@@ -41,7 +41,6 @@
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
     "react-native-circular-progress-indicator": "^4.2.0",
-    "react-native-draggable-flatlist": "^3.1.2",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-keyboard-avoiding-scroll-view": "^1.0.1",
     "react-native-reanimated": "~2.3.1",
@@ -50,7 +49,9 @@
     "react-native-slider": "^0.11.0",
     "react-native-svg": "12.3.0",
     "react-native-tab-view": "^3.1.1",
-    "react-native-web": "0.17.1"
+    "react-native-web": "0.17.1",
+    "shorthash": "^0.0.2",
+    "expo-file-system": "~13.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

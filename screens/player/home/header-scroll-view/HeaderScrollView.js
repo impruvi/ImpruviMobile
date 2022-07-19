@@ -1,10 +1,11 @@
-import {Animated, Image, ScrollView} from "react-native";
+import {Animated, Image, ScrollView, useWindowDimensions} from "react-native";
 import HeaderBackground from "../../../../assets/images/StadiumHeaderBackground.png";
 import {useState} from 'react';
 
 const HeaderScrollView = ({children}) => {
 
     const [offset, setOffset] = useState(0);
+    const {width} = useWindowDimensions();
 
     const top = offset < 0
         ? offset
@@ -28,7 +29,7 @@ const HeaderScrollView = ({children}) => {
                 overflow: 'hidden',
                 height: height
             }]}>
-                <Image source={HeaderBackground} style={{height: height}}/>
+                <Image source={HeaderBackground} style={{height: height, width: width}}/>
             </Animated.View>
 
             {children}

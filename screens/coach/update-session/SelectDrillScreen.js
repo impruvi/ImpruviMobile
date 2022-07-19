@@ -10,8 +10,7 @@ import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import {useCallback, useEffect, useState} from 'react';
 import HeaderCenter from "../../../components/HeaderCenter";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
+import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
 
 const SelectDrillScreen = ({route}) => {
 
@@ -57,8 +56,8 @@ const SelectDrillScreen = ({route}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
             <HeaderCenter title={'Select a drill'}
-                          right={<FontAwesomeIcon  icon={faXmarkLarge} size={20} />}
-                          onRightPress={navigation.goBack}/>
+                          left={<Text>Cancel</Text>}
+                          onLeftPress={navigation.goBack}/>
 
             {isLoading && <Loader/>}
             {!isLoading && (
@@ -77,9 +76,7 @@ const SelectDrillScreen = ({route}) => {
                                            })}/>
                             )}
                             {(!drills || drills.length === 0) && (
-                                <View>
-                                    <Text>No drills</Text>
-                                </View>
+                                <EmptyPlaceholder text={'No drills'} />
                             )}
                         </View>
                     )}

@@ -10,9 +10,7 @@ import HeaderScrollView from "./header-scroll-view/HeaderScrollView";
 import Week from "./week/Week";
 import Header from "./header/Header";
 import Progress from "./progress/Progress";
-import Toggle from "./toggle/Toggle";
 import {HomeTab} from "./tab";
-import Month from "./month/Month";
 import Loader from "../../../components/Loader";
 import Reload from "../../../components/Reload";
 
@@ -80,15 +78,17 @@ const HomeScreen = () => {
                                 <Week sessions={sessions} visible={selectedTab === HomeTab.Week}/>
                                 {/*<Month sessions={sessions} visible={selectedTab === HomeTab.Month}/>*/}
 
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15}}>
-                                    <View style={{flexDirection: 'row', flex: 1}}>
-                                        <Image source={SwipeIcon} style={{width: 20, height: 20}}/>
-                                        <Text style={{marginLeft: 5, color: '#6B6B6B', fontSize: 12, flex: 1, flexWrap: 'wrap'}}>
-                                            swipe to view past and future {selectedTab === HomeTab.Month ? 'months' : 'trainings'}
-                                        </Text>
+                                {sessions.length > 0 && (
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15}}>
+                                        <View style={{flexDirection: 'row', flex: 1}}>
+                                            <Image source={SwipeIcon} style={{width: 20, height: 20}}/>
+                                            <Text style={{marginLeft: 5, color: '#6B6B6B', fontSize: 12, flex: 1, flexWrap: 'wrap'}}>
+                                                swipe to view past and future {selectedTab === HomeTab.Month ? 'months' : 'trainings'}
+                                            </Text>
+                                        </View>
+                                        {/*<Toggle setSelectedTab={setSelectedTab} selectedTab={selectedTab}/>*/}
                                     </View>
-                                    {/*<Toggle setSelectedTab={setSelectedTab} selectedTab={selectedTab}/>*/}
-                                </View>
+                                )}
 
                                 <Progress sessions={sessions}/>
                             </>

@@ -10,9 +10,12 @@ export const CoachScreenNames = {
     Home: 'CoachHome',
     Players: 'CoachPlayers',
     Drills: 'CoachDrills',
+    Drill: 'CoachDrill',
     Profile: 'CoachProfile',
 
-    PlayersNavigator: 'PlayersNavigator',
+    PlayersNavigator: 'CoachPlayersNavigator',
+    ReviewTrainings: 'CoachReviewTrainings',
+    CreateTrainingPlans: 'CoachCreateTrainingPlans',
 
     CreateOrEditDrill: 'CoachCreateOrEditDrill',
     EditDrillName: 'CoachEditDrillName',
@@ -29,6 +32,8 @@ export const CoachScreenNames = {
 
     Session: 'CoachSession',
     DrillFeedback: 'CoachDrillFeedback',
+
+    SessionComplete: 'CoachSessionComplete',
 
     EditAbout: 'CoachEditAbout',
     EditEmail: 'CoachEditEmail',
@@ -48,6 +53,7 @@ export const PlayerScreenNames = {
     Session: 'PlayerSession',
     DrillSubmission: 'PlayerDrillSubmission',
     SessionComplete: 'PlayerSessionComplete',
+    TrainingPlanComplete: 'PlayerTrainingPlanComplete',
 
     Drill: 'PlayerDrill',
 
@@ -56,6 +62,7 @@ export const PlayerScreenNames = {
     EditAvailability: 'PlayerEditAvailability',
     EditEmail: 'PlayerEditEmail',
     EditName: 'PlayerEditName',
+    EditHeadshot: 'PlayerEditHeadshot',
 
     Coach: 'PlayerCoach',
 

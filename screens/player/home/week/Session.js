@@ -13,7 +13,7 @@ import {Colors} from "../../../../constants/colors";
 import Equipment from "../../../../components/Equipment";
 import {useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../../../ScreenNames";
-import {compareDates, getCurrentDate, getHumanReadableDate} from "../../../../util/dateUtil";
+import {DrillVideoTab} from "../../../../constants/drillVideoTab";
 
 const ActionButton = ({session, canSubmit}) => {
 
@@ -22,10 +22,12 @@ const ActionButton = ({session, canSubmit}) => {
     let backgroundColor;
     let color;
     let text;
+    let defaultSessionSelectedTab = DrillVideoTab.Demo;
     if (doesEveryDrillHaveSubmission(session) && doesAnyDrillHaveFeedback(session)) {
         backgroundColor = 'black';
         color = 'white';
-        text = 'View feedback'
+        text = 'View feedback';
+        defaultSessionSelectedTab = DrillVideoTab.Feedback;
     } else if (doesEveryDrillHaveSubmission(session)) {
         backgroundColor = '#EEECEC';
         color = 'black';
@@ -49,6 +51,7 @@ const ActionButton = ({session, canSubmit}) => {
     const startSession = () => {
         navigation.navigate(PlayerScreenNames.Session, {
             session: session,
+            selectedTab: defaultSessionSelectedTab
         });
     }
 

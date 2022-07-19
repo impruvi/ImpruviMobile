@@ -1,4 +1,4 @@
-import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
+import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import useAuth from "../../../hooks/useAuth";
 import HeaderCenter from "../../../components/HeaderCenter";
@@ -6,9 +6,9 @@ import FormOption from "../../../components/FormOption";
 import {PlayerScreenNames} from "../../ScreenNames";
 import {Colors} from "../../../constants/colors";
 import {useNavigation} from "@react-navigation/native";
-import {convertDayOfWeekToAbbreviatedDisplayValue} from "../../../constants/dayOfWeek";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
+import HeadshotChip from "../../../components/HeadshotChip";
 
 
 const SettingsScreen = () => {
@@ -24,8 +24,14 @@ const SettingsScreen = () => {
                           onLeftPress={navigation.goBack}/>
 
             <ScrollView style={{flex: 1}}>
-                <View style={{paddingHorizontal: 15}}>
-                    <Text style={styles.sectionHeader}>Overview</Text>
+                <View style={{width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 20}}>
+                    <HeadshotChip image={player.headshot} size={80} firstName={player.firstName} lastName={player.lastName}/>
+                    <TouchableOpacity style={{padding: 10}} onPress={() => navigation.navigate(PlayerScreenNames.EditHeadshot, {
+                        headshot: player.headshot,
+                        player: player
+                    })}>
+                        <Text>Change photo</Text>
+                    </TouchableOpacity>
                 </View>
                 <FormOption title={'Name'}
                             onPress={() => navigation.navigate(PlayerScreenNames.EditName, {

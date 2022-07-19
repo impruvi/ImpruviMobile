@@ -1,6 +1,6 @@
 import {
-    Image,
     Keyboard,
+    KeyboardAvoidingView,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -15,11 +15,12 @@ import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../../../constants/colors";
 import {useState} from "react";
 import HeaderCenter from "../../../components/HeaderCenter";
+import CachedImage from "../../../components/CachedImage";
 
 
 const EditDrillSelectionDetailsScreen = ({route}) => {
 
-    const {drill, onSelectDrill, onRemoveDrill} = route.params;
+    const {drill, onSelectDrill} = route.params;
 
     const [notes, setNotes] = useState(drill.notes);
 
@@ -33,47 +34,36 @@ const EditDrillSelectionDetailsScreen = ({route}) => {
         navigation.goBack();
     }
 
-    const onRemove = () => {
-        onRemoveDrill(drill);
-        navigation.goBack();
-    }
-
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-            <HeaderCenter title={drill.name}
-                          right={<FontAwesomeIcon  icon={faXmarkLarge} size={20} />}
-                          onRightPress={navigation.goBack}/>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{flex: 1}}>
-                    <View style={{flexDirection: 'row', padding: 15, borderBottomWidth: 1, borderColor: Colors.Border}}>
-                        <View style={{flex: 1}}>
-                            <TextInput multiline={true}
-                                       placeholder={'Enter notes (ex. include number of repetitions, duration, tips etc.)'}
-                                       style={{height: 150, paddingRight: 10}}
-                                       value={notes}
-                                       onChangeText={setNotes}/>
-                        </View>
-                        <View style={{width: 100}}>
-                            <Image source={{uri: drill.demos.frontThumbnail.fileLocation}} style={{height: 150, width: 100}} />
+            <KeyboardAvoidingView style={{flex: 1}} behavior={'padding'}>
+                <HeaderCenter title={drill.name}
+                              right={<FontAwesomeIcon  icon={faXmarkLarge} size={20} />}
+                              onRightPress={navigation.goBack}/>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={{flex: 1}}>
+                        <View style={{flexDirection: 'row', padding: 15, borderBottomWidth: 1, borderColor: Colors.Border}}>
+                            <View style={{flex: 1}}>
+                                <TextInput multiline={true}
+                                           placeholder={'Enter notes (ex. include number of repetitions, duration, tips etc.)'}
+                                           style={{height: 150, paddingRight: 10}}
+                                           value={notes}
+                                           onChangeText={setNotes}/>
+                            </View>
+                            <View style={{width: 100}}>
+                                <CachedImage source={{uri: drill.demos.frontThumbnail.fileLocation}} style={{height: 150, width: 100}} />
+                            </View>
                         </View>
                     </View>
-                </View>
 
-            </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
 
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', padding: 15}}>
-                {!!onRemoveDrill ? (
-                    <TouchableOpacity onPress={onRemove} style={styles.buttonSecondary}>
-                        <Text style={{fontWeight: '600'}}>Remove</Text>
+                <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end', padding: 15}}>
+                    <TouchableOpacity onPress={onAdd} style={styles.button}>
+                        <Text style={{color: 'white', fontWeight: '600'}}>Add</Text>
                     </TouchableOpacity>
-                ) : (
-                    <View style={{width: '49%'}}></View>
-                )}
-                <TouchableOpacity onPress={onAdd} style={styles.button}>
-                    <Text style={{color: 'white', fontWeight: '600'}}>{!!onRemoveDrill ? 'Update' : 'Add'}</Text>
-                </TouchableOpacity>
-            </View>
-
+                </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }

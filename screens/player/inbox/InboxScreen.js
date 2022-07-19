@@ -1,4 +1,4 @@
-import {FlatList, Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import HeaderCenter from "../../../components/HeaderCenter";
 import useHttpClient from "../../../hooks/useHttpClient";
 import {useCallback, useEffect, useState} from 'react';
@@ -10,6 +10,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../../ScreenNames";
 import useInboxViewDate from "../../../hooks/useInboxViewDate";
 import Reload from "../../../components/Reload";
+import HeadshotChip from "../../../components/HeadshotChip";
 
 const InboxEntryType = {
     NewSessionAdded: 'NEW_SESSION_ADDED',
@@ -77,9 +78,9 @@ const InboxScreen = () => {
             setEntries(inboxEntries.map(entry => {
                 let displayText;
                 if (entry.type === InboxEntryType.NewSessionAdded) {
-                    displayText = `${entry.actor.name} added a new session to your training plan`;
+                    displayText = `${entry.actor.firstName} added a new session to your training plan`;
                 } else if (entry.type === InboxEntryType.FeedbackProvided) {
-                    displayText = `${entry.actor.name} left feedback on your session`;
+                    displayText = `${entry.actor.firstName} left feedback on your session`;
                 } else if (entry.type === InboxEntryType.Message) {
                     displayText = entry.metadata.messageContent;
                 }
@@ -134,8 +135,8 @@ const InboxScreen = () => {
                                       showsVerticalScrollIndicator={false}
                                       renderItem={({item}) => (
                                           <TouchableOpacity style={{flexDirection: 'row', marginBottom: 20, alignItems: 'center'}} onPress={() => navigateToSession(item.metadata.sessionNumber)}>
-                                              <Image source={{uri: item.actor.image}} style={{width: 45, height: 45, borderRadius: 45, marginRight: 15}}/>
-                                              <View style={{flex: 1, justifyContent: 'flex-start'}}>
+                                              <HeadshotChip image={{fileLocation: item.actor.image}} firstName={item.actor.firstName} lastName={item.actor.lastName} size={45}/>
+                                              <View style={{flex: 1, justifyContent: 'flex-start', marginLeft: 10}}>
                                                   <Text style={{flex: 1, flexWrap: 'wrap', fontWeight: '500'}}>{item.displayText}</Text>
                                                   <Text style={{marginTop: 5, color: '#878787', fontWeight: '500', fontSize: 12}}>{item.displayDate}</Text>
                                               </View>

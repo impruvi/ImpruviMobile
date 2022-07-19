@@ -1,7 +1,6 @@
-import {ActivityIndicator, Image, Text, View} from 'react-native';
+import {ActivityIndicator, Image, Text, TouchableOpacity, View} from 'react-native';
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../../util/drillUtil";
-import {Video} from "expo-av";
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useState} from "react";
 import {LinearGradient} from "expo-linear-gradient";
 import {CoachScreenNames} from "../../../screens/ScreenNames";
 import {UserType} from "../../../constants/userType";
@@ -11,12 +10,14 @@ import SubmitButton from "../SubmitButton";
 import Footer from "../Footer";
 import {isLastDrillInSession} from "../../../util/sessionUtil";
 import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
+import CachedVideo from "../../CachedVideo";
+import InfoSheet from "../demo/InfoSheet";
 
 const FeedbackVideo = ({session, drill, isVisible}) => {
 
     const [feedbackStatus, setFeedbackStatus] = useState({});
+    const [isInfoShowing, setIsInfoShowing] = useState(false);
 
-    const feedbackRef = useRef();
     const {userType} = useAuth();
     const [isFocused, setIsFocused] = useState(true);
 
@@ -47,8 +48,7 @@ const FeedbackVideo = ({session, drill, isVisible}) => {
     return (
         <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {(isVisible || feedbackStatus.isLoaded) && doesDrillHaveFeedback(drill) && (
-                <Video
-                    ref={feedbackRef}
+                <CachedVideo
                     style={!isVisible ? {display: 'none'} : {flex: 1}}
                     source={{
                         uri: drill.feedback.fileLocation,
@@ -84,6 +84,16 @@ const FeedbackVideo = ({session, drill, isVisible}) => {
                             <Text style={{color: 'white', textAlign: 'center', fontSize: 12}}>Swipe up for next drill</Text>
                         </View>
                     )}
+
+                    <Text style={{color: 'white', fontWeight: '600', marginBottom: 5, fontSize: 16}}>
+                        {drill.name} {!!session && `(drill ${session.drills.indexOf(drill) + 1}/${session.drills.length})`}
+                    </Text>
+                    <Text style={{color: 'white'}}>
+                        {drill.description.replace(/\n|\r/g, "")}
+                    </Text>
+                    <TouchableOpacity style={{paddingVertical: 5}} onPress={() => setIsInfoShowing(true)}>
+                        <Text style={{color: 'white', textDecorationLine: 'underline'}}>See more</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{width: '100%', alignItems: 'center'}}>
                     {shouldShowSubmitFeedbackButton() && (
@@ -97,6 +107,10 @@ const FeedbackVideo = ({session, drill, isVisible}) => {
                     )}
                 </View>
             </Footer>
+
+            <InfoSheet isOpen={isInfoShowing}
+                       onClose={() => setIsInfoShowing(false)}
+                       drill={drill}/>
         </View>
     )
 }

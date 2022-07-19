@@ -1,8 +1,9 @@
 import {FlatList, View} from "react-native";
-import {doesEveryDrillHaveSubmission, isNextSession} from "../../../../util/sessionUtil";
+import {doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
 import Session from "./Session";
 import {useEffect, useRef, useState} from "react";
-import Header from "./Header";
+import EmptyPlaceholder from "../../../../components/EmptyPlaceholder";
+import Box from "../../../../components/Box";
 
 
 const Week = ({sessions, visible}) => {
@@ -43,12 +44,29 @@ const Week = ({sessions, visible}) => {
         setCurrentSession(sessions[initialSessionIndex]);
     }, []);
 
+    if (sessions.length === 0) {
+        return (
+            <View style={{width: '100%', paddingHorizontal: 15, marginBottom: 10}}>
+                <Box>
+                    <EmptyPlaceholder text={'You have no sessions'} />
+                </Box>
+            </View>
+        )
+    }
+
     if (!currentSession) {
         return <View />;
     }
 
     return (
         <View style={visible ? {flexDirection: 'column-reverse'} : {display: 'none'}}>
+            {sessions.length === 0 && (
+                <View style={{width: '100%', paddingHorizontal: 15, marginBottom: 10}}>
+                    <Box>
+                        <EmptyPlaceholder text={'You have no sessions'} />
+                    </Box>
+                </View>
+            )}
             <FlatList ref={listRef}
                       initialScrollIndex={currentSessionIndex}
                       onScrollToIndexFailed={info => {

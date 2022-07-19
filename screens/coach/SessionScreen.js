@@ -8,12 +8,14 @@ import useHttpClient from "../../hooks/useHttpClient";
 import {StatusBar} from "expo-status-bar";
 import DrillVideoTabs from "../../components/drill-videos/DrillVideoTabs";
 import {LinearGradient} from "expo-linear-gradient";
+import {doesEveryDrillHaveFeedback} from "../../util/sessionUtil";
+import {CoachScreenNames} from "../ScreenNames";
 
 
 const SessionScreen = ({route}) => {
     const [session, setSession] = useState(route.params.session);
     const [currentDrillId, setCurrentDrillId] = useState();
-    const [selectedTab, setSelectedTab] = useState(DrillVideoTab.Demo);
+    const [selectedTab, setSelectedTab] = useState(!!route.params.tab ? route.params.tab : DrillVideoTab.Demo);
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
@@ -23,6 +25,11 @@ const SessionScreen = ({route}) => {
             httpClient.getPlayerSessions(session.playerId).then(sessions => {
                 const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
                 setSession(matchingSession);
+
+                const justCompleted = !doesEveryDrillHaveFeedback(session) && doesEveryDrillHaveFeedback(matchingSession);
+                if (justCompleted) {
+                    navigation.navigate(CoachScreenNames.SessionComplete);
+                }
             });
         }, [httpClient, navigation])
     );

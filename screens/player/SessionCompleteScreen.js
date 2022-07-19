@@ -4,16 +4,41 @@ import {PlayerScreenNames} from "../ScreenNames";
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
+import {useEffect, useState} from 'react';
+import useHttpClient from "../../hooks/useHttpClient";
+import useAuth from "../../hooks/useAuth";
+import {doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
 
 const SessionCompleteScreen = () => {
 
+    const [hasCompletedAllTrainings, setHasCompletedAllTrainings] = useState(false);
+
+    const {player} = useAuth();
     const navigation = useNavigation();
+    const {httpClient} = useHttpClient();
+
+    const getHasCompletedAllTrainings = async () => {
+        const sessions = await httpClient.getPlayerSessions(player.playerId);
+        setHasCompletedAllTrainings(sessions.filter(session => !doesEveryDrillHaveSubmission(session)).length === 0);
+    }
+
+    const onClose = () => {
+        if (hasCompletedAllTrainings) {
+            navigation.navigate(PlayerScreenNames.TrainingPlanComplete);
+        } else {
+            navigation.navigate(PlayerScreenNames.Home)
+        }
+    }
+
+    useEffect(() => {
+        getHasCompletedAllTrainings();
+    }, []);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: Colors.Primary}}>
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20}}>
                 <TouchableOpacity style={{position: 'absolute', top: 0, left: 0, padding: 20}}
-                                  onPress={() => navigation.navigate(PlayerScreenNames.Home)} >
+                                  onPress={onClose} >
                     <FontAwesomeIcon icon={faXmarkLarge} size={25} style={{color: 'white'}}/>
                 </TouchableOpacity>
 

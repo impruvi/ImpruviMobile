@@ -1,7 +1,6 @@
-import React, {useRef, useState} from "react";
-import {ActivityIndicator, Image, Text, View} from "react-native";
+import React, {useState} from "react";
+import {ActivityIndicator, Image, Text, TouchableOpacity, View} from "react-native";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../../util/drillUtil";
-import {Video} from "expo-av";
 import {LinearGradient} from "expo-linear-gradient";
 import Footer from "../Footer";
 import SubmitButton from "../SubmitButton";
@@ -11,14 +10,16 @@ import useAuth from "../../../hooks/useAuth";
 import {UserType} from "../../../constants/userType";
 import {isLastDrillInSession} from "../../../util/sessionUtil";
 import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
+import CachedVideo from "../../CachedVideo";
+import InfoSheet from "../demo/InfoSheet";
 
 const SubmissionVideo = ({isVisible, drill, session}) => {
 
     const [submissionStatus, setSubmissionStatus] = useState({});
+    const [isInfoShowing, setIsInfoShowing] = useState(false);
 
     const navigation = useNavigation();
     const {userType} = useAuth();
-    const submissionRef = useRef();
 
     const shouldShowActivityIndicator = () => {
         if (!isVisible) {
@@ -40,8 +41,7 @@ const SubmissionVideo = ({isVisible, drill, session}) => {
     return (
         <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {(isVisible || submissionStatus.isLoaded) && doesDrillHaveSubmission(drill) && (
-                <Video
-                    ref={submissionRef}
+                <CachedVideo
                     style={!isVisible ? {display: 'none'} : {flex: 1}}
                     source={{
                         uri: drill.submission.fileLocation,
@@ -77,6 +77,16 @@ const SubmissionVideo = ({isVisible, drill, session}) => {
                             <Text style={{color: 'white', textAlign: 'center', fontSize: 12}}>Swipe up for next drill</Text>
                         </View>
                     )}
+
+                    <Text style={{color: 'white', fontWeight: '600', marginBottom: 5, fontSize: 16}}>
+                        {drill.name} {!!session && `(drill ${session.drills.indexOf(drill) + 1}/${session.drills.length})`}
+                    </Text>
+                    <Text style={{color: 'white'}}>
+                        {drill.description.replace(/\n|\r/g, "")}
+                    </Text>
+                    <TouchableOpacity style={{paddingVertical: 5}} onPress={() => setIsInfoShowing(true)}>
+                        <Text style={{color: 'white', textDecorationLine: 'underline'}}>See more</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{width: '100%', alignItems: 'center'}}>
                     {shouldShowSubmitButton() && (
@@ -87,6 +97,11 @@ const SubmissionVideo = ({isVisible, drill, session}) => {
                     )}
                 </View>
             </Footer>
+
+            <InfoSheet isOpen={isInfoShowing}
+                       onClose={() => setIsInfoShowing(false)}
+                       drill={drill}/>
+
         </View>
     )
 }

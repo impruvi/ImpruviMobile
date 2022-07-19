@@ -1,14 +1,18 @@
-import {SafeAreaView, TouchableOpacity, View} from "react-native";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faHouse, faListUl, faUser, faUsers} from "@fortawesome/pro-light-svg-icons";
+import {Image, StyleSheet, Text, TouchableWithoutFeedback, View} from "react-native";
 import React from "react";
 import {CoachScreenNames} from "../../screens/ScreenNames";
-import {Colors} from "../../constants/colors";
+import DrillsGrid from '../../assets/icons/navigation/DrillsGridDark.png';
+import DrillsGridActive from '../../assets/icons/navigation/DrillsGridActiveDark.png';
+import Players from '../../assets/icons/navigation/PlayersDark.png';
+import PlayersActive from '../../assets/icons/navigation/PlayersActiveDark.png';
+import HomeDark from '../../assets/icons/navigation/HomeDark.png';
+import HomeActiveDark from '../../assets/icons/navigation/HomeActiveDark.png';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const TabBar = ({ state, descriptors, navigation }) => {
     return (
-        <View style={{paddingTop: 7}}>
-            <SafeAreaView style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <SafeAreaView edges={['bottom', 'left', 'right']}>
+            <View style={{paddingTop: 7, flexDirection: 'row', justifyContent: 'center'}}>
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key];
                     const label =
@@ -41,28 +45,66 @@ const TabBar = ({ state, descriptors, navigation }) => {
                     };
 
                     return (
-                        <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={{ width: 50, height: 50, marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }} key={label}>
-                            {label === CoachScreenNames.Home &&
-                                <FontAwesomeIcon icon={ faHouse } color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                            }
+                        <TouchableWithoutFeedback onPress={onPress} onLongPress={onLongPress} key={label}>
+                            <View style={{justifyContent: 'center', alignItems: 'center', width: 80, height: 50, marginHorizontal: 20}}>
+                                {label === CoachScreenNames.Home && isFocused &&
+                                    <>
+                                        <Image source={HomeActiveDark} style={styles.icon}/>
+                                        <Text style={styles.iconText} >Home</Text>
+                                    </>
+                                }
+                                {label === CoachScreenNames.Home && !isFocused &&
+                                    <>
+                                        <Image source={HomeDark} style={styles.icon}/>
+                                        <Text style={styles.iconText}>Home</Text>
+                                    </>
+                                }
 
-                            {label === CoachScreenNames.PlayersNavigator &&
-                                <FontAwesomeIcon icon={faUsers} color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                            }
+                                {label === CoachScreenNames.PlayersNavigator && isFocused &&
+                                    <>
+                                        <Image source={PlayersActive} style={styles.icon}/>
+                                        <Text style={styles.iconText}>Players</Text>
+                                    </>
+                                }
+                                {label === CoachScreenNames.PlayersNavigator && !isFocused &&
+                                    <>
+                                        <Image source={Players} style={styles.icon}/>
+                                        <Text style={styles.iconText}>Players</Text>
+                                    </>
+                                }
 
-                            {label === CoachScreenNames.Drills &&
-                                <FontAwesomeIcon icon={faListUl} color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                            }
-
-                            {label === CoachScreenNames.Profile &&
-                                <FontAwesomeIcon icon={faUser} color={isFocused ? Colors.Primary : 'black'} size={25}/>
-                            }
-                        </TouchableOpacity>
+                                {label === CoachScreenNames.Drills && isFocused &&
+                                    <>
+                                        <Image source={DrillsGridActive} style={styles.icon}/>
+                                        <Text style={styles.iconText}>Drills</Text>
+                                    </>
+                                }
+                                {label === CoachScreenNames.Drills && !isFocused &&
+                                    <>
+                                        <Image source={DrillsGrid} style={styles.icon}/>
+                                        <Text style={styles.iconText}>Drills</Text>
+                                    </>
+                                }
+                            </View>
+                        </TouchableWithoutFeedback>
                     );
                 })}
-            </SafeAreaView>
-        </View>
+            </View>
+        </SafeAreaView>
     );
 };
+
+const styles = StyleSheet.create({
+    icon: {
+        height: 20,
+        width: 25,
+        resizeMode: 'contain'
+    },
+    iconText: {
+        marginTop: 5,
+        fontWeight: '500',
+        fontSize: 11
+    }
+});
 
 export default TabBar;

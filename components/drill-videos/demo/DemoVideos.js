@@ -1,7 +1,6 @@
 import {ActivityIndicator, Alert, Image, Text, TouchableOpacity, View} from "react-native";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {DrillVideoAngle} from "../../../constants/drillVideoAngle";
-import {Video} from "expo-av";
 import {doesDrillHaveSubmission} from "../../../util/drillUtil";
 import {useNavigation} from "@react-navigation/native";
 import SideOption from "./SideOption";
@@ -19,6 +18,7 @@ import SwipeIconYellow from '../../../assets/icons/SwipeYellow.png';
 import HelpPopup from "./help/HelpPopup";
 import {doesAnyDrillHaveSubmission, isFirstDrillInSession, isLastDrillInSession} from "../../../util/sessionUtil";
 import Footer from "../Footer";
+import CachedVideo from "../../CachedVideo";
 
 
 const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
@@ -36,9 +36,6 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
 
     const navigation = useNavigation();
     const {userType} = useAuth();
-    const frontRef = useRef();
-    const sideRef = useRef();
-    const closeRef = useRef();
 
     const onChangePlaybackRate = () => {
         if (playbackRate === .5) {
@@ -103,8 +100,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
     return (
         <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {((isVisible && selectedAngle === DrillVideoAngle.Front) || frontStatus.isLoaded) && (
-                <Video
-                    ref={frontRef}
+                <CachedVideo
                     style={selectedAngle === DrillVideoAngle.Front ? {flex: 1} : {display: 'none'}}
                     source={{
                         uri: drill.demos.front.fileLocation,
@@ -118,8 +114,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                 />
             )}
             {((isVisible && selectedAngle === DrillVideoAngle.Side) || sideStatus.isLoaded) && (
-                <Video
-                    ref={sideRef}
+                <CachedVideo
                     style={selectedAngle === DrillVideoAngle.Side ? {flex: 1} : {display: 'none'}}
                     source={{
                         uri: drill.demos.side.fileLocation,
@@ -133,8 +128,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                 />
             )}
             {((isVisible && selectedAngle === DrillVideoAngle.Close) || closeStatus.isLoaded) && (
-                <Video
-                    ref={closeRef}
+                <CachedVideo
                     style={selectedAngle === DrillVideoAngle.Close ? {flex: 1} : {display: 'none'}}
                     source={{
                         uri: drill.demos.close.fileLocation,
@@ -212,8 +206,12 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                 )}
             </Footer>
 
-            <InfoSheet isOpen={isInfoShowing} onClose={() => setIsInfoShowing(false)} drill={drill}/>
-            <HelpPopup visible={isHelpPopupOpen} close={() => setIsHelpPopupOpen(false)} shouldIncludeWelcome={isFirstSession && !doesAnyDrillHaveSubmission(session)}/>
+            <InfoSheet isOpen={isInfoShowing}
+                       onClose={() => setIsInfoShowing(false)}
+                       drill={drill}/>
+            <HelpPopup visible={isHelpPopupOpen}
+                       close={() => setIsHelpPopupOpen(false)}
+                       shouldIncludeWelcome={isFirstSession && !doesAnyDrillHaveSubmission(session)}/>
 
         </View>
     )

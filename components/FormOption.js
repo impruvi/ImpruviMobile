@@ -1,7 +1,8 @@
-import {Image, StyleSheet, Text, TouchableHighlight, View} from "react-native";
+import {StyleSheet, Text, TouchableHighlight, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleRight, faCircleExclamation} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../constants/colors";
+import CachedImage from "./CachedImage";
 
 const FormOption = ({onPress, title, textValue, imageValue, placeholder, errorMessage, titleColor, shouldHideArrow}) => {
 
@@ -25,7 +26,7 @@ const FormOption = ({onPress, title, textValue, imageValue, placeholder, errorMe
                                 <Text>{textValue.length > 33 ? `${textValue.substring(0,33).replace(/\n/g, ' ')}...` : textValue.replace('\n', ' ')}</Text>
                             )}
                             {!!imageValue && (
-                                <Image source={{uri: `${imageValue.uri}?${Date.now()}`}} style={{height: 60, width: 40}} />
+                                <CachedImage source={{uri: imageValue.uri}} style={{height: 60, width: 40}}/>
                             )}
                         </>
                     )}
