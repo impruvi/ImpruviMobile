@@ -2,10 +2,10 @@ import React, {useEffect, useRef, useState} from "react";
 import shorthash from "shorthash";
 import * as FileSystem from "expo-file-system";
 import {Video} from "expo-av";
+import {addFileCacheMapping, getFileCacheMapping} from "../file-cache/fileCache";
 
 const CachedVideo = ({source, style, resizeMode, shouldPlay, isLooping, playbackRate, isMuted, onPlaybackStatusUpdate}) => {
 
-    const url = source.uri;
     const [uri, setUri] = useState();
     const ref = useRef();
 
@@ -14,17 +14,20 @@ const CachedVideo = ({source, style, resizeMode, shouldPlay, isLooping, playback
     }, []);
 
     const Cached = async () => {
-        const name = shorthash.unique(url) + '.mov';
-        const path = `${FileSystem.cacheDirectory}${name}`;
-        const video = await FileSystem.getInfoAsync(path);
+        const localUri = await getFileCacheMapping(source.uri);
 
-        if (video.exists) {
-            setUri(video.uri);
-            return;
+        if (!!localUri) {
+            const f = await FileSystem.getInfoAsync(localUri);
+            if (f.exists) { // check that file was not cleared out of the cache
+                setUri(localUri);
+                return;
+            }
         }
 
-        const newImage = await FileSystem.downloadAsync(url, path);
-        setUri(newImage.uri);
+        const path = `${FileSystem.cacheDirectory}${shorthash.unique(source.uri)}.mov`;
+        const file = await FileSystem.downloadAsync(source.uri, path);
+        await addFileCacheMapping(source.uri, file.uri);
+        setUri(file.uri);
     }
 
     return (

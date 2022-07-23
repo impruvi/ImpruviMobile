@@ -1,6 +1,6 @@
 import {FlatList, View} from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import DrillVideos from "../../components/drill-videos/DrillVideos";
 import VideoBackIcon from "../../components/VideoBackIcon";
 import {DrillVideoTab} from "../../constants/drillVideoTab";
@@ -10,6 +10,8 @@ import DrillVideoTabs from "../../components/drill-videos/DrillVideoTabs";
 import {LinearGradient} from "expo-linear-gradient";
 import {doesEveryDrillHaveFeedback} from "../../util/sessionUtil";
 import {CoachScreenNames} from "../ScreenNames";
+import useLongRequest from "../../hooks/useLongRequest";
+import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
 
 
 const SessionScreen = ({route}) => {
@@ -17,28 +19,39 @@ const SessionScreen = ({route}) => {
     const [currentDrillId, setCurrentDrillId] = useState();
     const [selectedTab, setSelectedTab] = useState(!!route.params.tab ? route.params.tab : DrillVideoTab.Demo);
 
+    const {outstandingLongRequests} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-
-    useFocusEffect(
-        useCallback(() => {
-            httpClient.getPlayerSessions(session.playerId).then(sessions => {
-                const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
-                setSession(matchingSession);
-
-                const justCompleted = !doesEveryDrillHaveFeedback(session) && doesEveryDrillHaveFeedback(matchingSession);
-                if (justCompleted) {
-                    navigation.navigate(CoachScreenNames.SessionComplete);
-                }
-            });
-        }, [httpClient, navigation])
-    );
 
     const viewableItemsChanged = useRef(({viewableItems}) => {
         setCurrentDrillId(viewableItems[0].item.drillId);
     }).current;
 
     const viewConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
+
+
+    const getSessionLazy = () => {
+        httpClient.getPlayerSessions(session.playerId).then(sessions => {
+            const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
+            setSession(matchingSession);
+
+            const justCompleted = !doesEveryDrillHaveFeedback(session) && doesEveryDrillHaveFeedback(matchingSession);
+            if (justCompleted) {
+                navigation.navigate(CoachScreenNames.SessionComplete);
+            }
+        });
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            getSessionLazy();
+        }, [httpClient, navigation])
+    );
+
+    useEffect(() => {
+        getSessionLazy();
+    }, [outstandingLongRequests])
+
 
     return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
@@ -70,7 +83,10 @@ const SessionScreen = ({route}) => {
                 )}
             />
 
-            <DrillVideoTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
+            <DrillVideoTabs selectedTab={selectedTab}
+                            setSelectedTab={setSelectedTab}
+                            hasSubmission={doesDrillHaveSubmission(session.drills.find(drill => drill.drillId === currentDrillId))}
+                            hasFeedback={doesDrillHaveFeedback(session.drills.find(drill => drill.drillId === currentDrillId))}/>
             <VideoBackIcon onPress={() => navigation.goBack()} />
 
             <StatusBar style="light" />

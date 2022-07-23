@@ -12,8 +12,10 @@ import {isLastDrillInSession} from "../../../util/sessionUtil";
 import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 import CachedVideo from "../../CachedVideo";
 import InfoSheet from "../demo/InfoSheet";
+import useLongRequest from "../../../hooks/useLongRequest";
+import {LongRequestType} from "../../../model/longRequest";
 
-const SubmissionVideo = ({isVisible, drill, session}) => {
+const SubmissionVideo = ({isVisible, drill, session, isSubmitting}) => {
 
     const [submissionStatus, setSubmissionStatus] = useState({});
     const [isInfoShowing, setIsInfoShowing] = useState(false);
@@ -34,8 +36,13 @@ const SubmissionVideo = ({isVisible, drill, session}) => {
 
     const shouldShowSubmitButton = () => {
         return userType === UserType.Coach
+            && !isSubmitting
             && doesDrillHaveSubmission(drill)
             && !doesDrillHaveFeedback(drill);
+    }
+
+    const shouldShowSubmittingButton = () => {
+        return isSubmitting;
     }
 
     return (
@@ -94,6 +101,9 @@ const SubmissionVideo = ({isVisible, drill, session}) => {
                             session: session,
                             drillId: drill.drillId
                         })} text={'Submit feedback'} />
+                    )}
+                    {shouldShowSubmittingButton() && (
+                        <Text style={{color: 'white', fontWeight: '600'}}>Submitting...</Text>
                     )}
                 </View>
             </Footer>

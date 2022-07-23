@@ -4,12 +4,11 @@ import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useState} from 'react';
-import Loader from "../../../components/Loader";
-import Reload from "../../../components/Reload";
 import {StatusBar} from "expo-status-bar";
 import {CoachScreenNames} from '../../ScreenNames';
 import {Colors} from '../../../constants/colors';
-import DrillList from "../../../components/DrillList";
+import DrillList from "../../../components/drill-list/DrillList";
+import useLongRequest from "../../../hooks/useLongRequest";
 
 const DrillsScreen = () => {
 
@@ -17,6 +16,7 @@ const DrillsScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
 
+    const {outstandingLongRequests} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {coach} = useAuth();
@@ -43,6 +43,10 @@ const DrillsScreen = () => {
     useEffect(() => {
         getDrillsForCoach();
     }, []);
+
+    useEffect(() => {
+        getDrillsForCoachLazy();
+    }, [outstandingLongRequests]);
 
     useFocusEffect(
         useCallback(() => {

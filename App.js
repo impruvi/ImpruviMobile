@@ -11,6 +11,7 @@ import * as Notifications from 'expo-notifications';
 import React, {useEffect, useRef,} from 'react';
 import {LogBox} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {LongRequestProvider} from "./hooks/useLongRequest";
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -62,9 +63,11 @@ export default function App() {
                           <ErrorProvider>
                               <OnboardingProvider>
                                   <HttpClientProvider>
-                                      <PushProvider>
-                                          <Navigator />
-                                      </PushProvider>
+                                      <LongRequestProvider>
+                                          <PushProvider>
+                                              <Navigator />
+                                          </PushProvider>
+                                      </LongRequestProvider>
                                   </HttpClientProvider>
                               </OnboardingProvider>
                           </ErrorProvider>

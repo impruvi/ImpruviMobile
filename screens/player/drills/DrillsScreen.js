@@ -3,7 +3,7 @@ import {StatusBar} from "expo-status-bar";
 import useHttpClient from "../../../hooks/useHttpClient";
 import {useCallback, useEffect, useState} from 'react';
 import useAuth from "../../../hooks/useAuth";
-import DrillList from "../../../components/DrillList";
+import DrillList from "../../../components/drill-list/DrillList";
 import {PlayerScreenNames} from "../../ScreenNames";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useError from "../../../hooks/useError";

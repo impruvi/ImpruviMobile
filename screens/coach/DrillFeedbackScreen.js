@@ -7,13 +7,16 @@ import {CameraType} from "expo-camera/build/Camera.types";
 import useHttpClient from "../../hooks/useHttpClient";
 import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
+import {LongRequest, LongRequestType} from "../../model/longRequest";
+import useLongRequest from "../../hooks/useLongRequest";
+import {generateThumbnail} from "../../util/thumbnailUtil";
 
 const DrillFeedbackScreen = ({route}) => {
     const [video, setVideo] = useState();
     const {setError} = useError();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const {httpClient} = useHttpClient();
+    const {executeLongRequest} = useLongRequest();
     const navigation = useNavigation();
     const {coach} = useAuth();
     const {session, drillId} = route.params;
@@ -21,13 +24,15 @@ const DrillFeedbackScreen = ({route}) => {
     const onSubmit = async () => {
         try {
             setIsSubmitting(true);
-            await httpClient.createFeedback({
+            const input = {
                 coachId: coach.coachId,
                 playerId: session.playerId,
                 sessionNumber: session.sessionNumber,
                 drillId: drillId,
                 video: video
-            });
+            };
+            const thumbnail = await generateThumbnail(video);
+            executeLongRequest(new LongRequest(LongRequestType.CreateFeedback, {drillId: drillId, thumbnail: thumbnail}, input))
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

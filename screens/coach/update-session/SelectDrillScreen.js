@@ -2,7 +2,7 @@ import {SafeAreaView, Text, View} from 'react-native';
 import {CoachScreenNames} from "../../ScreenNames";
 import Loader from "../../../components/Loader";
 import Reload from "../../../components/Reload";
-import DrillList from "../../../components/DrillList";
+import DrillList from "../../../components/drill-list/DrillList";
 import {StatusBar} from "expo-status-bar";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../../hooks/useHttpClient";

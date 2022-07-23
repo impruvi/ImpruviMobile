@@ -21,9 +21,8 @@ import Footer from "../Footer";
 import CachedVideo from "../../CachedVideo";
 
 
-const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
+const DemoVideos = ({session, drill, isVisible, canSubmit, isSubmitting}) => {
 
-    const [hasAutoOpenedHelpPopup, setHasAutoOpenedHelpPopup] = useState(false);
     const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
 
     const [selectedAngle, setSelectedAngle] = useState(DrillVideoAngle.Front);
@@ -47,6 +46,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
 
     const shouldShowSubmitButton = () => {
         return !!session
+            && !isSubmitting
             && userType === UserType.Player
             && !doesDrillHaveSubmission(drill);
     }
@@ -55,6 +55,10 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
         return !!session
             && userType === UserType.Player
             && doesDrillHaveSubmission(drill);
+    }
+
+    const shouldShowSubmittingButton = () => {
+        return isSubmitting;
     }
 
     const isLoading = () => {
@@ -87,23 +91,13 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
         }
     }
 
-    useEffect(() => {
-        if (!session) {
-            return;
-        }
-        if (!hasAutoOpenedHelpPopup && isVisible && isFirstDrillInSession(drill, session) && isFirstSession && !isLoading() && !doesAnyDrillHaveSubmission(session)) {
-            setIsHelpPopupOpen(isFirstSession);
-            setHasAutoOpenedHelpPopup(true);
-        }
-    }, [isVisible, isFirstSession, frontStatus, sideStatus, closeStatus]);
-
     return (
         <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
             {((isVisible && selectedAngle === DrillVideoAngle.Front) || frontStatus.isLoaded) && (
                 <CachedVideo
                     style={selectedAngle === DrillVideoAngle.Front ? {flex: 1} : {display: 'none'}}
                     source={{
-                        uri: drill.demos.front.fileLocation,
+                        uri: drill.demos?.front?.fileLocation,
                     }}
                     resizeMode="cover"
                     rate={playbackRate}
@@ -117,7 +111,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                 <CachedVideo
                     style={selectedAngle === DrillVideoAngle.Side ? {flex: 1} : {display: 'none'}}
                     source={{
-                        uri: drill.demos.side.fileLocation,
+                        uri: drill.demos?.side.fileLocation,
                     }}
                     resizeMode="cover"
                     rate={playbackRate}
@@ -131,7 +125,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                 <CachedVideo
                     style={selectedAngle === DrillVideoAngle.Close ? {flex: 1} : {display: 'none'}}
                     source={{
-                        uri: drill.demos.close.fileLocation,
+                        uri: drill.demos?.close.fileLocation,
                     }}
                     resizeMode="cover"
                     rate={playbackRate}
@@ -196,6 +190,9 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                         {shouldShowSubmittedButton() && (
                             <Text style={{color: 'white', fontWeight: '600'}}>Your video is submitted!</Text>
                         )}
+                        {shouldShowSubmittingButton() && (
+                            <Text style={{color: 'white', fontWeight: '600'}}>Submitting...</Text>
+                        )}
                         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
                             <SideOption icon={HelpIconWhite}
                                         text={'Help'}
@@ -210,8 +207,7 @@ const DemoVideos = ({session, drill, isVisible, isFirstSession, canSubmit}) => {
                        onClose={() => setIsInfoShowing(false)}
                        drill={drill}/>
             <HelpPopup visible={isHelpPopupOpen}
-                       close={() => setIsHelpPopupOpen(false)}
-                       shouldIncludeWelcome={isFirstSession && !doesAnyDrillHaveSubmission(session)}/>
+                       close={() => setIsHelpPopupOpen(false)}/>
 
         </View>
     )

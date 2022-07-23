@@ -1,22 +1,13 @@
-import {
-    FlatList,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useWindowDimensions,
-    View
-} from "react-native";
-import {Colors} from "../constants/colors";
-import {CategoryType, getCategoryDisplayValue} from "../constants/categoryType";
+import {FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Colors} from "../../constants/colors";
+import {CategoryType, getCategoryDisplayValue} from "../../constants/categoryType";
 import {useEffect, useRef, useState} from "react";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faMagnifyingGlass, faXmarkCircle} from "@fortawesome/pro-light-svg-icons";
-import Reload from "./Reload";
-import EmptyPlaceholder from "./EmptyPlaceholder";
-import CachedImage from "./CachedImage";
+import Reload from "../Reload";
+import EmptyPlaceholder from "../EmptyPlaceholder";
+import DrillListItem from "./DrillListItem";
 
 
 const AllCategory = 'ALL'
@@ -39,8 +30,6 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
     const [selectedCategory, setSelectedCategory] = useState(AllCategory);
 
     const searchInputRef = useRef();
-    const {width} = useWindowDimensions();
-
 
     const selectCategory = (category) => {
         setVisibleDrills(drills.filter(drill => category === AllCategory || drill.category === category).sort(compareDrills));
@@ -72,7 +61,6 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
         setVisibleDrills(drills.sort(compareDrills));
     }, [drills]);
 
-    const imageDimension = width / 3 - 16;
 
     return (
         <View style={{flex: 1}}>
@@ -129,15 +117,8 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
                                     showsVerticalScrollIndicator={false}
                                     numColumns={3}
                                     renderItem={({item}) => (
-                                        <TouchableOpacity style={{width: '32%', marginHorizontal: 2, marginBottom: 10}}
-                                                          activeOpacity={.6}
-                                                          onPress={() => onPressDrill(item)}>
-                                            {!!item?.demos?.frontThumbnail && (
-                                                <CachedImage source={{uri: item.demos.frontThumbnail.fileLocation}} style={{width: imageDimension, height: imageDimension, borderRadius: 10}} />
-                                            )}
-                                            <Text style={{fontWeight: '600', marginTop: 5}}>{item.name}</Text>
-                                            <Text style={{color: Colors.TextSecondary}}>{getCategoryDisplayValue(item.category)}</Text>
-                                        </TouchableOpacity>
+                                        <DrillListItem drill={item}
+                                                       onPress={() => onPressDrill(item)}/>
                                     )}/>
                             )}
                             {visibleDrills.length === 0 && (

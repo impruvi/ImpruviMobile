@@ -12,16 +12,17 @@ import {canSubmitForSession, doesAnyDrillHaveFeedback, doesEveryDrillHaveSubmiss
 import useAuth from "../../hooks/useAuth";
 import {PlayerScreenNames} from "../ScreenNames";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
+import useLongRequest from "../../hooks/useLongRequest";
 
 const SessionScreen = ({route}) => {
 
-    const [isFirstSession, setIsFirstSession] = useState(false);
     const [sessions, setSessions] = useState([]);
     const [session, setSession] = useState(route.params.session);
 
     const [currentDrillId, setCurrentDrillId] = useState(route.params.drillId);
     const [selectedTab, setSelectedTab] = useState(!!route.params.selectedTab ? route.params.selectedTab : DrillVideoTab.Demo);
 
+    const {outstandingLongRequests} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {player} = useAuth();
@@ -43,24 +44,31 @@ const SessionScreen = ({route}) => {
         }
     }
 
+    const getSessionLazy = () => {
+        httpClient.getPlayerSessions(player.playerId).then(sessions => {
+            setSessions(sessions);
+            const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
+            const justCompleted = !doesEveryDrillHaveSubmission(session) && doesEveryDrillHaveSubmission(matchingSession);
+            setSession(matchingSession);
+            if (justCompleted) {
+                navigation.navigate(PlayerScreenNames.SessionComplete);
+            }
+        });
+    }
+
     useFocusEffect(
         useCallback(() => {
-            httpClient.getPlayerSessions(player.playerId).then(sessions => {
-                setSessions(sessions);
-                const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
-                setIsFirstSession(!!matchingSession && matchingSession === sessions[0])
-                const justCompleted = !doesEveryDrillHaveSubmission(session) && doesEveryDrillHaveSubmission(matchingSession);
-                setSession(matchingSession);
-                if (justCompleted) {
-                    navigation.navigate(PlayerScreenNames.SessionComplete);
-                }
-            });
+            getSessionLazy();
         }, [httpClient, navigation])
     );
 
     useEffect(() => {
         markFeedbackAsViewed();
     }, []);
+
+    useEffect(() => {
+        getSessionLazy();
+    }, [outstandingLongRequests])
 
     return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
@@ -87,7 +95,6 @@ const SessionScreen = ({route}) => {
                             isLast={currentDrillId === session.drills[session.drills.length - 1].drillId}
                             isVisible={currentDrillId === item.drillId && isFocused}
                             selectedTab={selectedTab}
-                            isFirstSession={isFirstSession}
                             canSubmit={canSubmitForSession(sessions, session)}/>
                         <LinearGradient
                             colors={['rgba(0, 0, 0, .6)', 'transparent']}

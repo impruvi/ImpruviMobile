@@ -13,6 +13,8 @@ import useError from "../../../hooks/useError";
 import FormOption from "../../../components/FormOption";
 import HeaderCenter from "../../../components/HeaderCenter";
 import {generateThumbnail} from "../../../util/thumbnailUtil";
+import useLongRequest from "../../../hooks/useLongRequest";
+import {LongRequest, LongRequestType} from "../../../model/longRequest";
 
 const Fields = {
     Name: 'NAME',
@@ -47,6 +49,7 @@ const CreateOrEditDrillScreen = ({route}) => {
     const [hasSubmitted, setHasSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const {executeLongRequest} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {coach} = useAuth();
@@ -66,37 +69,33 @@ const CreateOrEditDrillScreen = ({route}) => {
             if (fieldsWithInvalidInput.length === 0) {
                 setIsSubmitting(true);
 
-                if (!!drill) {
-                    await httpClient.updateDrill({
-                        drill: drill,
-                        drillId: drill.drillId,
+                let currentDrill = !!drill ? drill : null;
+                if (!currentDrill) {
+                    currentDrill = await httpClient.createDrill({
                         coachId: coach.coachId,
                         name: name,
                         description: description,
                         category: category,
                         equipment: equipment,
-                        frontVideo: frontVideo,
-                        sideVideo: sideVideo,
-                        closeVideo: closeVideo,
-                        frontVideoThumbnail: frontVideoThumbnail,
-                        sideVideoThumbnail: sideVideoThumbnail,
-                        closeVideoThumbnail: closeVideoThumbnail
-                    });
-                } else {
-                    await httpClient.createDrill({
-                        coachId: coach.coachId,
-                        name: name,
-                        description: description,
-                        category: category,
-                        equipment: equipment,
-                        frontVideo: frontVideo,
-                        sideVideo: sideVideo,
-                        closeVideo: closeVideo,
-                        frontVideoThumbnail: frontVideoThumbnail,
-                        sideVideoThumbnail: sideVideoThumbnail,
-                        closeVideoThumbnail: closeVideoThumbnail
                     });
                 }
+
+                const input = {
+                    drill: {
+                        ...currentDrill,
+                        name: name,
+                        description: description,
+                        category: category,
+                        equipment: equipment,
+                    },
+                    frontVideo: frontVideo,
+                    sideVideo: sideVideo,
+                    closeVideo: closeVideo,
+                    frontVideoThumbnail: frontVideoThumbnail,
+                    sideVideoThumbnail: sideVideoThumbnail,
+                    closeVideoThumbnail: closeVideoThumbnail
+                };
+                executeLongRequest(new LongRequest(LongRequestType.UpdateDrill, {drillId: currentDrill.drillId}, input))
 
                 setIsSubmitting(false);
                 navigation.goBack();

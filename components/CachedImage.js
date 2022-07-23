@@ -3,6 +3,7 @@ import shorthash from 'shorthash';
 import * as FileSystem from 'expo-file-system';
 import {Image} from 'react-native';
 import {isRemoteMedia} from "../util/fileUtil";
+import {addFileCacheMapping, getFileCacheMapping} from "../file-cache/fileCache";
 
 const CachedImage = ({source, style}) => {
 
@@ -17,18 +18,21 @@ const CachedImage = ({source, style}) => {
             setUri(source.uri);
             return;
         }
-        const name = shorthash.unique(source.uri);
-        const path = `${FileSystem.cacheDirectory}${name}`;
-        const image = await FileSystem.getInfoAsync(path);
 
-        if (image.exists) {
-            setUri(image.uri);
-            return;
+        const localUri = await getFileCacheMapping(source.uri);
+
+        if (!!localUri) {
+            const f = await FileSystem.getInfoAsync(localUri);
+            if (f.exists) { // check that file was not cleared out of the cache
+                setUri(localUri);
+                return;
+            }
         }
 
-        const newImage = await FileSystem.downloadAsync(source.uri, path);
-
-        setUri(newImage.uri);
+        const path = `${FileSystem.cacheDirectory}${shorthash.unique(source.uri)}.mov`;
+        const file = await FileSystem.downloadAsync(source.uri, path);
+        await addFileCacheMapping(source.uri, file.uri);
+        setUri(file.uri);
     }
 
     return <Image style={style}
