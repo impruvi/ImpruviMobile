@@ -337,7 +337,7 @@ class HttpClient {
     }
 
     createSubmission = async ({playerId, sessionNumber, drillId, video}) => {
-        const mediaUploadUrl = await this.getMediaUploadUrl(`${playerId}/${sessionNumber}/${drillId}/submission`)
+        const mediaUploadUrl = await this.getMediaUploadUrl(`submission/${playerId}/${sessionNumber}/${drillId}`)
         await this.uploadFile(video, mediaUploadUrl.uploadUrl);
         await addFileCacheMapping(mediaUploadUrl.fileLocation, video.uri);
         await this.#client.invokeApi({}, '/sessions/submission/create', 'POST', {}, {
@@ -349,7 +349,7 @@ class HttpClient {
     }
 
     createFeedback = async ({coachId, playerId, sessionNumber, drillId, video}) => {
-        const mediaUploadUrl = await this.getMediaUploadUrl(`${playerId}/${sessionNumber}/${drillId}/feedback`)
+        const mediaUploadUrl = await this.getMediaUploadUrl(`feedback/${playerId}/${sessionNumber}/${drillId}`)
         await this.uploadFile(video, mediaUploadUrl.uploadUrl);
         await addFileCacheMapping(mediaUploadUrl.fileLocation, video.uri);
         await this.#client.invokeApi({}, '/sessions/feedback/create', 'POST', {}, {
