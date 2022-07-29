@@ -51,7 +51,7 @@ const EditDrillSelectionDetailsScreen = ({route}) => {
                                            onChangeText={setNotes}/>
                             </View>
                             <View style={{width: 100}}>
-                                <CachedImage source={{uri: drill.demos.frontThumbnail.fileLocation}} style={{height: 150, width: 100}} />
+                                <CachedImage sourceUri={drill.demos.frontThumbnail.fileLocation} style={{height: 150, width: 100}} />
                             </View>
                         </View>
                     </View>

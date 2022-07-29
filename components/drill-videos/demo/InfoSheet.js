@@ -46,7 +46,7 @@ const InfoSheet = ({isOpen, onClose, drill}) => {
                         <Text>{drill.notes}</Text>
                     </View>
                     {!!drill.diagramFileLocation && (
-                        <CachedImage source={{uri: drill.diagramFileLocation}} style={{width: '100%', minHeight: 280, marginTop: 10, resizeMode: 'contain'}} />
+                        <CachedImage sourceUri={drill.diagramFileLocation} style={{width: '100%', minHeight: 280, marginTop: 10, resizeMode: 'contain'}} />
                     )}
                 </View>
             </BottomSheetView>

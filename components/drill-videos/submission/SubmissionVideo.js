@@ -12,10 +12,8 @@ import {isLastDrillInSession} from "../../../util/sessionUtil";
 import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 import CachedVideo from "../../CachedVideo";
 import InfoSheet from "../demo/InfoSheet";
-import useLongRequest from "../../../hooks/useLongRequest";
-import {LongRequestType} from "../../../model/longRequest";
 
-const SubmissionVideo = ({isVisible, drill, session, isSubmitting}) => {
+const SubmissionVideo = ({isDrillFocused, isTabSelected, drill, session, isSubmitting}) => {
 
     const [submissionStatus, setSubmissionStatus] = useState({});
     const [isInfoShowing, setIsInfoShowing] = useState(false);
@@ -24,7 +22,7 @@ const SubmissionVideo = ({isVisible, drill, session, isSubmitting}) => {
     const {userType} = useAuth();
 
     const shouldShowActivityIndicator = () => {
-        if (!isVisible) {
+        if (!isDrillFocused || !isTabSelected) {
             return false;
         }
 
@@ -46,15 +44,16 @@ const SubmissionVideo = ({isVisible, drill, session, isSubmitting}) => {
     }
 
     return (
-        <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
-            {(isVisible || submissionStatus.isLoaded) && doesDrillHaveSubmission(drill) && (
+        <View key={drill.drillId} style={isTabSelected ? {flex: 1, position: 'relative'} : {display: 'none'}}>
+            {doesDrillHaveSubmission(drill) && (
                 <CachedVideo
-                    style={!isVisible ? {display: 'none'} : {flex: 1}}
-                    source={{
-                        uri: drill.submission.fileLocation,
-                    }}
+                    style={{flex: 1}}
+                    videoSourceUri={(isTabSelected && isDrillFocused) || submissionStatus.isLoaded
+                        ? drill.submission.fileLocation
+                        : null}
+                    posterSourceUri={drill.submissionThumbnail?.fileLocation}
                     resizeMode="cover"
-                    shouldPlay={isVisible}
+                    shouldPlay={isTabSelected && isDrillFocused}
                     isLooping
                     onPlaybackStatusUpdate={status => setSubmissionStatus(() => status)}
                 />

@@ -11,7 +11,6 @@ export const AuthProvider = ({children}) => {
     const [player, setPlayer] = useState();
     const [coach, setCoach] = useState();
 
-
     const getFromStorage = async () => {
         const userType = await AsyncStorage.getItem('userType');
         if (!userType) {

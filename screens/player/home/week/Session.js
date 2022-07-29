@@ -96,10 +96,12 @@ const Session = ({session, sessions}) => {
                         />
                     </View>
                     <View style={{paddingLeft: 20, flex: 1}}>
-                        <Text style={{fontWeight: '600', marginBottom: 5}}>Suggested equipment</Text>
-                        {sessionEquipment.map(equipment => (
-                            <Equipment equipment={equipment} key={equipment.equipmentType}/>
-                        ))}
+                        <View style={{flex: 1}}>
+                            <Text style={{fontWeight: '600', marginBottom: 5}}>Suggested equipment</Text>
+                            {sessionEquipment.map(equipment => (
+                                <Equipment equipment={equipment} key={equipment.equipmentType}/>
+                            ))}
+                        </View>
                         <ActionButton session={session}
                                       canSubmit={canSubmit}/>
                     </View>

@@ -23,13 +23,14 @@ const DrillSubmissionScreen = ({route}) => {
     const onSubmit = async () => {
         try {
             setIsSubmitting(true);
+            const thumbnail = await generateThumbnail(video);
             const input = {
                 playerId: player.playerId,
                 sessionNumber,
                 drillId,
-                video
+                video,
+                videoThumbnail: thumbnail
             }
-            const thumbnail = await generateThumbnail(video);
             executeLongRequest(new LongRequest(LongRequestType.CreateSubmission, {drillId: drillId, thumbnail: thumbnail}, input))
             setIsSubmitting(false);
             navigation.goBack();

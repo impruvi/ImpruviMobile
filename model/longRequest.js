@@ -14,6 +14,7 @@ export class LongRequest {
     input = null; // the input to the method on the httpClient
 
     progress = 0;
+    attemptedNumberOfRetries = 0;
 
     constructor(operation, metadata, input) {
         this.requestId = shorthash.unique(`${operation}${JSON.stringify(metadata)}${JSON.stringify(input)}`);

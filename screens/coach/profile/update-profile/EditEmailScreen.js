@@ -2,11 +2,12 @@ import {useNavigation} from "@react-navigation/native";
 import EditContainer from "../../../../components/EditContainer";
 import EditHeader from "../../../../components/EditHeader";
 import {useState} from "react";
-import {StyleSheet, TextInput} from "react-native";
+import {Alert, StyleSheet, TextInput} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
 import useAuth from "../../../../hooks/useAuth";
+import {isValidEmail} from "../../../../util/emailUtil";
 
 const EditEmailScreen = ({route}) => {
 
@@ -19,6 +20,15 @@ const EditEmailScreen = ({route}) => {
     const {setCoach} = useAuth();
 
     const onSave = async () => {
+        if (!isValidEmail(email)) {
+            Alert.alert('Please enter a valid email address', '', [
+                {
+                    text: 'Ok',
+                }
+            ]);
+            return;
+        }
+
         try {
             setIsSubmitting(true);
             const newCoach = {

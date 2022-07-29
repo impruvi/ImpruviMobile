@@ -97,8 +97,14 @@ const CreateOrEditDrillScreen = ({route}) => {
                 };
                 executeLongRequest(new LongRequest(LongRequestType.UpdateDrill, {drillId: currentDrill.drillId}, input))
 
+                // for some reason the navigation back glitches if we do not have some async function in here
+                await httpClient.stall(0);
                 setIsSubmitting(false);
-                navigation.goBack();
+                if (!currentDrill) {
+                    navigation.goBack();
+                } else {
+                    navigation.pop(2);
+                }
             }
         } catch (e) {
             console.log(e);

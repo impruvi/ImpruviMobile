@@ -36,7 +36,7 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
 
     const startRecording = useCallback(async () => {
         const video = await cameraRef.current.recordAsync({
-            mute: true, // for whatever reason, allowing audio causes video recording to glitch: https://github.com/expo/expo/issues/8538
+            // mute: true, // for whatever reason, allowing audio causes video recording to glitch: https://github.com/expo/expo/issues/8538
             maxDuration: maximumDurationInSeconds,
         });
         setVideo(video);

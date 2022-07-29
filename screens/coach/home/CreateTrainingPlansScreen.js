@@ -8,14 +8,14 @@ import {useCallback, useState} from "react";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import useHttpClient from "../../../hooks/useHttpClient";
-import {doesPlayerNeedMoreTrainings} from "../../../util/playerUtil";
+import {findSubscription, getPlayersAndSubscriptionsRequiringTrainings} from "../../../util/playerUtil";
 import Loader from "../../../components/Loader";
 import Reload from "../../../components/Reload";
 
 
 const CreateTrainingPlansScreen = ({route}) => {
 
-    const [playersRequiringTrainings, setPlayersRequiringTrainings] = useState(route.params.playersRequiringTrainings);
+    const [playersAndSubscriptionsRequiringTrainings, setPlayersAndSubscriptionsRequiringTrainings] = useState(route.params.playersAndSubscriptionsRequiringTrainings);
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
 
@@ -32,24 +32,12 @@ const CreateTrainingPlansScreen = ({route}) => {
 
     const getIncompletePlayerSessionsLazy = async () => {
         try {
-            const allPlayerSessions = await httpClient.getCoachSessions(coach.coachId);
-            const requiringTrainings = allPlayerSessions.map(playerSession => {
-                if (!playerSession.player.subscription || playerSession.player.subscription.currentPeriodStartDateEpochMillis <= 0) {
-                    return null;
-                }
-                const subscriptionStartDateEpochMillis = playerSession.player.subscription.currentPeriodStartDateEpochMillis;
-                const numberOfSessionsInSubscription = playerSession.player.subscription.numberOfSessions;
-                if (doesPlayerNeedMoreTrainings(playerSession.player, playerSession.sessions)) {
-                    return {
-                        numberOfSessionsInSubscription: numberOfSessionsInSubscription,
-                        player: playerSession.player,
-                        subscriptionStartDateEpochMillis: subscriptionStartDateEpochMillis
-                    };
-                } else {
-                    return null;
-                }
-            }).filter(player => !!player);
-            setPlayersRequiringTrainings(requiringTrainings);
+            const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
+                httpClient.getPlayerSessionsForCoach(coach.coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+            ]);
+
+            setPlayersAndSubscriptionsRequiringTrainings(getPlayersAndSubscriptionsRequiringTrainings(allPlayerSessions, playersAndSubscriptions));
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
@@ -82,8 +70,10 @@ const CreateTrainingPlansScreen = ({route}) => {
                             )}
                             {!hasError && (
                                 <>
-                                    {playersRequiringTrainings.map(playerRequiringTrainings => (
-                                        <CreateTrainingsListItem playerRequiringTrainings={playerRequiringTrainings} key={playerRequiringTrainings.player.playerId}/>
+                                    {playersAndSubscriptionsRequiringTrainings.map(playerRequiringTrainings => (
+                                        <CreateTrainingsListItem playerRequiringTrainings={playerRequiringTrainings}
+                                                                 subscription={findSubscription(playerRequiringTrainings.player, playersAndSubscriptionsRequiringTrainings)}
+                                                                 key={playerRequiringTrainings.player.playerId}/>
                                     ))}
                                 </>
                             )}

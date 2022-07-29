@@ -1,4 +1,4 @@
-import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import useAuth from "../../../hooks/useAuth";
 import HeaderCenter from "../../../components/HeaderCenter";
@@ -50,14 +50,6 @@ const SettingsScreen = () => {
                             textValue={player.email}
                             placeholder={'Enter your email'}
                             errorMessage={null}/>
-                {/*<FormOption title={'Availability'}*/}
-                {/*            onPress={() => navigation.navigate(PlayerScreenNames.EditAvailability, {*/}
-                {/*                availability: player.availability,*/}
-                {/*                player: player*/}
-                {/*            })}*/}
-                {/*            textValue={player.availability ? player.availability.map(convertDayOfWeekToAbbreviatedDisplayValue).join('/') : ''}*/}
-                {/*            placeholder={'What days can you train'}*/}
-                {/*            errorMessage={null}/>*/}
                 <FormOption title={'Sign out'}
                             titleColor={Colors.Primary}
                             onPress={() => {
@@ -83,15 +75,5 @@ const SettingsScreen = () => {
         </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    sectionHeader: {
-        marginTop: 20,
-        marginBottom: 5,
-        fontWeight: '600',
-        fontSize: 13,
-        color: Colors.TextSecondary
-    },
-});
 
 export default SettingsScreen;

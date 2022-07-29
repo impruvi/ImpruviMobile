@@ -7,7 +7,7 @@ import EditContainer from "../../../../components/EditContainer";
 
 const EditDrillCategoryScreen = ({route}) => {
 
-    const [category, setCategory] = useState(route.params.category);
+    const [category, setCategory] = useState(route.params.category || Object.entries(CategoryType)[0][1]);
 
     const navigation = useNavigation();
 
@@ -26,7 +26,7 @@ const EditDrillCategoryScreen = ({route}) => {
                 onValueChange={itemValue => setCategory(itemValue)}>
                 {Object.entries(CategoryType).map(categoryType => {
                     return (
-                        <Picker.Item label={categoryType[0]} value={categoryType[1]} />
+                        <Picker.Item label={categoryType[0]} value={categoryType[1]} key={categoryType[1]}/>
                     )
                 })}
             </Picker>

@@ -76,11 +76,11 @@ const CoachNavigator = () => {
                               cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS
                           }}
             />
-            <Stack.Screen name={CoachScreenNames.EditDrillName} component={EditDrillNameScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={CoachScreenNames.EditDrillDescription} component={EditDrillDescriptionScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={CoachScreenNames.EditDrillCategory} component={EditDrillCategoryScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={CoachScreenNames.EditDrillEquipment} component={EditDrillEquipmentScreen} options={{gestureResponseDistance: width}}/>
-            <Stack.Screen name={CoachScreenNames.EditDrillDemo} component={EditDrillDemoScreen} options={{gestureResponseDistance: width}}/>
+            <Stack.Screen name={CoachScreenNames.EditDrillName} component={EditDrillNameScreen}/>
+            <Stack.Screen name={CoachScreenNames.EditDrillDescription} component={EditDrillDescriptionScreen}/>
+            <Stack.Screen name={CoachScreenNames.EditDrillCategory} component={EditDrillCategoryScreen}/>
+            <Stack.Screen name={CoachScreenNames.EditDrillEquipment} component={EditDrillEquipmentScreen}/>
+            <Stack.Screen name={CoachScreenNames.EditDrillDemo} component={EditDrillDemoScreen}/>
 
             <Stack.Screen name={CoachScreenNames.Player} component={PlayerScreen} options={{gestureResponseDistance: width}}/>
             <Stack.Screen name={CoachScreenNames.CreateOrEditSession}

@@ -11,13 +11,14 @@ import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
 import HeadshotChip from "../../components/HeadshotChip";
 import PlayerTrainingListItem from "../../components/PlayerTrainingListItem";
-import {doesPlayerNeedMoreTrainings, getNumberOfSessionsCreatedForSubscription} from "../../util/playerUtil";
+import {doesPlayerNeedMoreSessions, getNumberOfSessionsCreatedForSubscription} from "../../util/playerUtil";
 import {DayInMillis, getTimeRemainingDisplayText} from "../../util/timeUtil";
 import EmptyPlaceholder from "../../components/EmptyPlaceholder";
 
 const PlayerScreen = ({route}) => {
 
-    const [player, setPlayer] = useState(route.params.player);
+    const [player] = useState(route.params.player);
+    const [subscription] = useState(route.params.subscription);
     const [sessions, setSessions] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -35,7 +36,7 @@ const PlayerScreen = ({route}) => {
 
     const getPlayerSessionsLazy = async () => {
         try {
-            const allPlayerSessions = await httpClient.getCoachSessions(coach.coachId);
+            const allPlayerSessions = await httpClient.getPlayerSessionsForCoach(coach.coachId);
             const sessions = allPlayerSessions.find(ps => ps.player.playerId === route.params.player.playerId).sessions;
             setSessions(sessions);
         } catch (e) {
@@ -74,12 +75,12 @@ const PlayerScreen = ({route}) => {
                         <Text style={{fontWeight: '600', marginTop: 3}}>{player.firstName} {player.lastName}</Text>
                     </View>
 
-                    {doesPlayerNeedMoreTrainings(player, sessions) && (
+                    {doesPlayerNeedMoreSessions(subscription, sessions) && (
                         <View style={{paddingHorizontal: 15}}>
                             <View style={{padding: 20, borderWidth: 1, borderColor: Colors.Border, borderRadius: 15, marginBottom: 15}}>
                                 <Text style={{fontWeight: '500'}}>
-                                    {player.firstName} subscribed for {player.subscription.numberOfSessions} new training sessions.
-                                    Add {player.subscription.numberOfSessions - getNumberOfSessionsCreatedForSubscription(player, sessions)} more trainings
+                                    {player.firstName} subscribed for {subscription.plan.numberOfTrainings} new training sessions.
+                                    Add {subscription.plan.numberOfTrainings - getNumberOfSessionsCreatedForSubscription(subscription, sessions)} more trainings
                                 </Text>
                                 <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginTop: 15, alignItems: 'center'}}>
                                     <TouchableOpacity style={{paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: Colors.Primary}} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
@@ -87,7 +88,7 @@ const PlayerScreen = ({route}) => {
                                     })}>
                                         <Text style={{color: 'white', fontWeight: '500'}}>Add a training</Text>
                                     </TouchableOpacity>
-                                    <Text style={{color: '#BEBEBE', fontSize: 12, fontWeight: '500'}}>{getTimeRemainingDisplayText(player.subscription.currentPeriodStartDateEpochMillis + DayInMillis)}</Text>
+                                    <Text style={{color: '#BEBEBE', fontSize: 12, fontWeight: '500'}}>{getTimeRemainingDisplayText(subscription.currentPeriodStartDateEpochMillis + DayInMillis)}</Text>
                                 </View>
                             </View>
                         </View>

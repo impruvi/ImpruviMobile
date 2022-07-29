@@ -4,7 +4,6 @@ import VideoCamera from "../../components/camera/VideoCamera";
 import VideoPreview from "../../components/camera/VideoPreview";
 import {useState} from "react";
 import {CameraType} from "expo-camera/build/Camera.types";
-import useHttpClient from "../../hooks/useHttpClient";
 import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
 import {LongRequest, LongRequestType} from "../../model/longRequest";
@@ -24,14 +23,15 @@ const DrillFeedbackScreen = ({route}) => {
     const onSubmit = async () => {
         try {
             setIsSubmitting(true);
+            const thumbnail = await generateThumbnail(video);
             const input = {
                 coachId: coach.coachId,
                 playerId: session.playerId,
                 sessionNumber: session.sessionNumber,
                 drillId: drillId,
-                video: video
+                video: video,
+                videoThumbnail: thumbnail
             };
-            const thumbnail = await generateThumbnail(video);
             executeLongRequest(new LongRequest(LongRequestType.CreateFeedback, {drillId: drillId, thumbnail: thumbnail}, input))
             setIsSubmitting(false);
             navigation.goBack();

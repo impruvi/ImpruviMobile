@@ -10,17 +10,19 @@ import Loader from "../../../components/Loader";
 import Reload from "../../../components/Reload";
 import {StatusBar} from "expo-status-bar";
 import HeaderCenter from "../../../components/HeaderCenter";
-import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
-import {faUser} from "@fortawesome/pro-light-svg-icons";
 import ReviewTrainingListItem from "../../../components/ReviewTrainingListItem";
 import CreateTrainingsListItem from "../../../components/CreateTrainingsListItem";
-import {doesPlayerNeedMoreTrainings, getSessionsRequiringFeedback} from "../../../util/playerUtil";
+import {
+    findSubscription,
+    getPlayersAndSubscriptionsRequiringTrainings,
+    getPlayerSessionsRequiringFeedback
+} from "../../../util/playerUtil";
 import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
 import HeadshotChip from "../../../components/HeadshotChip";
 
 
 const HomeScreen = () => {
-    const [playersRequiringTrainings, setPlayersRequiringTrainings] = useState([]);
+    const [playersAndSubscriptionsRequiringTrainings, setPlayersAndSubscriptionsRequiringTrainings] = useState([]);
     const [playerSessionsRequiringFeedback, setPlayerSessionsRequiringFeedback] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
@@ -30,44 +32,22 @@ const HomeScreen = () => {
     const {coach} = useAuth();
     const {setError} = useError();
 
-    const getIncompletePlayerSessions = async () => {
+    const initialize = async () => {
         setIsLoading(true);
         setHasError(false);
-        await getIncompletePlayerSessionsLazy();
+        await initializeLazy();
         setIsLoading(false);
     }
 
-    const getIncompletePlayerSessionsLazy = async () => {
+    const initializeLazy = async () => {
         try {
-            const allPlayerSessions = await httpClient.getCoachSessions(coach.coachId);
-            const requiringFeedback = allPlayerSessions.map(playerSessions => {
-                const sessionsRequiringFeedback = getSessionsRequiringFeedback(playerSessions.sessions);
-                return !!sessionsRequiringFeedback
-                    ? {
-                        player: playerSessions.player,
-                        session: sessionsRequiringFeedback
-                    }
-                    : null;
-            }).filter(playerSessions => !!playerSessions);
-            setPlayerSessionsRequiringFeedback(requiringFeedback);
+            const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
+                httpClient.getPlayerSessionsForCoach(coach.coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+            ]);
 
-            const requiringTrainings = allPlayerSessions.map(playerSession => {
-                if (!playerSession.player.subscription || playerSession.player.subscription.currentPeriodStartDateEpochMillis <= 0) {
-                    return null;
-                }
-                const subscriptionStartDateEpochMillis = playerSession.player.subscription.currentPeriodStartDateEpochMillis;
-                const numberOfSessionsInSubscription = playerSession.player.subscription.numberOfSessions;
-                if (doesPlayerNeedMoreTrainings(playerSession.player, playerSession.sessions)) {
-                    return {
-                        numberOfSessionsInSubscription: numberOfSessionsInSubscription,
-                        player: playerSession.player,
-                        subscriptionStartDateEpochMillis: subscriptionStartDateEpochMillis
-                    };
-                } else {
-                    return null;
-                }
-            }).filter(player => !!player);
-            setPlayersRequiringTrainings(requiringTrainings);
+            setPlayerSessionsRequiringFeedback(getPlayerSessionsRequiringFeedback(allPlayerSessions));
+            setPlayersAndSubscriptionsRequiringTrainings(getPlayersAndSubscriptionsRequiringTrainings(allPlayerSessions, playersAndSubscriptions));
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
@@ -76,12 +56,12 @@ const HomeScreen = () => {
     }
 
     useEffect(() => {
-        getIncompletePlayerSessions();
+        initialize();
     }, []);
 
     useFocusEffect(
         useCallback(() => {
-            getIncompletePlayerSessionsLazy();
+            initializeLazy();
         }, [httpClient, navigation])
     );
 
@@ -91,50 +71,48 @@ const HomeScreen = () => {
                 <HeaderCenter title={'Home'}
                               hasBorder={true}
                               right={(
-                                  <View style={{width: 40, height: 40, borderRadius: 40, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ddd', overflow: 'hidden'}}>
-                                      {!!coach.headshot && coach.headshot.uploadDateEpochMillis > 0 && (
-                                          <HeadshotChip image={coach.headshot} firstName={coach.firstName} lastName={coach.lastName} size={40} />
-                                      )}
-                                      {(!coach.headshot || coach.headshot.uploadDateEpochMillis === 0) && (
-                                          <FontAwesomeIcon icon={faUser} size={25}/>
-                                      )}
-                                  </View>
+                                  <HeadshotChip image={coach.headshot} firstName={coach.firstName} lastName={coach.lastName} size={40} />
                               )}
                               onRightPress={() => navigation.navigate(CoachScreenNames.Profile)}/>
                 {isLoading && <Loader/>}
                 {!isLoading && (
                     <>
-                        {hasError && <Reload onReload={getIncompletePlayerSessions}/>}
+                        {hasError && <Reload onReload={initialize}/>}
                         {!hasError && (
                             <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 15, paddingVertical: 15}}>
                                 <Text style={styles.title}>Review trainings</Text>
 
                                 {playerSessionsRequiringFeedback.length > 0 && playerSessionsRequiringFeedback.slice(0,3).map(playerSession => (
-                                    <ReviewTrainingListItem playerSession={playerSession} key={playerSession.player.playerId}/>
+                                    <ReviewTrainingListItem playerSession={playerSession}
+                                                            subscription={findSubscription(playerSession.player, playersAndSubscriptionsRequiringTrainings)}
+                                                            key={playerSession.player.playerId}/>
                                 ))}
                                 {playerSessionsRequiringFeedback.length === 0 && (
                                     <EmptyPlaceholder text={'No sessions to review'} />
                                 )}
                                 {playerSessionsRequiringFeedback.length > 0 && (
                                     <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.ReviewTrainings, {
-                                        incompletePlayerSessions: playerSessionsRequiringFeedback
+                                        playerSessionsRequiringFeedback: playerSessionsRequiringFeedback,
+                                        playersAndSubscriptionsRequiringTrainings: playersAndSubscriptionsRequiringTrainings
                                     })}>
                                         <Text style={styles.viewAllButtonText}>View all ({playerSessionsRequiringFeedback.length})</Text>
                                     </TouchableOpacity>
                                 )}
 
                                 <Text style={styles.title}>Create training plans</Text>
-                                {playersRequiringTrainings.length > 0 && playersRequiringTrainings.slice(0,3).map(playerRequiringTrainings => (
-                                    <CreateTrainingsListItem playerRequiringTrainings={playerRequiringTrainings} key={playerRequiringTrainings.player.playerId}/>
+                                {playersAndSubscriptionsRequiringTrainings.length > 0 && playersAndSubscriptionsRequiringTrainings.slice(0,3).map(playerRequiringTrainings => (
+                                    <CreateTrainingsListItem playerRequiringTrainings={playerRequiringTrainings}
+                                                             subscription={findSubscription(playerRequiringTrainings.player, playersAndSubscriptionsRequiringTrainings)}
+                                                             key={playerRequiringTrainings.player.playerId}/>
                                 ))}
-                                {playersRequiringTrainings.length === 0 && (
+                                {playersAndSubscriptionsRequiringTrainings.length === 0 && (
                                     <EmptyPlaceholder text={'No trainings to create'} />
                                 )}
-                                {playersRequiringTrainings.length > 0 && (
+                                {playersAndSubscriptionsRequiringTrainings.length > 0 && (
                                     <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.CreateTrainingPlans, {
-                                        playersRequiringTrainings: playersRequiringTrainings
+                                        playersAndSubscriptionsRequiringTrainings: playersAndSubscriptionsRequiringTrainings
                                     })}>
-                                        <Text style={styles.viewAllButtonText}>View all ({playersRequiringTrainings.length})</Text>
+                                        <Text style={styles.viewAllButtonText}>View all ({playersAndSubscriptionsRequiringTrainings.length})</Text>
                                     </TouchableOpacity>
                                 )}
                             </ScrollView>

@@ -2,7 +2,8 @@ export const EquipmentType = {
     Ball: 'BALL',
     Cone: 'CONE',
     Goal: 'GOAL',
-    Space: 'SPACE'
+    Space: 'SPACE',
+    AgilityLadder: 'AGILITY_LADDER'
 }
 
 export const getEquipmentTypeDisplayValue = (equipment) => {

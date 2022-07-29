@@ -34,8 +34,8 @@ const CreateOrEditSessionScreen = ({route}) => {
     }
 
     const onSubmit = async () => {
-        if (isSubmitting || drills.length === 0) {
-            Alert.alert('You must add at least 1 drill', '', [
+        if (isSubmitting || drills.length < 4) {
+            Alert.alert('You must add at least 4 drills', '', [
                 {
                     text: 'Ok',
                 },

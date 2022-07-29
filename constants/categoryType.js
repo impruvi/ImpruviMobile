@@ -1,8 +1,9 @@
 export const CategoryType = {
+    Warmup: 'WARM_UP',
+    Juggling: 'JUGGLING',
     Dribbling: 'DRIBBLING',
     Passing: 'PASSING',
     Shooting: 'SHOOTING',
-    Warmup: 'WARM_UP',
 }
 
 export const getCategoryDisplayValue = (category) => {

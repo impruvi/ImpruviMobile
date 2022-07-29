@@ -7,23 +7,29 @@ import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {useEffect, useState} from 'react';
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
-import {doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
+import {doesEverySessionInPlanHaveSubmission} from "../../util/playerUtil";
 
 const SessionCompleteScreen = () => {
 
-    const [hasCompletedAllTrainings, setHasCompletedAllTrainings] = useState(false);
+    const [subscription, setSubscription] = useState();
+    const [sessions, setSessions] = useState();
 
     const {player} = useAuth();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
 
-    const getHasCompletedAllTrainings = async () => {
-        const sessions = await httpClient.getPlayerSessions(player.playerId);
-        setHasCompletedAllTrainings(sessions.filter(session => !doesEveryDrillHaveSubmission(session)).length === 0);
+    const initialize = async () => {
+        const [sessions, subscription] = await Promise.all([
+            httpClient.getPlayerSessions(player.playerId),
+            httpClient.getSubscription(player.coachId, player.playerId)
+        ]);
+
+        setSessions(sessions);
+        setSubscription(subscription);
     }
 
     const onClose = () => {
-        if (hasCompletedAllTrainings) {
+        if (doesEverySessionInPlanHaveSubmission(subscription, sessions)) {
             navigation.navigate(PlayerScreenNames.TrainingPlanComplete);
         } else {
             navigation.navigate(PlayerScreenNames.Home)
@@ -31,7 +37,7 @@ const SessionCompleteScreen = () => {
     }
 
     useEffect(() => {
-        getHasCompletedAllTrainings();
+        initialize();
     }, []);
 
     return (

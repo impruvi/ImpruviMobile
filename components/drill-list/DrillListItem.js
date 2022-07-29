@@ -47,7 +47,7 @@ const DrillListItem = ({drill, onPress}) => {
                           activeOpacity={.6}
                           onPress={onDrillPress}>
             {!!drill?.demos?.frontThumbnail && (
-                <CachedImage source={{uri: drill.demos.frontThumbnail.fileLocation}} style={{width: imageDimension, height: imageDimension, borderRadius: 10}} />
+                <CachedImage sourceUri={drill.demos.frontThumbnail.fileLocation} style={{width: imageDimension, height: imageDimension, borderRadius: 10}} />
             )}
             {!drill?.demos?.frontThumbnail && (
                 <View style={{width: imageDimension, height: imageDimension, borderRadius: 10}}/>
@@ -63,7 +63,7 @@ const DrillListItem = ({drill, onPress}) => {
                         progressValueColor={'transparent'}
                         titleStyle={{display: 'none'}}
                     />
-                    <Text style={{color: 'white', fontSize: 12}}>Uploading...</Text>
+                    <Text style={{color: 'white', fontSize: 12, marginTop: 2}}>Uploading...</Text>
                 </View>
             )}
             <Text style={{fontWeight: '600', marginTop: 5}}>{drill.name}</Text>

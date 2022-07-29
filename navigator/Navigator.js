@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {Animated, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import AuthenticationScreen from "../screens/AuthenticationScreen";
+import InvitationCodeScreen from "../screens/authentication/InvitationCodeScreen";
 
 import {RootScreenNames} from '../screens/ScreenNames';
 import useAuth from "../hooks/useAuth";
@@ -13,6 +13,7 @@ import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {UserType} from "../constants/userType";
 import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
 import Loader from "../components/Loader";
+import SignInScreen from "../screens/authentication/SignInScreen";
 
 
 const Stack = createStackNavigator();
@@ -43,7 +44,8 @@ const RootNavigator = () => {
             <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>
                 {!userType && (
                     <>
-                        <Stack.Screen name={RootScreenNames.Authentication} component={AuthenticationScreen}/>
+                        <Stack.Screen name={RootScreenNames.SignIn} component={SignInScreen}/>
+                        <Stack.Screen name={RootScreenNames.InvitationCode} component={InvitationCodeScreen}/>
                         <Stack.Screen name={RootScreenNames.TermsAndConditions} component={TermsAndConditionsScreen}/>
                     </>
                 )}

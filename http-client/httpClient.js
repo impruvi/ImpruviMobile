@@ -13,6 +13,29 @@ class HttpClient {
         secretKey: 'i+JX947fAdM4IkZEB6OZ+OtGK/nNspP5PQ3lLeEi',
     });
 
+    signIn = async (email, password, expoPushToken) => {
+        try {
+            const response = await this.#client.invokeApi({}, '/player/sign-in', 'POST', {}, {
+                email,
+                password,
+                expoPushToken
+            });
+            return {
+                success: true,
+                ...response.data
+            };
+        } catch (err) {
+            console.log(err.response.status);
+            if (err.response.status === 403 || err.response.status === 400) {
+                return {
+                    success: false
+                }
+            }
+
+            throw err
+        }
+    }
+
     validateInviteCode = async (invitationCode, expoPushToken) => {
         try {
             const response = await this.#client.invokeApi({}, '/invitation-code/validate', 'POST', {}, {
@@ -26,7 +49,7 @@ class HttpClient {
             };
         } catch(err) {
             console.log(err.response.status);
-            if (err.response.status === 403) {
+            if (err.response.status === 403 || err.response.status === 400) {
                 return {
                     success: false
                 }
@@ -60,8 +83,10 @@ class HttpClient {
     }
 
     updatePlayer = async ({playerId, coachId, firstName, lastName, email, headshot}) => {
-        const player = {
-            playerId,
+        const currentPlayer = await this.getPlayer(playerId);
+
+        const updatedPlayer = {
+            ...currentPlayer,
             coachId,
             firstName,
             lastName,
@@ -72,7 +97,7 @@ class HttpClient {
         if (!!headshot && !!headshot.uri && !isRemoteMedia(headshot)) {
             const mediaUploadUrl = await this.getMediaUploadUrl('player/headshot');
             await this.uploadFile(headshot, mediaUploadUrl.uploadUrl);
-            player.headshot = {
+            updatedPlayer.headshot = {
                 fileLocation: mediaUploadUrl.fileLocation,
                 uploadDateEpochMillis: new Date().getTime() // TODO: move updating of this to BE
             }
@@ -80,14 +105,16 @@ class HttpClient {
         }
 
         await this.#client.invokeApi({}, '/player/update', 'POST', {},{
-            player: player
+            player: updatedPlayer
         });
         return await this.getPlayer(playerId);
     }
 
     updateCoach = async ({coachId, firstName, lastName, email, about, position, school, youthClub, headshot}) => {
-        const coach = {
-            coachId,
+        const currentCoach = await this.getCoach(coachId);
+
+        const updatedCoach = {
+            ...currentCoach,
             firstName,
             lastName,
             email,
@@ -100,14 +127,14 @@ class HttpClient {
         if (!!headshot && !!headshot.uri && !isRemoteMedia(headshot)) {
             const mediaUploadUrl = await this.getMediaUploadUrl('coach/headshot');
             await this.uploadFile(headshot, mediaUploadUrl.uploadUrl);
-            coach.headshot = {
+            updatedCoach.headshot = {
                 fileLocation: mediaUploadUrl.fileLocation,
                 uploadDateEpochMillis: new Date().getTime() // TODO: move updating of this to BE
             }
             await addFileCacheMapping(mediaUploadUrl.fileLocation, headshot.uri);
         }
         await this.#client.invokeApi({}, '/coach/update', 'POST', {},{
-            coach: coach
+            coach: updatedCoach
         });
         return await this.getCoach(coachId);
     }
@@ -134,12 +161,34 @@ class HttpClient {
         return response.data.sessions;
     }
 
-    getCoachSessions = async (coachId) => {
+    getPlayerSessionsForCoach = async (coachId) => {
         const response = await this.#client.invokeApi({}, '/sessions/coach/get', 'POST', {}, {
             coachId: coachId
         });
 
         return response.data.playerSessions;
+    }
+
+
+    // TODO: change this to pass token as soon as we have that ready
+    getSubscription = async (coachId, playerId) => {
+        const playersAndSubscriptions = await this.getPlayersAndSubscriptionsForCoach(coachId);
+        return playersAndSubscriptions.find(playerAndSubscription => playerAndSubscription.player.playerId === playerId).subscription;
+    }
+
+    getPlayersAndSubscriptionsForCoach = async (coachId) => {
+        const response = await this.#client.invokeApi({}, '/coach/players-and-subscriptions/get', 'POST', {}, {
+            coachId: coachId
+        });
+
+        return response.data.playersAndSubscriptions;
+    }
+
+    getDrill = async ({drillId}) => {
+        const response = await this.#client.invokeApi({}, '/drills/get', 'POST', {},{
+            drillId
+        });
+        return response.data.drill;
     }
 
     createDrill = async ({coachId, name, description, category, equipment}) => {
@@ -158,6 +207,7 @@ class HttpClient {
 
 
     updateDrill = async ({drill, frontVideo, sideVideo, closeVideo, frontVideoThumbnail, sideVideoThumbnail, closeVideoThumbnail}, requestId, onProgressChange) => {
+        const currentDrill = await this.getDrill({drillId: drill.drillId});
         const currentTime = new Date().getTime() // TODO: move updating of this to BE
 
         let [
@@ -218,6 +268,7 @@ class HttpClient {
         if (didFrontChange || didSideChange || didCloseChange) {
             await this.#client.invokeApi({}, '/drills/update', 'POST', {}, {
                 drill: {
+                    ...currentDrill,
                     ...drill,
                     demos: {
                         ...drill.demos,
@@ -261,6 +312,7 @@ class HttpClient {
 
         await this.#client.invokeApi({}, '/drills/update', 'POST', {}, {
             drill: {
+                ...currentDrill,
                 ...drill,
                 demos: {
                     front: !isRemoteMedia(frontVideo) ? {fileLocation: frontFileLocation, uploadDateEpochMillis: currentTime} : drill.demos.front,
@@ -314,10 +366,10 @@ class HttpClient {
     }
 
     updateSession = async ({playerId, sessionNumber, drills}) => {
+        const currentSession = await this.getSession({playerId, sessionNumber});
         await this.#client.invokeApi({}, '/sessions/update', 'POST', {}, {
             session: {
-                playerId: playerId,
-                sessionNumber: sessionNumber,
+                ...currentSession,
                 drills: drills.map(drill => {
                     return {
                         drillId: drill.drillId,
@@ -329,6 +381,14 @@ class HttpClient {
         });
     }
 
+    getSession = async ({playerId, sessionNumber}) => {
+        const response = await this.#client.invokeApi({}, '/sessions/get', 'POST', {}, {
+            playerId: playerId,
+            sessionNumber: sessionNumber,
+        });
+        return response.data.session;
+    }
+
     deleteSession = async ({playerId, sessionNumber}) => {
         await this.#client.invokeApi({}, '/sessions/delete', 'POST', {}, {
             playerId: playerId,
@@ -336,28 +396,55 @@ class HttpClient {
         });
     }
 
-    createSubmission = async ({playerId, sessionNumber, drillId, video}) => {
-        const mediaUploadUrl = await this.getMediaUploadUrl(`submission/${playerId}/${sessionNumber}/${drillId}`)
-        await this.uploadFile(video, mediaUploadUrl.uploadUrl);
-        await addFileCacheMapping(mediaUploadUrl.fileLocation, video.uri);
+    createSubmission = async ({playerId, sessionNumber, drillId, video, videoThumbnail}) => {
+        const [videoFileLocation, thumbnailFileLocation] = await Promise.all([
+            (async () => {
+                const mediaUploadUrl = await this.getMediaUploadUrl(`submission/${playerId}/${sessionNumber}/${drillId}`)
+                await this.uploadFile(video, mediaUploadUrl.uploadUrl);
+                return mediaUploadUrl.fileLocation;
+            })(),
+            (async () => {
+                const mediaUploadUrl = await this.getMediaUploadUrl(`submission/${playerId}/${sessionNumber}/${drillId}/thumbnail`)
+                await this.uploadFile(videoThumbnail, mediaUploadUrl.uploadUrl);
+                return mediaUploadUrl.fileLocation;
+            })()
+
+        ]);
+
+        await addFileCacheMapping(videoFileLocation, video.uri);
+        await addFileCacheMapping(thumbnailFileLocation, videoThumbnail.uri);
         await this.#client.invokeApi({}, '/sessions/submission/create', 'POST', {}, {
             playerId: playerId,
             sessionNumber: sessionNumber,
             drillId: drillId,
-            fileLocation: mediaUploadUrl.fileLocation
+            fileLocation: videoFileLocation,
+            thumbnailFileLocation: thumbnailFileLocation,
         });
     }
 
-    createFeedback = async ({coachId, playerId, sessionNumber, drillId, video}) => {
-        const mediaUploadUrl = await this.getMediaUploadUrl(`feedback/${playerId}/${sessionNumber}/${drillId}`)
-        await this.uploadFile(video, mediaUploadUrl.uploadUrl);
-        await addFileCacheMapping(mediaUploadUrl.fileLocation, video.uri);
+    createFeedback = async ({coachId, playerId, sessionNumber, drillId, video, videoThumbnail}) => {
+        const [videoFileLocation, thumbnailFileLocation] = await Promise.all([
+            (async () => {
+                const mediaUploadUrl = await this.getMediaUploadUrl(`feedback/${playerId}/${sessionNumber}/${drillId}`)
+                await this.uploadFile(video, mediaUploadUrl.uploadUrl);
+                return mediaUploadUrl.fileLocation;
+            })(),
+            (async () => {
+                const mediaUploadUrl = await this.getMediaUploadUrl(`feedback/${playerId}/${sessionNumber}/${drillId}/thumbnail`)
+                await this.uploadFile(videoThumbnail, mediaUploadUrl.uploadUrl);
+                return mediaUploadUrl.fileLocation;
+            })()
+
+        ]);
+        await addFileCacheMapping(videoFileLocation, video.uri);
+        await addFileCacheMapping(thumbnailFileLocation, videoThumbnail.uri);
         await this.#client.invokeApi({}, '/sessions/feedback/create', 'POST', {}, {
             coachId: coachId,
             playerId: playerId,
             sessionNumber: sessionNumber,
             drillId: drillId,
-            fileLocation: mediaUploadUrl.fileLocation
+            fileLocation: videoFileLocation,
+            thumbnailFileLocation: thumbnailFileLocation,
         });
     }
 

@@ -2,7 +2,7 @@ import EditHeader from "../../../../components/EditHeader";
 import EditContainer from "../../../../components/EditContainer";
 import {useNavigation} from "@react-navigation/native";
 import {useState} from "react";
-import {StyleSheet, Text, TextInput, View} from "react-native";
+import {Alert, StyleSheet, Text, TextInput, View} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
@@ -20,6 +20,14 @@ const EditNameScreen = ({route}) => {
     const {setPlayer} = useAuth();
 
     const onSave = async () => {
+        if (!firstName || !lastName) {
+            Alert.alert('Please enter your first and last name', '', [
+                {
+                    text: 'Ok',
+                }
+            ]);
+            return;
+        }
         try {
             setIsSubmitting(true);
             const newPlayer = {

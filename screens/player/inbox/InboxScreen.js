@@ -1,4 +1,4 @@
-import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import HeaderCenter from "../../../components/HeaderCenter";
 import useHttpClient from "../../../hooks/useHttpClient";
 import {useCallback, useEffect, useState} from 'react';
@@ -11,6 +11,7 @@ import {PlayerScreenNames} from "../../ScreenNames";
 import useInboxViewDate from "../../../hooks/useInboxViewDate";
 import Reload from "../../../components/Reload";
 import HeadshotChip from "../../../components/HeadshotChip";
+import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
 
 const InboxEntryType = {
     NewSessionAdded: 'NEW_SESSION_ADDED',
@@ -129,19 +130,28 @@ const InboxScreen = () => {
                             </View>
                         )}
                         {!hasError && (
-                            <FlatList keyExtractor={(item, index) => `${index}`}
-                                      data={entries}
-                                      contentContainerStyle={{marginTop: 10}}
-                                      showsVerticalScrollIndicator={false}
-                                      renderItem={({item}) => (
-                                          <TouchableOpacity style={{flexDirection: 'row', marginBottom: 20, alignItems: 'center'}} onPress={() => navigateToSession(item.metadata.sessionNumber)}>
-                                              <HeadshotChip image={{fileLocation: item.actor.image}} firstName={item.actor.firstName} lastName={item.actor.lastName} size={45}/>
-                                              <View style={{flex: 1, justifyContent: 'flex-start', marginLeft: 10}}>
-                                                  <Text style={{flex: 1, flexWrap: 'wrap', fontWeight: '500'}}>{item.displayText}</Text>
-                                                  <Text style={{marginTop: 5, color: '#878787', fontWeight: '500', fontSize: 12}}>{item.displayDate}</Text>
-                                              </View>
-                                          </TouchableOpacity>
-                                      )}/>
+                            <>
+                                {entries.length === 0 && (
+                                    <ScrollView style={{flex: 1}}>
+                                        <EmptyPlaceholder text={'You inbox is empty'} />
+                                    </ScrollView>
+                                )}
+                                {entries.length > 0 && (
+                                    <FlatList keyExtractor={(item, index) => `${index}`}
+                                              data={entries}
+                                              contentContainerStyle={{marginTop: 10}}
+                                              showsVerticalScrollIndicator={false}
+                                              renderItem={({item}) => (
+                                                  <TouchableOpacity style={{flexDirection: 'row', marginBottom: 20, alignItems: 'center'}} onPress={() => navigateToSession(item.metadata.sessionNumber)}>
+                                                      <HeadshotChip image={{fileLocation: item.actor.image}} firstName={item.actor.firstName} lastName={item.actor.lastName} size={45}/>
+                                                      <View style={{flex: 1, justifyContent: 'flex-start', marginLeft: 10}}>
+                                                          <Text style={{flex: 1, flexWrap: 'wrap', fontWeight: '500'}}>{item.displayText}</Text>
+                                                          <Text style={{marginTop: 5, color: '#878787', fontWeight: '500', fontSize: 12}}>{item.displayDate}</Text>
+                                                      </View>
+                                                  </TouchableOpacity>
+                                              )}/>
+                                )}
+                            </>
                         )}
                     </>
                 )}

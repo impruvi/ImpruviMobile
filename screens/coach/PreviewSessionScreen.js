@@ -44,7 +44,8 @@ const PreviewSessionScreen = ({route}) => {
                         <DemoVideos
                             session={session}
                             drill={item}
-                            isVisible={currentDrillId === item.drillId}
+                            isDrillFocused={currentDrillId === item.drillId}
+                            isTabSelected={true}
                             isLast={currentDrillId === session.drills[session.drills.length - 1].drillId}/>
                     </View>
                 )}

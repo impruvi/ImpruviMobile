@@ -41,6 +41,10 @@ export const LongRequestProvider = ({children}) => {
     const executeRequests = async (requests) => {
         const failedRequests = (await Promise.all(requests
             .map(async request => {
+                if (request.attemptedNumberOfRetries > 60) {
+                    return null;
+                }
+                request.attemptedNumberOfRetries = request.attemptedNumberOfRetries + 1;
                 try {
                     await httpClient[request.operation](request.input, request.requestId, (progress) => {
                         setOutstandingRequests(requests.map(req => {

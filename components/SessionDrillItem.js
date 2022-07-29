@@ -8,7 +8,7 @@ const SessionDrillItem = ({drill}) => {
     return (
         <Box key={drill.drillId} style={{flexDirection: 'row'}}>
             <View style={{padding: 15}}>
-                <CachedImage source={{uri: drill.demos?.frontThumbnail?.fileLocation}} style={{width: 60, height: 90, borderRadius: 3}} />
+                <CachedImage sourceUri={drill.demos?.frontThumbnail?.fileLocation} style={{width: 60, height: 90, borderRadius: 3}} />
             </View>
             <View style={{paddingVertical: 20, paddingRight: 20, flex: 1}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>

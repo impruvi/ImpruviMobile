@@ -1,11 +1,11 @@
 import {ActivityIndicator, Image, Text, TouchableOpacity, View} from 'react-native';
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../../util/drillUtil";
-import React, {useCallback, useState} from "react";
+import React, {useState} from "react";
 import {LinearGradient} from "expo-linear-gradient";
 import {CoachScreenNames} from "../../../screens/ScreenNames";
 import {UserType} from "../../../constants/userType";
 import useAuth from "../../../hooks/useAuth";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import SubmitButton from "../SubmitButton";
 import Footer from "../Footer";
 import {isLastDrillInSession} from "../../../util/sessionUtil";
@@ -13,21 +13,14 @@ import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 import CachedVideo from "../../CachedVideo";
 import InfoSheet from "../demo/InfoSheet";
 
-const FeedbackVideo = ({session, drill, isVisible}) => {
+const FeedbackVideo = ({isDrillFocused, isTabSelected, drill, session}) => {
 
     const [feedbackStatus, setFeedbackStatus] = useState({});
     const [isInfoShowing, setIsInfoShowing] = useState(false);
 
     const {userType} = useAuth();
-    const [isFocused, setIsFocused] = useState(true);
 
     const navigation = useNavigation();
-
-    useFocusEffect(
-        useCallback(() => {
-            setIsFocused(true);
-        }, [navigation])
-    );
 
     const shouldShowSubmitFeedbackButton = () => {
         return userType === UserType.Coach
@@ -36,7 +29,7 @@ const FeedbackVideo = ({session, drill, isVisible}) => {
     }
 
     const shouldShowActivityIndicator = () => {
-        if (!isVisible) {
+        if (!isTabSelected || !isDrillFocused) {
             return false;
         }
 
@@ -46,15 +39,16 @@ const FeedbackVideo = ({session, drill, isVisible}) => {
         return !feedbackStatus.isLoaded || feedbackStatus.isBuffering;
     }
     return (
-        <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
-            {(isVisible || feedbackStatus.isLoaded) && doesDrillHaveFeedback(drill) && (
+        <View key={drill.drillId} style={isTabSelected ? {flex: 1, position: 'relative'} : {display: 'none'}}>
+            {doesDrillHaveFeedback(drill) && (
                 <CachedVideo
-                    style={!isVisible ? {display: 'none'} : {flex: 1}}
-                    source={{
-                        uri: drill.feedback.fileLocation,
-                    }}
+                    style={{flex: 1}}
+                    videoSourceUri={(isTabSelected && isDrillFocused) || feedbackStatus.isLoaded
+                        ? drill.feedback.fileLocation
+                        : null}
+                    posterSourceUri={drill.feedbackThumbnail?.fileLocation}
                     resizeMode="cover"
-                    shouldPlay={isVisible && isFocused}
+                    shouldPlay={isTabSelected && isDrillFocused}
                     isLooping
                     onPlaybackStatusUpdate={status => setFeedbackStatus(() => status)}
                 />
@@ -98,7 +92,6 @@ const FeedbackVideo = ({session, drill, isVisible}) => {
                 <View style={{width: '100%', alignItems: 'center'}}>
                     {shouldShowSubmitFeedbackButton() && (
                         <SubmitButton onPress={() => {
-                            setIsFocused(false);
                             navigation.navigate(CoachScreenNames.DrillFeedback, {
                                 session: session,
                                 drillId: drill.drillId

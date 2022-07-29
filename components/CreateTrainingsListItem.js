@@ -5,7 +5,7 @@ import {Colors} from "../constants/colors";
 import {useNavigation} from "@react-navigation/native";
 import {DayInMillis, getTimeRemainingDisplayText} from "../util/timeUtil";
 
-const CreateTrainingsListItem = ({playerRequiringTrainings}) => {
+const CreateTrainingsListItem = ({playerRequiringTrainings, subscription}) => {
 
     const navigation = useNavigation();
 
@@ -16,7 +16,8 @@ const CreateTrainingsListItem = ({playerRequiringTrainings}) => {
     return (
         <View style={{flexDirection: 'row', paddingVertical: 15}}>
             <TouchableOpacity onPress={() => navigation.navigate(CoachScreenNames.Player, {
-                player: playerRequiringTrainings.player
+                player: playerRequiringTrainings.player,
+                subscription: subscription
             })}>
                 <HeadshotChip firstName={playerRequiringTrainings.player.firstName}
                               lastName={playerRequiringTrainings.player.lastName}
@@ -24,15 +25,16 @@ const CreateTrainingsListItem = ({playerRequiringTrainings}) => {
             </TouchableOpacity>
             <View style={{flex: 1, paddingHorizontal: 10}}>
                 <Text style={{fontWeight: '500', fontSize: 14}}>{playerRequiringTrainings.player.firstName} {playerRequiringTrainings.player.lastName}</Text>
-                <Text style={{color: '#5E5E5E', marginTop: 3}}>Purchased {playerRequiringTrainings.numberOfSessionsInSubscription} trainings</Text>
+                <Text style={{color: '#5E5E5E', marginTop: 3}}>Purchased {subscription.plan.numberOfTrainings} trainings</Text>
             </View>
             <View style={{alignItems: 'center'}}>
                 <TouchableOpacity style={{backgroundColor: '#f1f1f1', paddingVertical: 7, paddingHorizontal: 12, borderRadius: 20}} onPress={() => navigation.navigate(CoachScreenNames.Player, {
-                    player: playerRequiringTrainings.player
+                    player: playerRequiringTrainings.player,
+                    subscription: subscription
                 })}>
                     <Text style={{color: Colors.Primary, fontWeight: '500'}}>Create trainings</Text>
                 </TouchableOpacity>
-                <Text style={{color: '#BEBEBE', fontSize: 12, marginTop: 2}}>{getTimeToCreateTrainings(playerRequiringTrainings.subscriptionStartDateEpochMillis)}</Text>
+                <Text style={{color: '#BEBEBE', fontSize: 12, marginTop: 2}}>{getTimeToCreateTrainings(subscription.currentPeriodStartDateEpochMillis)}</Text>
             </View>
         </View>
     )

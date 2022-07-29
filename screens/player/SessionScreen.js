@@ -22,12 +22,12 @@ const SessionScreen = ({route}) => {
     const [currentDrillId, setCurrentDrillId] = useState(route.params.drillId);
     const [selectedTab, setSelectedTab] = useState(!!route.params.selectedTab ? route.params.selectedTab : DrillVideoTab.Demo);
 
+    const isFocused = useIsFocused();
     const {outstandingLongRequests} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {player} = useAuth();
     const listRef = useRef();
-    const isFocused = useIsFocused();
     const viewableItemsChanged = useRef(({viewableItems}) => {
         setCurrentDrillId(viewableItems[0].item.drillId);
     }).current;
@@ -42,7 +42,7 @@ const SessionScreen = ({route}) => {
         } catch (e) {
             console.log(e);
         }
-    }
+    };
 
     const getSessionLazy = () => {
         httpClient.getPlayerSessions(player.playerId).then(sessions => {
@@ -64,7 +64,7 @@ const SessionScreen = ({route}) => {
 
     useEffect(() => {
         markFeedbackAsViewed();
-    }, []);
+    }, [markFeedbackAsViewed]);
 
     useEffect(() => {
         getSessionLazy();
@@ -93,8 +93,8 @@ const SessionScreen = ({route}) => {
                             session={session}
                             drill={item}
                             isLast={currentDrillId === session.drills[session.drills.length - 1].drillId}
-                            isVisible={currentDrillId === item.drillId && isFocused}
                             selectedTab={selectedTab}
+                            isDrillFocused={isFocused && currentDrillId === item.drillId}
                             canSubmit={canSubmitForSession(sessions, session)}/>
                         <LinearGradient
                             colors={['rgba(0, 0, 0, .6)', 'transparent']}
@@ -108,7 +108,7 @@ const SessionScreen = ({route}) => {
                             setSelectedTab={setSelectedTab}
                             hasSubmission={doesDrillHaveSubmission(session.drills.find(drill => drill.drillId === currentDrillId))}
                             hasFeedback={doesDrillHaveFeedback(session.drills.find(drill => drill.drillId === currentDrillId))}/>
-            <VideoBackIcon onPress={() => navigation.goBack()} />
+            <VideoBackIcon onPress={navigation.goBack} />
 
             <StatusBar style="light" />
         </View>

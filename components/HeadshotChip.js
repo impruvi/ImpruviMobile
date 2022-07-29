@@ -6,7 +6,7 @@ const HeadshotChip = ({size= 40, firstName, lastName, image}) => {
         <View style={{width: size, height: size, borderRadius: size, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ddd', overflow: 'hidden'}}>
             {!!image && !!image.fileLocation && (
                 <CachedImage
-                    source={{uri: image.fileLocation}}
+                    sourceUri={image.fileLocation}
                     style={{width: size, height: size, resizeMode: 'cover'}}
                 />
             )}

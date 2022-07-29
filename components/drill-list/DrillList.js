@@ -31,10 +31,16 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
 
     const searchInputRef = useRef();
 
+    const getMatchingDrills = (drills, category, searchInput) => {
+        return drills.filter(drill => {
+            return (category === AllCategory || drill.category === category)
+                && (drill.name.toLowerCase().search(searchInput.toLowerCase()) >= 0 || drill.description.toLowerCase().search(searchInput.toLowerCase()) >= 0)
+        });
+    }
+
     const selectCategory = (category) => {
         setVisibleDrills(drills.filter(drill => category === AllCategory || drill.category === category).sort(compareDrills));
         setSelectedCategory(category);
-
     }
 
     const onSearchInputChange = (text) => {
@@ -42,10 +48,7 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
         if (!text || text.length === 0) {
             setVisibleDrills(drills.filter(drill => selectedCategory === AllCategory || drill.category === selectedCategory).sort(compareDrills));
         } else {
-            const matchingDrills = drills.filter(drill => {
-                return (selectedCategory === AllCategory || drill.category === selectedCategory)
-                    && (drill.name.toLowerCase().search(text.toLowerCase()) >= 0 || drill.description.toLowerCase().search(text.toLowerCase()) >= 0)
-            });
+            const matchingDrills = getMatchingDrills(drills, selectedCategory, searchInput);
             setVisibleDrills(matchingDrills.sort(compareDrills));
         }
     }
@@ -56,9 +59,9 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
         setVisibleDrills(drills.filter(drill => selectedCategory === AllCategory || drill.category === selectedCategory).sort(compareDrills));
     }
 
-
     useEffect(() => {
-        setVisibleDrills(drills.sort(compareDrills));
+        const matchingDrills = getMatchingDrills(drills, selectedCategory, searchInput);
+        setVisibleDrills(matchingDrills.sort(compareDrills));
     }, [drills]);
 
 

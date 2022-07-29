@@ -6,7 +6,7 @@ import EmptyPlaceholder from "../../../../components/EmptyPlaceholder";
 import Box from "../../../../components/Box";
 
 
-const Week = ({sessions, visible}) => {
+const Week = ({sessions}) => {
 
     const [currentSessionIndex, setCurrentSessionIndex] = useState();
     const [currentSession, setCurrentSession] = useState();
@@ -16,12 +16,6 @@ const Week = ({sessions, visible}) => {
         setCurrentSessionIndex(viewableItems[0].index);
     }).current;
     const viewConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
-
-    const onSetCurrentSession = (session) => {
-        const index = sessions.indexOf(session);
-        setCurrentSession(session);
-        listRef.current?.scrollToIndex({ index: index, animated: false })
-    }
 
     useEffect(() => {
         if (!currentSession || !sessions) {
@@ -59,7 +53,7 @@ const Week = ({sessions, visible}) => {
     }
 
     return (
-        <View style={visible ? {flexDirection: 'column-reverse'} : {display: 'none'}}>
+        <View style={{flexDirection: 'column-reverse'}}>
             {sessions.length === 0 && (
                 <View style={{width: '100%', paddingHorizontal: 15, marginBottom: 10}}>
                     <Box>
@@ -83,14 +77,10 @@ const Week = ({sessions, visible}) => {
                       contentContainerStyle={{marginTop: 20}}
                       keyExtractor={(item) => item.sessionNumber}
                       showsHorizontalScrollIndicator={false}
-                      renderItem={({item, index}) => (
+                      renderItem={({item}) => (
                           <Session session={item}
                                    sessions={sessions}/>
                       )} />
-            {/*<Header currentSession={currentSession}*/}
-            {/*        sessions={sessions}*/}
-            {/*        setCurrentSession={onSetCurrentSession}/>*/}
-
         </View>
     );
 }

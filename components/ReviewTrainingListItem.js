@@ -8,7 +8,7 @@ import {useNavigation} from "@react-navigation/native";
 import {DayInMillis, getTimeRemainingDisplayText} from "../util/timeUtil";
 import {getCompletedDateEpochMillis} from "../util/sessionUtil";
 
-const ReviewTrainingListItem = ({playerSession}) => {
+const ReviewTrainingListItem = ({playerSession, subscription}) => {
 
     const navigation = useNavigation();
 
@@ -19,7 +19,8 @@ const ReviewTrainingListItem = ({playerSession}) => {
     return (
         <View style={{flexDirection: 'row', paddingVertical: 15}}>
             <TouchableOpacity onPress={() => navigation.navigate(CoachScreenNames.Player, {
-                player: playerSession.player
+                player: playerSession.player,
+                subscription: subscription
             })}>
                 <HeadshotChip firstName={playerSession.player.firstName}
                               lastName={playerSession.player.lastName}

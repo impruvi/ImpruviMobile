@@ -15,7 +15,8 @@ const DrillScreen = ({route}) => {
     return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
             <DemoVideos drill={drill}
-                        isVisible={true}
+                        isDrillFocused={true}
+                        isTabSelected={true}
                         isLast={true}/>
             <LinearGradient
                 colors={['rgba(0, 0, 0, .6)', 'transparent']}

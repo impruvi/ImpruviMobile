@@ -1,5 +1,5 @@
 import {ActivityIndicator, Alert, Image, Text, TouchableOpacity, View} from "react-native";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {DrillVideoAngle} from "../../../constants/drillVideoAngle";
 import {doesDrillHaveSubmission} from "../../../util/drillUtil";
 import {useNavigation} from "@react-navigation/native";
@@ -16,12 +16,12 @@ import VideoIconRed from '../../../assets/icons/VideoRed.png';
 import HelpIconWhite from '../../../assets/icons/HelpWhite.png';
 import SwipeIconYellow from '../../../assets/icons/SwipeYellow.png';
 import HelpPopup from "./help/HelpPopup";
-import {doesAnyDrillHaveSubmission, isFirstDrillInSession, isLastDrillInSession} from "../../../util/sessionUtil";
+import {isLastDrillInSession} from "../../../util/sessionUtil";
 import Footer from "../Footer";
 import CachedVideo from "../../CachedVideo";
 
 
-const DemoVideos = ({session, drill, isVisible, canSubmit, isSubmitting}) => {
+const DemoVideos = ({isDrillFocused, isTabSelected, drill, session, canSubmit, isSubmitting}) => {
 
     const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
 
@@ -61,7 +61,11 @@ const DemoVideos = ({session, drill, isVisible, canSubmit, isSubmitting}) => {
         return isSubmitting;
     }
 
-    const isLoading = () => {
+    const shouldShowActivityIndicator = () => {
+        if (!isDrillFocused || !isTabSelected) {
+            return false;
+        }
+
         if (selectedAngle === DrillVideoAngle.Front) {
             return !frontStatus.isLoaded || frontStatus.isBuffering;
         } else if (selectedAngle === DrillVideoAngle.Side) {
@@ -69,11 +73,7 @@ const DemoVideos = ({session, drill, isVisible, canSubmit, isSubmitting}) => {
         } else {
             return !closeStatus.isLoaded || closeStatus.isBuffering;
         }
-    }
-
-    const shouldShowActivityIndicator = () => {
-        return isVisible && isLoading();
-    }
+    };
 
     const onSubmitButtonPress = () => {
         if (canSubmit) {
@@ -92,49 +92,43 @@ const DemoVideos = ({session, drill, isVisible, canSubmit, isSubmitting}) => {
     }
 
     return (
-        <View key={drill.drillId} style={!isVisible ? {display: 'none'} : {flex: 1, position: 'relative'}}>
-            {((isVisible && selectedAngle === DrillVideoAngle.Front) || frontStatus.isLoaded) && (
-                <CachedVideo
-                    style={selectedAngle === DrillVideoAngle.Front ? {flex: 1} : {display: 'none'}}
-                    source={{
-                        uri: drill.demos?.front?.fileLocation,
-                    }}
-                    resizeMode="cover"
-                    rate={playbackRate}
-                    shouldPlay={isVisible && selectedAngle === DrillVideoAngle.Front}
-                    isLooping
-                    isMuted
-                    onPlaybackStatusUpdate={status => setFrontStatus(() => status)}
-                />
-            )}
-            {((isVisible && selectedAngle === DrillVideoAngle.Side) || sideStatus.isLoaded) && (
-                <CachedVideo
-                    style={selectedAngle === DrillVideoAngle.Side ? {flex: 1} : {display: 'none'}}
-                    source={{
-                        uri: drill.demos?.side.fileLocation,
-                    }}
-                    resizeMode="cover"
-                    rate={playbackRate}
-                    shouldPlay={isVisible && selectedAngle === DrillVideoAngle.Side}
-                    isLooping
-                    isMuted
-                    onPlaybackStatusUpdate={status => setSideStatus(() => status)}
-                />
-            )}
-            {((isVisible && selectedAngle === DrillVideoAngle.Close) || closeStatus.isLoaded) && (
-                <CachedVideo
-                    style={selectedAngle === DrillVideoAngle.Close ? {flex: 1} : {display: 'none'}}
-                    source={{
-                        uri: drill.demos?.close.fileLocation,
-                    }}
-                    resizeMode="cover"
-                    rate={playbackRate}
-                    shouldPlay={isVisible && selectedAngle === DrillVideoAngle.Close}
-                    isLooping
-                    isMuted
-                    onPlaybackStatusUpdate={status => setCloseStatus(() => status)}
-                />
-            )}
+        <View key={drill.drillId} style={isTabSelected ? {flex: 1, position: 'relative'} : {display: 'none'}}>
+            <CachedVideo
+                style={selectedAngle === DrillVideoAngle.Front ? {flex: 1} : {display: 'none'}}
+                videoSourceUri={(isTabSelected && isDrillFocused && selectedAngle === DrillVideoAngle.Front) || frontStatus.isLoaded
+                    ? drill.demos?.front?.fileLocation
+                    : null}
+                posterSourceUri={drill.demos?.frontThumbnail?.fileLocation}
+                resizeMode="cover"
+                playbackRate={playbackRate}
+                shouldPlay={isTabSelected && isDrillFocused && selectedAngle === DrillVideoAngle.Front}
+                isLooping
+                onPlaybackStatusUpdate={status => setFrontStatus(() => status)}
+            />
+            <CachedVideo
+                style={selectedAngle === DrillVideoAngle.Side ? {flex: 1} : {display: 'none'}}
+                videoSourceUri={(isTabSelected && isDrillFocused && selectedAngle === DrillVideoAngle.Side) || sideStatus.isLoaded
+                    ? drill.demos?.side?.fileLocation
+                    : null}
+                posterSourceUri={drill.demos?.sideThumbnail?.fileLocation}
+                resizeMode="cover"
+                playbackRate={playbackRate}
+                shouldPlay={isTabSelected && isDrillFocused && selectedAngle === DrillVideoAngle.Side}
+                isLooping
+                onPlaybackStatusUpdate={status => setSideStatus(() => status)}
+            />
+            <CachedVideo
+                style={selectedAngle === DrillVideoAngle.Close ? {flex: 1} : {display: 'none'}}
+                videoSourceUri={(isTabSelected && isDrillFocused && selectedAngle === DrillVideoAngle.Close) || closeStatus.isLoaded
+                    ? drill.demos?.close?.fileLocation
+                    : null}
+                posterSourceUri={drill.demos?.closeThumbnail?.fileLocation}
+                resizeMode="cover"
+                playbackRate={playbackRate}
+                shouldPlay={isTabSelected && isDrillFocused && selectedAngle === DrillVideoAngle.Close}
+                isLooping
+                onPlaybackStatusUpdate={status => setCloseStatus(() => status)}
+            />
 
             {shouldShowActivityIndicator() && (
                 <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
@@ -143,10 +137,10 @@ const DemoVideos = ({session, drill, isVisible, canSubmit, isSubmitting}) => {
             )}
 
             <LinearGradient
-                colors={['rgba(0, 0, 0, .6)', 'transparent']}
+                colors={['rgba(0, 0, 0, .7)', 'transparent']}
                 start={{ x: 0, y: 1 }}
                 end={{ x: 0, y: 0 }}
-                style={{width: '100%', height: 400, position: 'absolute', bottom: 0, left: 0}} />
+                style={{width: '100%', height: 500, position: 'absolute', bottom: 0, left: 0, zIndex: 10}} />
 
             <Footer>
                 <View style={{flex: 1, paddingHorizontal: 5}}>

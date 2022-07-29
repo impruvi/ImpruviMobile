@@ -21,7 +21,7 @@ import {Colors} from "../../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faMagnifyingGlass, faXmarkCircle} from "@fortawesome/pro-light-svg-icons";
 import HeadshotChip from "../../../components/HeadshotChip";
-import {doesAnySessionRequireFeedback, doesPlayerNeedMoreTrainings} from "../../../util/playerUtil";
+import {doesAnySessionRequireFeedback, doesPlayerNeedMoreSessions, findSubscription} from "../../../util/playerUtil";
 import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
 
 
@@ -38,6 +38,7 @@ function comparePlayerSessions( playerSession1, playerSession2 ) {
 const PlayersScreen = () => {
     const [searchInput, setSearchInput] = useState('');
     const [allPlayerSessions, setAllPlayerSessions] = useState([]);
+    const [playersAndSubscriptions, setPlayersAndSubscriptions] = useState([]);
     const [visiblePlayerSessions, setVisiblePlayerSessions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
@@ -57,9 +58,13 @@ const PlayersScreen = () => {
 
     const getAllPlayerSessionsLazy = async () => {
         try {
-            const playerSessions = await httpClient.getCoachSessions(coach.coachId);
-            setAllPlayerSessions(playerSessions);
-            updateVisiblePlayerSessions(searchInput, playerSessions);
+            const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
+                httpClient.getPlayerSessionsForCoach(coach.coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+            ]);
+            setPlayersAndSubscriptions(playersAndSubscriptions);
+            setAllPlayerSessions(allPlayerSessions);
+            updateVisiblePlayerSessions(searchInput, allPlayerSessions);
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
@@ -89,7 +94,6 @@ const PlayersScreen = () => {
         searchInputRef.current?.focus();
         setVisiblePlayerSessions(allPlayerSessions.sort(comparePlayerSessions));
     }
-
 
     useEffect(() => {
         getAllPlayerSessions();
@@ -132,10 +136,11 @@ const PlayersScreen = () => {
                                 )}
                                 {visiblePlayerSessions.map(playerSession => (
                                     <TouchableHighlight underlayColor="#EFF3F4" onPress={() => navigation.navigate(CoachScreenNames.Player, {
-                                        player: playerSession.player
+                                        player: playerSession.player,
+                                        subscription: findSubscription(playerSession.player, playersAndSubscriptions)
                                     })} key={playerSession.player.playerId}>
                                         <View style={{flexDirection: 'row', paddingVertical: 12, alignItems: 'center', paddingHorizontal: 15}}>
-                                            <View style={(doesAnySessionRequireFeedback(playerSession.sessions) || doesPlayerNeedMoreTrainings(playerSession.player, playerSession.sessions)) ? {backgroundColor: Colors.Primary, width: 6, height: 6, borderRadius: 6, marginRight: 8} : {width: 6, height: 6, borderRadius: 6, marginRight: 8}}/>
+                                            <View style={(doesAnySessionRequireFeedback(playerSession.sessions) || doesPlayerNeedMoreSessions(findSubscription(playerSession.player, playersAndSubscriptions), playerSession.sessions)) ? {backgroundColor: Colors.Primary, width: 6, height: 6, borderRadius: 6, marginRight: 8} : {width: 6, height: 6, borderRadius: 6, marginRight: 8}}/>
                                             <HeadshotChip firstName={playerSession.player.firstName} lastName={playerSession.player.lastName} image={playerSession.player.headshot}/>
                                             <View style={{flex: 1, paddingHorizontal: 10}}>
                                                 <Text style={{fontWeight: '500', fontSize: 14}}>{playerSession.player.firstName} {playerSession.player.lastName}</Text>

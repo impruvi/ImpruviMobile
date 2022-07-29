@@ -5,7 +5,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import ReviewTrainingListItem from "../../../components/ReviewTrainingListItem";
 import {useCallback, useState} from "react";
-import {getSessionsRequiringFeedback} from "../../../util/playerUtil";
+import {
+    findSubscription,
+    getPlayersAndSubscriptionsRequiringTrainings,
+    getPlayerSessionsRequiringFeedback
+} from "../../../util/playerUtil";
 import useHttpClient from "../../../hooks/useHttpClient";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
@@ -14,7 +18,8 @@ import Loader from "../../../components/Loader";
 
 const ReviewTrainingsScreen = ({route}) => {
 
-    const [playerSessionsRequiringFeedback, setPlayerSessionsRequiringFeedback] = useState(route.params.incompletePlayerSessions);
+    const [playersAndSubscriptionsRequiringTrainings, setPlayersAndSubscriptionsRequiringTrainings] = useState(route.params.playersAndSubscriptionsRequiringTrainings);
+    const [playerSessionsRequiringFeedback, setPlayerSessionsRequiringFeedback] = useState(route.params.playerSessionsRequiringFeedback);
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
 
@@ -31,17 +36,13 @@ const ReviewTrainingsScreen = ({route}) => {
 
     const getIncompletePlayerSessionsLazy = async () => {
         try {
-            const allPlayerSessions = await httpClient.getCoachSessions(coach.coachId);
-            const requiringFeedback = allPlayerSessions.map(playerSessions => {
-                const sessionsRequiringFeedback = getSessionsRequiringFeedback(playerSessions.sessions);
-                return !!sessionsRequiringFeedback
-                    ? {
-                        player: playerSessions.player,
-                        session: sessionsRequiringFeedback
-                    }
-                    : null;
-            }).filter(playerSessions => !!playerSessions);
-            setPlayerSessionsRequiringFeedback(requiringFeedback);
+            const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
+                httpClient.getPlayerSessionsForCoach(coach.coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+            ]);
+
+            setPlayersAndSubscriptionsRequiringTrainings(getPlayersAndSubscriptionsRequiringTrainings(allPlayerSessions, playersAndSubscriptions));
+            setPlayerSessionsRequiringFeedback(getPlayerSessionsRequiringFeedback(allPlayerSessions));
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
@@ -74,7 +75,9 @@ const ReviewTrainingsScreen = ({route}) => {
                             {!hasError && (
                                 <>
                                     {playerSessionsRequiringFeedback.map(playerSession => (
-                                        <ReviewTrainingListItem playerSession={playerSession} key={playerSession.player.playerId} />
+                                        <ReviewTrainingListItem playerSession={playerSession}
+                                                                subscription={findSubscription(playerSession.player, playersAndSubscriptionsRequiringTrainings)}
+                                                                key={playerSession.player.playerId} />
                                     ))}
                                 </>
                             )}

@@ -67,8 +67,9 @@ const SessionScreen = ({route}) => {
                         <DrillVideos
                             session={session}
                             drill={item}
-                            isVisible={currentDrillId === item.drillId}
-                            selectedTab={selectedTab}/>
+                            isDrillFocused={currentDrillId === item.drillId}
+                            selectedTab={selectedTab}
+                            isLast={currentDrillId === session.drills[session.drills.length - 1].drillId}/>
                         <LinearGradient
                             colors={['rgba(0, 0, 0, .4)', 'transparent']}
                             start={{ x: 0, y: 0 }}

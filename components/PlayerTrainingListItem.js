@@ -41,17 +41,25 @@ const PlayerTrainingListItem = ({player, session, setIsDeleting, onDelete}) => {
             {
                 text: 'Delete',
                 onPress: () => {
-                    Alert.alert(`Are you sure you want to delete training ${session.sessionNumber}`, '', [
-                        {
-                            text: 'Delete',
-                            onPress: () => deleteTraining(session),
-                            style: 'destructive'
-                        },
-                        {
-                            text: 'Cancel',
-                            style: 'cancel',
-                        }
-                    ]);
+                    if (session.sessionNumber === 1) {
+                        Alert.alert(`You can not delete the intro session`, '', [
+                            {
+                                text: 'Ok',
+                            }
+                        ]);
+                    } else {
+                        Alert.alert(`Are you sure you want to delete training ${session.sessionNumber}`, '', [
+                            {
+                                text: 'Delete',
+                                onPress: () => deleteTraining(session),
+                                style: 'destructive'
+                            },
+                            {
+                                text: 'Cancel',
+                                style: 'cancel',
+                            }
+                        ]);
+                    }
                 },
                 style: 'destructive'
             },
@@ -93,7 +101,12 @@ const PlayerTrainingListItem = ({player, session, setIsDeleting, onDelete}) => {
             <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderColor: Colors.Border}}>
                 <View style={needsFeedback() ? {backgroundColor: Colors.Primary, width: 6, height: 6, borderRadius: 6, marginRight: 8} : {width: 6, height: 6, borderRadius: 6, marginRight: 8}}/>
                 <View style={{flex: 1}}>
-                    <Text style={isCompleted() ? {color: '#BEBEBE', fontSize: 14, fontWeight: '500'} : {fontSize: 14, fontWeight: '500'}}>Training {session.sessionNumber}</Text>
+                    <Text style={isCompleted() ? {color: '#BEBEBE', fontSize: 14, fontWeight: '500'} : {fontSize: 14, fontWeight: '500'}}>
+                        Training {session.sessionNumber} {session.sessionNumber === 1 && (
+                            <Text style={{color: '#aaa'}}>
+                                (Intro session)
+                            </Text>)}
+                    </Text>
                     <Text style={isCompleted() ? {color: '#BEBEBE', marginTop: 3} : {color: '#505050', marginTop: 3}}>
                         {!doesEveryDrillHaveSubmission(session)
                             ? `${session.drills.length} drills`
