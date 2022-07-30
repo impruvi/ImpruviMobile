@@ -1,10 +1,9 @@
 import React, {useEffect, useRef} from 'react';
-import {Animated, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import InvitationCodeScreen from "../screens/authentication/InvitationCodeScreen";
 
 import {RootScreenNames} from '../screens/ScreenNames';
-import useAuth from "../hooks/useAuth";
 import PlayerNavigator from "./player/PlayerNavigator";
 import CoachNavigator from "./coach/CoachNavigator";
 import useError from "../hooks/useError";
@@ -12,16 +11,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {UserType} from "../constants/userType";
 import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
-import Loader from "../components/Loader";
 import SignInScreen from "../screens/authentication/SignInScreen";
-
+import UpdateAppScreen from "../screens/UpdateAppScreen";
+import useAuth from "../hooks/useAuth";
 
 const Stack = createStackNavigator();
 
-const RootNavigator = () => {
+const RootNavigator = ({isCompatible, newAppVersionPreviewImage}) => {
+
     const {userType} = useAuth();
     const {error, setError} = useError();
-    const errorAnimation = useRef(new Animated.Value(-200)).current
+    const errorAnimation = useRef(new Animated.Value(-200)).current;
 
     useEffect(() => {
         if (!!error) {
@@ -31,29 +31,34 @@ const RootNavigator = () => {
         }
     }, [error]);
 
-    const {isLoadingAuth} = useAuth();
-
-    if (isLoadingAuth) {
-        return <View style={{flex: 1}}>
-            <Loader text={'Loading...'}/>
-        </View>
-    }
-
     return (
-        <View style={{flex: 1, position: 'relative'}}>
-            <Stack.Navigator screenOptions={{headerShown: false, cardStyle: {backgroundColor: 'white'}}}>
-                {!userType && (
+        <View style={styles.container}>
+            <Stack.Navigator screenOptions={{headerShown: false, cardStyle: styles.cardStyle}}>
+                {!isCompatible && (
+                    <Stack.Screen name={RootScreenNames.UpdateApp}
+                                  component={UpdateAppScreen}
+                                  initialParams={{previewImageFileLocation: newAppVersionPreviewImage}}/>
+                )}
+                {isCompatible && (
                     <>
-                        <Stack.Screen name={RootScreenNames.SignIn} component={SignInScreen}/>
-                        <Stack.Screen name={RootScreenNames.InvitationCode} component={InvitationCodeScreen}/>
-                        <Stack.Screen name={RootScreenNames.TermsAndConditions} component={TermsAndConditionsScreen}/>
+                        {!userType && (
+                            <Stack.Group>
+                                <Stack.Screen name={RootScreenNames.SignIn} component={SignInScreen}/>
+                                <Stack.Screen name={RootScreenNames.InvitationCode} component={InvitationCodeScreen}/>
+                                <Stack.Screen name={RootScreenNames.TermsAndConditions} component={TermsAndConditionsScreen}/>
+                            </Stack.Group>
+                        )}
+                        {!!userType && (
+                            <>
+                                {userType === UserType.Player && (
+                                    <Stack.Screen name={RootScreenNames.PlayerNavigator} component={PlayerNavigator}/>
+                                )}
+                                {userType === UserType.Coach && (
+                                    <Stack.Screen name={RootScreenNames.CoachNavigator} component={CoachNavigator}/>
+                                )}
+                            </>
+                        )}
                     </>
-                )}
-                {!!userType && userType === UserType.Player && (
-                    <Stack.Screen name={RootScreenNames.PlayerNavigator} component={PlayerNavigator}/>
-                )}
-                {!!userType && userType === UserType.Coach && (
-                    <Stack.Screen name={RootScreenNames.CoachNavigator} component={CoachNavigator}/>
                 )}
             </Stack.Navigator>
 
@@ -73,5 +78,15 @@ const RootNavigator = () => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative'
+    },
+    cardStyle: {
+        backgroundColor: 'white'
+    }
+});
 
 export default RootNavigator;

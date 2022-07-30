@@ -6,7 +6,6 @@ import {Alert, StyleSheet, TextInput} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
-import useAuth from "../../../../hooks/useAuth";
 import {isValidEmail} from "../../../../util/emailUtil";
 
 const EditEmailScreen = ({route}) => {
@@ -17,7 +16,6 @@ const EditEmailScreen = ({route}) => {
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
-    const {setCoach} = useAuth();
 
     const onSave = async () => {
         if (!isValidEmail(email)) {
@@ -35,7 +33,8 @@ const EditEmailScreen = ({route}) => {
                 ...route.params.coach,
                 email: email,
             };
-            setCoach(await httpClient.updateCoach(newCoach));
+            const updatedCoach = await httpClient.updateCoach(newCoach);
+            route.params.setCoach(updatedCoach);
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

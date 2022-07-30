@@ -19,7 +19,7 @@ const CreateTrainingPlansScreen = ({route}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
 
-    const {coach} = useAuth();
+    const {coachId} = useAuth();
     const {setError} = useError();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
@@ -33,8 +33,8 @@ const CreateTrainingPlansScreen = ({route}) => {
     const getIncompletePlayerSessionsLazy = async () => {
         try {
             const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
-                httpClient.getPlayerSessionsForCoach(coach.coachId),
-                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+                httpClient.getPlayerSessionsForCoach(coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coachId)
             ]);
 
             setPlayersAndSubscriptionsRequiringTrainings(getPlayersAndSubscriptionsRequiringTrainings(allPlayerSessions, playersAndSubscriptions));

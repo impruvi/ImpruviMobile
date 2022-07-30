@@ -6,7 +6,6 @@ import {Alert, StyleSheet, Text, TextInput, View} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
-import useAuth from "../../../../hooks/useAuth";
 
 const EditNameScreen = ({route}) => {
 
@@ -17,7 +16,6 @@ const EditNameScreen = ({route}) => {
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
-    const {setPlayer} = useAuth();
 
     const onSave = async () => {
         if (!firstName || !lastName) {
@@ -35,8 +33,8 @@ const EditNameScreen = ({route}) => {
                 firstName: firstName,
                 lastName: lastName
             };
-            await httpClient.updatePlayer(newPlayer);
-            setPlayer(newPlayer)
+            const updatedPlayer = await httpClient.updatePlayer(newPlayer);
+            route.params.setPlayer(updatedPlayer)
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

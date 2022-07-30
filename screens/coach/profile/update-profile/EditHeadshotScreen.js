@@ -5,7 +5,6 @@ import {useEffect, useState} from "react";
 import {Image, View} from "react-native";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
-import useAuth from "../../../../hooks/useAuth";
 import * as ImagePicker from "expo-image-picker";
 
 const EditHeadshotScreen = ({route}) => {
@@ -16,7 +15,6 @@ const EditHeadshotScreen = ({route}) => {
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
-    const {setCoach} = useAuth();
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -45,7 +43,8 @@ const EditHeadshotScreen = ({route}) => {
                 ...route.params.coach,
                 headshot: headshot,
             };
-            setCoach(await httpClient.updateCoach(newCoach));
+            const updatedCoach = await httpClient.updateCoach(newCoach);
+            route.params.setCoach(updatedCoach);
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

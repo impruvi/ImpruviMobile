@@ -20,23 +20,16 @@ const PlayerScreen = ({route}) => {
     const [player] = useState(route.params.player);
     const [subscription] = useState(route.params.subscription);
     const [sessions, setSessions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
-    const {coach} = useAuth();
-
-    const getPlayerSessions = async () => {
-        setIsLoading(true);
-        await getPlayerSessionsLazy();
-        setIsLoading(false);
-    }
+    const {coachId} = useAuth();
 
     const getPlayerSessionsLazy = async () => {
         try {
-            const allPlayerSessions = await httpClient.getPlayerSessionsForCoach(coach.coachId);
+            const allPlayerSessions = await httpClient.getPlayerSessionsForCoach(coachId);
             const sessions = allPlayerSessions.find(ps => ps.player.playerId === route.params.player.playerId).sessions;
             setSessions(sessions);
         } catch (e) {
@@ -44,10 +37,6 @@ const PlayerScreen = ({route}) => {
             setError('An error occurred. Please try again.');
         }
     }
-
-    useEffect(() => {
-        getPlayerSessions();
-    }, []);
 
     useFocusEffect(
         useCallback(() => {

@@ -30,7 +30,7 @@ const SignInScreen = () => {
     const [invalidCredentialsError, setInvalidCredentialsError] = useState('');
 
     const {setError} = useError();
-    const {setPlayer} = useAuth();
+    const {setPlayerId} = useAuth();
     const {httpClient} = useHttpClient();
     const {expoPushToken} = usePush();
     const navigation = useNavigation();
@@ -43,7 +43,7 @@ const SignInScreen = () => {
         try {
             const result = await httpClient.signIn(email, password, expoPushToken);
             if (result.success) {
-                setPlayer(result.player);
+                setPlayerId(result.player.playerId);
             } else {
                 setInvalidCredentialsError('Invalid email/password combination');
             }

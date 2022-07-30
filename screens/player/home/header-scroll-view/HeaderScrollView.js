@@ -1,8 +1,9 @@
 import {Animated, Image, ScrollView, useWindowDimensions} from "react-native";
 import HeaderBackground from "../../../../assets/images/StadiumHeaderBackground.png";
 import {useState} from 'react';
+import CachedImage from "../../../../components/CachedImage";
 
-const HeaderScrollView = ({children}) => {
+const HeaderScrollView = ({children, imageFileLocation}) => {
 
     const [offset, setOffset] = useState(0);
     const {width} = useWindowDimensions();
@@ -29,7 +30,7 @@ const HeaderScrollView = ({children}) => {
                 overflow: 'hidden',
                 height: height
             }]}>
-                <Image source={HeaderBackground} style={{height: height, width: width}}/>
+                <CachedImage sourceUri={!!imageFileLocation ? imageFileLocation : HeaderBackground.uri} style={{height: height, width: width}}/>
             </Animated.View>
 
             {children}

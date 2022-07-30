@@ -75,11 +75,6 @@ const SessionScreen = ({route}) => {
                             start={{ x: 0, y: 0 }}
                             end={{ x: 0, y: 1 }}
                             style={{width: '100%', height: 175, position: 'absolute', top: 0, left: 0}} />
-                        <LinearGradient
-                            colors={['rgba(0, 0, 0, .3)', 'transparent']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={{width: 175, height: '100%', position: 'absolute', top: 0, left: 0}} />
                     </>
                 )}
             />

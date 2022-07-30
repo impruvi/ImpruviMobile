@@ -13,6 +13,20 @@ class HttpClient {
         secretKey: 'i+JX947fAdM4IkZEB6OZ+OtGK/nNspP5PQ3lLeEi',
     });
 
+    isAppVersionCompatible = async (version) => {
+        try {
+            const response = await this.#client.invokeApi({}, '/app-version/is-compatible', 'POST', {}, {
+                version,
+            });
+            return response.data;
+        } catch (err) {
+            console.log(err.response.status);
+            return {
+                isCompatible: true // default to true since it is overwhelmingly likely to be the case
+            }
+        }
+    }
+
     signIn = async (email, password, expoPushToken) => {
         try {
             const response = await this.#client.invokeApi({}, '/player/sign-in', 'POST', {}, {
@@ -140,17 +154,35 @@ class HttpClient {
     }
 
     getCoach = async (coachId) => {
-        const response = await this.#client.invokeApi({}, '/coach/get', 'POST', {},{
-            coachId: coachId
-        });
-        return response.data.coach;
+        try {
+            const response = await this.#client.invokeApi({}, '/coach/get', 'POST', {},{
+                coachId: coachId
+            });
+            return response.data.coach;
+        } catch(err) {
+            console.log(err.response.status);
+            if (err.response.status === 404) {
+                return null
+            }
+
+            throw err
+        }
     }
 
     getPlayer = async (playerId) => {
-        const response = await this.#client.invokeApi({}, '/player/get', 'POST', {},{
-            playerId: playerId
-        });
-        return response.data.player;
+        try {
+            const response = await this.#client.invokeApi({}, '/player/get', 'POST', {},{
+                playerId: playerId
+            });
+            return response.data.player;
+        } catch(err) {
+            console.log(err.response.status);
+            if (err.response.status === 404) {
+                return null
+            }
+
+            throw err
+        }
     }
 
     getPlayerSessions = async (playerId) => {
@@ -169,11 +201,19 @@ class HttpClient {
         return response.data.playerSessions;
     }
 
+    getSubscription = async (playerId) => {
+        try {
+            const response = await this.#client.invokeApi({}, '/player/subscription/get', 'POST', {}, {
+                playerId: playerId,
+            });
+            return response.data.subscription;
+        } catch(err) {
+            if (err.response.status === 404) {
+                return null;
+            }
 
-    // TODO: change this to pass token as soon as we have that ready
-    getSubscription = async (coachId, playerId) => {
-        const playersAndSubscriptions = await this.getPlayersAndSubscriptionsForCoach(coachId);
-        return playersAndSubscriptions.find(playerAndSubscription => playerAndSubscription.player.playerId === playerId).subscription;
+            throw err
+        }
     }
 
     getPlayersAndSubscriptionsForCoach = async (coachId) => {

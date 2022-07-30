@@ -32,7 +32,7 @@ const InvitationCodeScreen = () => {
     const [invalidCodeError, setInvalidCodeError] = useState('');
 
     const {setError} = useError();
-    const {setCoach} = useAuth();
+    const {setCoachId} = useAuth();
     const {httpClient} = useHttpClient();
     const {expoPushToken} = usePush();
     const navigation = useNavigation();
@@ -45,7 +45,7 @@ const InvitationCodeScreen = () => {
         try {
             const result = await httpClient.validateInviteCode(invitationCode, expoPushToken);
             if (result.success) {
-                setCoach(result.coach);
+                setCoachId(result.coach.coachId);
             } else {
                 setInvalidCodeError('Invalid code');
             }

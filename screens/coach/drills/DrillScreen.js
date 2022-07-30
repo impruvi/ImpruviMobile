@@ -10,6 +10,7 @@ import {CoachScreenNames} from "../../ScreenNames";
 import useHttpClient from "../../../hooks/useHttpClient";
 import useError from "../../../hooks/useError";
 import Loader from "../../../components/Loader";
+import useAuth from "../../../hooks/useAuth";
 
 
 const DrillScreen = ({route}) => {
@@ -19,12 +20,21 @@ const DrillScreen = ({route}) => {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const navigation = useNavigation();
+    const {coachId} = useAuth();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
 
     const deleteDrill = async () => {
         setIsDeleting(true);
         try {
+            const coach = await httpClient.getCoach(coachId);
+            if (!!coach.introSessionDrills.find(d => d.drillId === drill.drillId)) {
+                Alert.alert(`You can not delete an intro session drill?`, '', [
+                    {
+                        text: 'Ok',
+                    }
+                ])
+            }
             await httpClient.deleteDrill(drill.drillId);
             navigation.goBack();
         } catch (e) {
@@ -40,6 +50,7 @@ const DrillScreen = ({route}) => {
             {
                 text: 'Delete',
                 onPress: () => {
+
                     Alert.alert(`Are you sure you want to delete ${drill.name}?`, '', [
                         {
                             text: 'Delete',

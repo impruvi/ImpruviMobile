@@ -12,7 +12,7 @@ const HeadshotChip = ({size= 40, firstName, lastName, image}) => {
             )}
             {(!image || !image.fileLocation) && (
                 <View>
-                    <Text style={{fontSize: size / 2.3}}>{`${firstName.substring(0, 1).toUpperCase()}${lastName.substring(0, 1).toUpperCase()}`}</Text>
+                    <Text style={{fontSize: size / 2.3}}>{`${firstName?.substring(0, 1)?.toUpperCase()}${lastName?.substring(0, 1)?.toUpperCase()}`}</Text>
                 </View>
             )}
         </View>

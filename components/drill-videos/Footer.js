@@ -11,7 +11,7 @@ const Footer = ({children}) => {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        zIndex: 20,
+        zIndex: 1000,
         bottom: 0,
         left: 0,
         width: '100%',

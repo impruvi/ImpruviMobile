@@ -17,7 +17,7 @@ const DrillFeedbackScreen = ({route}) => {
 
     const {executeLongRequest} = useLongRequest();
     const navigation = useNavigation();
-    const {coach} = useAuth();
+    const {coachId} = useAuth();
     const {session, drillId} = route.params;
 
     const onSubmit = async () => {
@@ -25,7 +25,7 @@ const DrillFeedbackScreen = ({route}) => {
             setIsSubmitting(true);
             const thumbnail = await generateThumbnail(video);
             const input = {
-                coachId: coach.coachId,
+                coachId: coachId,
                 playerId: session.playerId,
                 sessionNumber: session.sessionNumber,
                 drillId: drillId,

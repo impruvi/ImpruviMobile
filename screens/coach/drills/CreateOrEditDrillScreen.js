@@ -52,7 +52,7 @@ const CreateOrEditDrillScreen = ({route}) => {
     const {executeLongRequest} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-    const {coach} = useAuth();
+    const {coachId} = useAuth();
     const {setError} = useError();
 
     const onSubmit = async () => {
@@ -72,7 +72,7 @@ const CreateOrEditDrillScreen = ({route}) => {
                 let currentDrill = !!drill ? drill : null;
                 if (!currentDrill) {
                     currentDrill = await httpClient.createDrill({
-                        coachId: coach.coachId,
+                        coachId: coachId,
                         name: name,
                         description: description,
                         category: category,

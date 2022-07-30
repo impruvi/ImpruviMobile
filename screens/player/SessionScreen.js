@@ -26,7 +26,7 @@ const SessionScreen = ({route}) => {
     const {outstandingLongRequests} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-    const {player} = useAuth();
+    const {playerId} = useAuth();
     const listRef = useRef();
     const viewableItemsChanged = useRef(({viewableItems}) => {
         setCurrentDrillId(viewableItems[0].item.drillId);
@@ -37,7 +37,7 @@ const SessionScreen = ({route}) => {
     const markFeedbackAsViewed = async () => {
         try {
             if (doesAnyDrillHaveFeedback(session) && !session.hasViewedFeedback) {
-                await httpClient.markFeedbackAsViewed(session.sessionNumber, player.playerId);
+                await httpClient.markFeedbackAsViewed(session.sessionNumber, playerId);
             }
         } catch (e) {
             console.log(e);
@@ -45,7 +45,7 @@ const SessionScreen = ({route}) => {
     };
 
     const getSessionLazy = () => {
-        httpClient.getPlayerSessions(player.playerId).then(sessions => {
+        httpClient.getPlayerSessions(playerId).then(sessions => {
             setSessions(sessions);
             const matchingSession = sessions.find(sess => sess.sessionNumber === session.sessionNumber);
             const justCompleted = !doesEveryDrillHaveSubmission(session) && doesEveryDrillHaveSubmission(matchingSession);

@@ -17,11 +17,11 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
     const [numberOfUnreadInboxEntries, setNumberOfUnreadInboxEntries] = useState(0);
     const {httpClient} = useHttpClient();
-    const {player} = useAuth();
+    const {playerId} = useAuth();
     const {lastViewedDateEpochMillis} = useInboxViewDate();
 
     const getNumberOfUnreadInboxEntries = async () => {
-        const inboxEntries = await httpClient.getInboxForPlayer(player.playerId);
+        const inboxEntries = await httpClient.getInboxForPlayer(playerId);
         const unreadInboxEntries = inboxEntries.filter(inboxEntry => inboxEntry.creationDateEpochMillis > lastViewedDateEpochMillis);
         setNumberOfUnreadInboxEntries(unreadInboxEntries.length);
     }

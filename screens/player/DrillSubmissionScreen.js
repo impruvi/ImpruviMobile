@@ -16,7 +16,7 @@ const DrillSubmissionScreen = ({route}) => {
 
     const {executeLongRequest} = useLongRequest();
     const {setError} = useError();
-    const {player} = useAuth();
+    const {playerId} = useAuth();
     const navigation = useNavigation();
     const {sessionNumber, drillId} = route.params;
 
@@ -25,7 +25,7 @@ const DrillSubmissionScreen = ({route}) => {
             setIsSubmitting(true);
             const thumbnail = await generateThumbnail(video);
             const input = {
-                playerId: player.playerId,
+                playerId,
                 sessionNumber,
                 drillId,
                 video,

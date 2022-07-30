@@ -22,6 +22,8 @@ import HeadshotChip from "../../../components/HeadshotChip";
 
 
 const HomeScreen = () => {
+
+    const [coach, setCoach] = useState();
     const [playersAndSubscriptionsRequiringTrainings, setPlayersAndSubscriptionsRequiringTrainings] = useState([]);
     const [playerSessionsRequiringFeedback, setPlayerSessionsRequiringFeedback] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,7 @@ const HomeScreen = () => {
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-    const {coach} = useAuth();
+    const {coachId} = useAuth();
     const {setError} = useError();
 
     const initialize = async () => {
@@ -41,9 +43,10 @@ const HomeScreen = () => {
 
     const initializeLazy = async () => {
         try {
+            httpClient.getCoach(coachId).then(setCoach);
             const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
-                httpClient.getPlayerSessionsForCoach(coach.coachId),
-                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+                httpClient.getPlayerSessionsForCoach(coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coachId)
             ]);
 
             setPlayerSessionsRequiringFeedback(getPlayerSessionsRequiringFeedback(allPlayerSessions));
@@ -71,7 +74,7 @@ const HomeScreen = () => {
                 <HeaderCenter title={'Home'}
                               hasBorder={true}
                               right={(
-                                  <HeadshotChip image={coach.headshot} firstName={coach.firstName} lastName={coach.lastName} size={40} />
+                                  <HeadshotChip image={coach?.headshot} firstName={coach?.firstName} lastName={coach?.lastName} size={40} />
                               )}
                               onRightPress={() => navigation.navigate(CoachScreenNames.Profile)}/>
                 {isLoading && <Loader/>}

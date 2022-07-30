@@ -31,7 +31,7 @@ const InboxScreen = () => {
 
     const {viewInbox} = useInboxViewDate();
     const {setError} = useError();
-    const {player} = useAuth();
+    const {playerId} = useAuth();
     const {httpClient} = useHttpClient();
 
     const navigateToSession = (sessionNumber) => {
@@ -59,7 +59,7 @@ const InboxScreen = () => {
 
     const getSessions = async () => {
         try {
-            const allSessions = await httpClient.getPlayerSessions(player.playerId);
+            const allSessions = await httpClient.getPlayerSessions(playerId);
             setSessions(allSessions);
         } catch (e) {
             console.log(e);
@@ -75,7 +75,7 @@ const InboxScreen = () => {
 
     const getInboxEntriesLazy = async () => {
         try {
-            const inboxEntries = await httpClient.getInboxForPlayer(player.playerId);
+            const inboxEntries = await httpClient.getInboxForPlayer(playerId);
             setEntries(inboxEntries.map(entry => {
                 let displayText;
                 if (entry.type === InboxEntryType.NewSessionAdded) {

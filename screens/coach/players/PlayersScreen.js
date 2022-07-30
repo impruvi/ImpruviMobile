@@ -46,7 +46,7 @@ const PlayersScreen = () => {
     const searchInputRef = useRef();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-    const {coach} = useAuth();
+    const {coachId} = useAuth();
     const {setError} = useError();
 
     const getAllPlayerSessions = async () => {
@@ -59,8 +59,8 @@ const PlayersScreen = () => {
     const getAllPlayerSessionsLazy = async () => {
         try {
             const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
-                httpClient.getPlayerSessionsForCoach(coach.coachId),
-                httpClient.getPlayersAndSubscriptionsForCoach(coach.coachId)
+                httpClient.getPlayerSessionsForCoach(coachId),
+                httpClient.getPlayersAndSubscriptionsForCoach(coachId)
             ]);
             setPlayersAndSubscriptions(playersAndSubscriptions);
             setAllPlayerSessions(allPlayerSessions);

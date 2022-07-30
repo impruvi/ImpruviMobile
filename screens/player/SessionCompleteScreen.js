@@ -14,14 +14,14 @@ const SessionCompleteScreen = () => {
     const [subscription, setSubscription] = useState();
     const [sessions, setSessions] = useState();
 
-    const {player} = useAuth();
+    const {playerId} = useAuth();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
 
     const initialize = async () => {
         const [sessions, subscription] = await Promise.all([
-            httpClient.getPlayerSessions(player.playerId),
-            httpClient.getSubscription(player.coachId, player.playerId)
+            httpClient.getPlayerSessions(playerId),
+            httpClient.getSubscription(playerId)
         ]);
 
         setSessions(sessions);

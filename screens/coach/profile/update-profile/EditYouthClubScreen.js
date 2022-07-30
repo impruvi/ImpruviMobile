@@ -6,7 +6,6 @@ import {Alert, StyleSheet, TextInput} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
-import useAuth from "../../../../hooks/useAuth";
 
 const EditYouthClubScreen = ({route}) => {
 
@@ -16,7 +15,6 @@ const EditYouthClubScreen = ({route}) => {
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
-    const {setCoach} = useAuth();
 
     const onSave = async () => {
         if (!school) {
@@ -34,7 +32,8 @@ const EditYouthClubScreen = ({route}) => {
                 ...route.params.coach,
                 youthClub: youthClub,
             };
-            setCoach(await httpClient.updateCoach(newCoach));
+            const updatedCoach = await httpClient.updateCoach(newCoach);
+            route.params.setCoach(updatedCoach);
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {

@@ -1,6 +1,7 @@
 export const RootScreenNames = {
     InvitationCode: 'InvitationCode',
     SignIn: 'SignIn',
+    UpdateApp: 'UpdateApp',
     TermsAndConditions: 'TermsAndConditions',
     CoachNavigator: 'CoachNavigator',
     PlayerNavigator: 'PlayerNavigator',

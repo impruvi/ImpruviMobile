@@ -63,9 +63,7 @@ const ActionButton = ({session, canSubmit}) => {
     );
 }
 
-const Session = ({session, sessions}) => {
-
-    const canSubmit = canSubmitForSession(sessions, session);
+const Session = ({session, canSubmit}) => {
 
     const {width} = useWindowDimensions();
     const sessionEquipment  = getSessionEquipment(session);
@@ -73,12 +71,15 @@ const Session = ({session, sessions}) => {
     return (
         <View style={{width: width, paddingHorizontal: 15, marginBottom: 10}}>
             <Box>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, alignItems: 'flex-start'}}>
-                    <Text style={{fontWeight: '600', fontSize: 18, marginBottom: 10}}>
+                <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center'}}>
+                    <Text style={{fontWeight: '600', fontSize: 18}}>
                         {canSubmit && doesAnyDrillHaveSubmission(session) && 'Current training'}
                         {canSubmit && !doesAnyDrillHaveSubmission(session) && 'Next training'}
-                        {!canSubmit && `Training ${session.sessionNumber} `}
+                        {!canSubmit && `Training ${session.sessionNumber}`}
                     </Text>
+                    {session.isIntroSession && (
+                        <Text style={{color: '#aaa', fontSize: 14, fontWeight: '500'}}> (Intro session)</Text>
+                    )}
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <View>

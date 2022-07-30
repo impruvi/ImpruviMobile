@@ -17,7 +17,7 @@ const DrillsScreen = () => {
     const navigation = useNavigation();
     const {setError} = useError();
     const {httpClient} = useHttpClient();
-    const {player} = useAuth();
+    const {playerId} = useAuth();
 
 
     const getDrills = async () => {
@@ -29,7 +29,7 @@ const DrillsScreen = () => {
 
     const getDrillsLazy = async () => {
         try {
-            const drills = await httpClient.getDrillsForPlayer(player.playerId);
+            const drills = await httpClient.getDrillsForPlayer(playerId);
             setDrills(drills);
         } catch (e) {
             console.log(e);

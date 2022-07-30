@@ -19,7 +19,7 @@ const DrillsScreen = () => {
     const {outstandingLongRequests} = useLongRequest();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
-    const {coach} = useAuth();
+    const {coachId} = useAuth();
     const {setError} = useError();
 
     const getDrillsForCoach = async () => {
@@ -31,7 +31,7 @@ const DrillsScreen = () => {
 
     const getDrillsForCoachLazy = async () => {
         try {
-            const result = await httpClient.getDrillsForCoach(coach.coachId);
+            const result = await httpClient.getDrillsForCoach(coachId);
             setDrills(result.drills);
         } catch (e) {
             console.log(e);

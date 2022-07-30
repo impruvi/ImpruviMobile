@@ -1,5 +1,5 @@
 import {FlatList, View} from "react-native";
-import {doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
+import {canSubmitForSession, doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
 import Session from "./Session";
 import {useEffect, useRef, useState} from "react";
 import EmptyPlaceholder from "../../../../components/EmptyPlaceholder";
@@ -79,7 +79,7 @@ const Week = ({sessions}) => {
                       showsHorizontalScrollIndicator={false}
                       renderItem={({item}) => (
                           <Session session={item}
-                                   sessions={sessions}/>
+                                   canSubmit={canSubmitForSession(sessions, item)}/>
                       )} />
         </View>
     );

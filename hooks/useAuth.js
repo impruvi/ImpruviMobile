@@ -4,43 +4,22 @@ import {UserType} from "../constants/userType";
 
 const AuthContext = createContext({});
 
-export const AuthProvider = ({children}) => {
+export const AuthProvider = ({children, initialPlayerId, initialCoachId, initialUserType}) => {
 
-    const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-    const [userType, setUserType] = useState(); // if userType is present then user is authenticated
-    const [player, setPlayer] = useState();
-    const [coach, setCoach] = useState();
+    const [userType, setUserType] = useState(initialUserType); // if userType is present then user is authenticated
+    const [playerId, setPlayerId] = useState(initialPlayerId);
+    const [coachId, setCoachId] = useState(initialCoachId);
 
-    const getFromStorage = async () => {
-        const userType = await AsyncStorage.getItem('userType');
-        if (!userType) {
-            return;
-        }
-
-        setUserType(userType);
-        if (userType === UserType.Coach) {
-            const coachJSON = await AsyncStorage.getItem('coach');
-            setCoach(JSON.parse(coachJSON));
-        } else {
-            const playerJSON = await AsyncStorage.getItem('player');
-            setPlayer(JSON.parse(playerJSON));
-        }
-    }
-
-    useEffect(() => {
-        getFromStorage().then(() => setIsLoadingAuth(false));
-    }, []);
-
-    const onSetPlayer = async (player) => {
-        setPlayer(player);
-        await AsyncStorage.setItem('player', JSON.stringify(player));
+    const onSetPlayerId = async (playerId) => {
+        setPlayerId(playerId);
+        await AsyncStorage.setItem('playerId', playerId);
         setUserType(UserType.Player);
         await AsyncStorage.setItem('userType', UserType.Player);
     }
 
-    const onSetCoach = async (coach) => {
-        setCoach(coach)
-        await AsyncStorage.setItem('coach', JSON.stringify(coach));
+    const onSetCoachId = async (coachId) => {
+        setCoachId(coachId);
+        await AsyncStorage.setItem('coachId', coachId);
         setUserType(UserType.Coach);
         await AsyncStorage.setItem('userType', UserType.Coach);
     }
@@ -49,11 +28,11 @@ export const AuthProvider = ({children}) => {
         try {
             if (userType === UserType.Coach) {
                 await AsyncStorage.removeItem('userType');
-                await AsyncStorage.removeItem('coach');
+                await AsyncStorage.removeItem('coachId');
                 setUserType(undefined);
             } else {
                 await AsyncStorage.removeItem('userType');
-                await AsyncStorage.removeItem('player');
+                await AsyncStorage.removeItem('playerId');
                 setUserType(undefined);
             }
         } catch(exception) {
@@ -62,14 +41,13 @@ export const AuthProvider = ({children}) => {
     }
 
     const memoedValue = useMemo(() => ({
-        isLoadingAuth,
         userType,
-        player,
-        coach,
-        setPlayer: onSetPlayer,
-        setCoach: onSetCoach,
+        playerId,
+        coachId,
+        setPlayerId: onSetPlayerId,
+        setCoachId: onSetCoachId,
         signOut: signOut
-    }), [isLoadingAuth, userType, player, coach, signOut, onSetPlayer, onSetCoach]);
+    }), [userType, playerId, coachId, signOut, onSetPlayerId, onSetCoachId]);
 
     return (
         <AuthContext.Provider value={memoedValue}>
