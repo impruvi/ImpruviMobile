@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
+import {Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {getCategoryDisplayValue} from "../../constants/categoryType";
 import {Colors} from "../../constants/colors";
 import CachedImage from "../CachedImage";
@@ -9,9 +9,6 @@ import CircularProgress from "react-native-circular-progress-indicator";
 const DrillListItem = ({drill, onPress}) => {
 
     const {outstandingLongRequests} = useLongRequest();
-    const {width} = useWindowDimensions();
-
-    const imageDimension = width / 3 - 16;
 
     const isDrillPressable = () => {
         const outstandingRequestForDrill = getOutstandingRequestForDrill();
@@ -43,17 +40,15 @@ const DrillListItem = ({drill, onPress}) => {
     const outstandingRequestForDrill = getOutstandingRequestForDrill();
 
     return (
-        <TouchableOpacity style={{width: '32%', marginHorizontal: 2, marginBottom: 10, position: 'relative'}}
-                          activeOpacity={.6}
-                          onPress={onDrillPress}>
+        <TouchableOpacity style={styles.container} activeOpacity={.6} onPress={onDrillPress}>
             {!!drill?.demos?.frontThumbnail && (
-                <CachedImage sourceUri={drill.demos.frontThumbnail.fileLocation} style={{width: imageDimension, height: imageDimension, borderRadius: 10}} />
+                <CachedImage sourceUri={drill.demos.frontThumbnail.fileLocation} style={styles.thumbnail} />
             )}
             {!drill?.demos?.frontThumbnail && (
-                <View style={{width: imageDimension, height: imageDimension, borderRadius: 10}}/>
+                <View style={styles.thumbnail}/>
             )}
             {!!outstandingRequestForDrill && (
-                <View style={{position: 'absolute', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, .3)', width: imageDimension, height: imageDimension, borderRadius: 10}}>
+                <View style={styles.loadingContainer}>
                     <CircularProgress
                         value={Math.floor(outstandingRequestForDrill.progress * 100)}
                         maxValue={100}
@@ -61,15 +56,54 @@ const DrillListItem = ({drill, onPress}) => {
                         activeStrokeColor={'white'}
                         inActiveStrokeColor={'#aaa'}
                         progressValueColor={'transparent'}
-                        titleStyle={{display: 'none'}}
+                        titleStyle={styles.loadingTitleStyle}
                     />
-                    <Text style={{color: 'white', fontSize: 12, marginTop: 2}}>Uploading...</Text>
+                    <Text style={styles.loadingText}>Uploading...</Text>
                 </View>
             )}
-            <Text style={{fontWeight: '600', marginTop: 5}}>{drill.name}</Text>
-            <Text style={{color: Colors.TextSecondary}}>{getCategoryDisplayValue(drill.category)}</Text>
+            <Text style={styles.title}>{drill.name}</Text>
+            <Text style={styles.subTitle}>{getCategoryDisplayValue(drill.category)}</Text>
         </TouchableOpacity>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: '32%',
+        marginHorizontal: 2,
+        marginBottom: 10,
+        position: 'relative'
+    },
+    thumbnail: {
+        borderRadius: 10,
+        height: Dimensions.get('window').width / 3 - 16,
+        width: Dimensions.get('window').width / 3 - 16,
+    },
+    loadingContainer: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(0, 0, 0, .3)',
+        borderRadius: 10,
+        height: Dimensions.get('window').width / 3 - 16,
+        width: Dimensions.get('window').width / 3 - 16,
+    },
+    loadingTitleStyle: {
+        display: 'none'
+    },
+    loadingText: {
+        color: 'white',
+        fontSize: 12,
+        marginTop: 2
+    },
+    title: {
+        fontWeight: '600',
+        marginTop: 5
+    },
+    subTitle: {
+        color: Colors.TextSecondary
+    }
+})
+
 
 export default DrillListItem;

@@ -9,10 +9,12 @@ import HomeDark from '../../assets/icons/navigation/HomeDark.png';
 import HomeActiveDark from '../../assets/icons/navigation/HomeActiveDark.png';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
+const safeAreaEdges = ['bottom', 'left', 'right'];
+
 const TabBar = ({ state, descriptors, navigation }) => {
     return (
-        <SafeAreaView edges={['bottom', 'left', 'right']}>
-            <View style={{paddingTop: 7, flexDirection: 'row', justifyContent: 'center'}}>
+        <SafeAreaView edges={safeAreaEdges}>
+            <View style={styles.container}>
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key];
                     const label =
@@ -46,7 +48,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
                     return (
                         <TouchableWithoutFeedback onPress={onPress} onLongPress={onLongPress} key={label}>
-                            <View style={{justifyContent: 'center', alignItems: 'center', width: 80, height: 50, marginHorizontal: 20}}>
+                            <View style={styles.content}>
                                 {label === CoachScreenNames.Home && isFocused &&
                                     <>
                                         <Image source={HomeActiveDark} style={styles.icon}/>
@@ -95,6 +97,18 @@ const TabBar = ({ state, descriptors, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        paddingTop: 7,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    content: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        height: 50,
+        marginHorizontal: 20
+    },
     icon: {
         height: 20,
         width: 25,

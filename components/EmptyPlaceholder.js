@@ -1,13 +1,32 @@
-import {Image, Text, View} from "react-native";
+import {Image, Text, View, StyleSheet} from "react-native";
 import EmptyGreyIcon from "../assets/icons/EmptyGrey.png";
 
 const EmptyPlaceholder = ({text}) => {
     return (
-        <View style={{paddingVertical: 25, width: '100%', alignItems: 'center', marginBottom: 20}}>
-            <Image source={EmptyGreyIcon} style={{width: 80, height: 80, resizeMode: 'contain'}}/>
-            <Text style={{color: '#BFBFBF', fontWeight: '500', fontSize: 13}}>{text}</Text>
+        <View style={styles.container}>
+            <Image source={EmptyGreyIcon} style={styles.image}/>
+            <Text style={styles.text}>{text}</Text>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        paddingVertical: 25,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 20
+    },
+    image: {
+        width: 80,
+        height: 80,
+        resizeMode: 'contain'
+    },
+    text: {
+        color: '#BFBFBF',
+        fontWeight: '500',
+        fontSize: 13
+    }
+})
 
 export default EmptyPlaceholder;

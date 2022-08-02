@@ -1,9 +1,10 @@
-import {FlatList, View} from "react-native";
+import {FlatList, View, StyleSheet} from "react-native";
 import {canSubmitForSession, doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
 import Session from "./Session";
 import {useEffect, useRef, useState} from "react";
 import EmptyPlaceholder from "../../../../components/EmptyPlaceholder";
 import Box from "../../../../components/Box";
+import {useCallback} from 'react';
 
 
 const Week = ({sessions}) => {
@@ -38,24 +39,26 @@ const Week = ({sessions}) => {
         setCurrentSession(sessions[initialSessionIndex]);
     }, []);
 
-    if (sessions.length === 0) {
-        return (
-            <View style={{width: '100%', paddingHorizontal: 15, marginBottom: 10}}>
-                <Box>
-                    <EmptyPlaceholder text={'You have no sessions'} />
-                </Box>
-            </View>
-        )
-    }
+    const onScrollToIndexFailed = useCallback(info => {
+        const wait = new Promise(resolve => setTimeout(resolve, 0));
+        wait.then(() => {
+            listRef.current?.scrollToIndex({ index: info.index, animated: false });
+        });
+    }, [listRef]);
 
-    if (!currentSession) {
-        return <View />;
-    }
+    const extractKey = useCallback(item => item.sessionNumber, []);
+
+    const renderItem = useCallback(({item}) => {
+        return (
+            <Session session={item}
+                     canSubmit={canSubmitForSession(sessions, item)}/>
+        );
+    }, [sessions]);
 
     return (
-        <View style={{flexDirection: 'column-reverse'}}>
+        <View style={styles.container}>
             {sessions.length === 0 && (
-                <View style={{width: '100%', paddingHorizontal: 15, marginBottom: 10}}>
+                <View style={styles.emptyPlaceholderContainer}>
                     <Box>
                         <EmptyPlaceholder text={'You have no sessions'} />
                     </Box>
@@ -63,26 +66,32 @@ const Week = ({sessions}) => {
             )}
             <FlatList ref={listRef}
                       initialScrollIndex={currentSessionIndex}
-                      onScrollToIndexFailed={info => {
-                          const wait = new Promise(resolve => setTimeout(resolve, 0));
-                          wait.then(() => {
-                              listRef.current?.scrollToIndex({ index: info.index, animated: false });
-                          });
-                      }}
+                      onScrollToIndexFailed={onScrollToIndexFailed}
                       onViewableItemsChanged={viewableItemsChanged}
                       viewabilityConfig={viewConfig}
                       data={sessions}
                       horizontal
                       pagingEnabled
-                      contentContainerStyle={{marginTop: 20}}
-                      keyExtractor={(item) => item.sessionNumber}
+                      contentContainerStyle={styles.listContainer}
+                      keyExtractor={extractKey}
                       showsHorizontalScrollIndicator={false}
-                      renderItem={({item}) => (
-                          <Session session={item}
-                                   canSubmit={canSubmitForSession(sessions, item)}/>
-                      )} />
+                      renderItem={renderItem} />
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'column-reverse'
+    },
+    emptyPlaceholderContainer: {
+        width: '100%',
+        paddingHorizontal: 15,
+        marginBottom: 10
+    },
+    listContainer: {
+        marginTop: 20
+    }
+});
 
 export default Week;

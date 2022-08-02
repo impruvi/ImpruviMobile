@@ -45,7 +45,7 @@ const EditPositionScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Position'}/>
             <TextInput style={styles.input} value={position} onChangeText={setPosition}/>

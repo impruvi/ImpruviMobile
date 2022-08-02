@@ -1,13 +1,13 @@
-import {Text, View} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import CachedImage from './CachedImage';
 
 const HeadshotChip = ({size= 40, firstName, lastName, image}) => {
     return (
-        <View style={{width: size, height: size, borderRadius: size, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ddd', overflow: 'hidden'}}>
+        <View style={{...styles.container, width: size, height: size, borderRadius: size}}>
             {!!image && !!image.fileLocation && (
                 <CachedImage
                     sourceUri={image.fileLocation}
-                    style={{width: size, height: size, resizeMode: 'cover'}}
+                    style={{...styles.image, width: size, height: size}}
                 />
             )}
             {(!image || !image.fileLocation) && (
@@ -18,5 +18,17 @@ const HeadshotChip = ({size= 40, firstName, lastName, image}) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ddd',
+        overflow: 'hidden'
+    },
+    image: {
+        resizeMode: 'cover'
+    }
+});
 
 export default HeadshotChip;

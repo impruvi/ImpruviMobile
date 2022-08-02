@@ -1,6 +1,6 @@
 import {ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {Colors} from "../../../constants/colors";
 import {CoachScreenNames} from "../../ScreenNames";
@@ -157,16 +157,19 @@ const CreateOrEditDrillScreen = ({route}) => {
         }).join(', ');
     }
 
+    const headerLeft = useMemo(() => <Text>Cancel</Text>, []);
+
+
     return (
-        <View style={{flex: 1, backgroundColor: 'white'}}>
-            <SafeAreaView style={{flex: 1}}>
-                <View style={{flex: 1, position: 'relative'}}>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeAreaView}>
+                <View style={styles.content}>
                     <HeaderCenter title={!!drill ? 'Update drill' : 'Add drill'}
-                                  left={<Text>Cancel</Text>}
+                                  left={headerLeft}
                                   onLeftPress={navigation.goBack}/>
 
                     <KeyboardAvoidingScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={0}>
-                        <View style={{paddingHorizontal: 15}}>
+                        <View style={styles.section}>
                             <Text style={styles.sectionHeader}>Overview</Text>
                         </View>
                         <FormOption title={'Name'}
@@ -210,7 +213,7 @@ const CreateOrEditDrillScreen = ({route}) => {
                                     ? 'Specify the required equipment'
                                     : null}/>
 
-                        <View style={{paddingHorizontal: 15}}>
+                        <View style={styles.section}>
                             <Text style={styles.sectionHeader}>Demos</Text>
                         </View>
                         <FormOption title={'Front view'}
@@ -253,7 +256,7 @@ const CreateOrEditDrillScreen = ({route}) => {
                                     ? 'Provide a video'
                                     : null}/>
 
-                        <View style={{paddingHorizontal: 15}}>
+                        <View style={styles.section}>
                             <TouchableOpacity style={styles.button} onPress={onSubmit}>
                                 {!!drill && (
                                     <Text style={styles.buttonText}>
@@ -272,9 +275,9 @@ const CreateOrEditDrillScreen = ({route}) => {
             </SafeAreaView>
 
             {isSubmitting && (
-                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, .6)'}}>
+                <View style={styles.submittingContainer}>
                     <ActivityIndicator size="small" color="black"/>
-                    <Text style={{fontSize: 15, fontWeight: '500', marginTop: 10}}>
+                    <Text style={styles.submittingText}>
                         {isSubmitting && !!drill && 'Updating drill...'}
                         {isSubmitting && !drill && 'Creating drill...'}
                     </Text>
@@ -285,17 +288,30 @@ const CreateOrEditDrillScreen = ({route}) => {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    safeAreaView: {
+        flex: 1
+    },
+    content: {
+        flex: 1,
+        position: 'relative'
+    },
+    section: {
+        paddingHorizontal: 15
+    },
     sectionHeader: {
         marginTop: 20,
         marginBottom: 5,
         fontWeight: '600',
         fontSize: 13,
-        color: Colors.TextSecondary
+        color: Colors.TextSecondary,
     },
     button: {
         width: '100%',
         backgroundColor: Colors.Primary,
-        borderRadius: 30,
+        borderRadius: 10,
         paddingVertical: 13,
         alignItems: 'center',
         justifyContent: 'center',
@@ -318,6 +334,19 @@ const styles = StyleSheet.create({
         color: Colors.Primary,
         fontWeight: '500',
         fontSize: 15
+    },
+    submittingContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, .6)'
+    },
+    submittingText: {
+        fontSize: 15,
+        fontWeight: '500',
+        marginTop: 10
     }
 });
 

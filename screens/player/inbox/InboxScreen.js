@@ -1,22 +1,37 @@
-import {FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import HeaderCenter from "../../../components/HeaderCenter";
 import useHttpClient from "../../../hooks/useHttpClient";
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import useAuth from "../../../hooks/useAuth";
-import Loader from "../../../components/Loader";
 import useError from "../../../hooks/useError";
 import moment from 'moment';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../../ScreenNames";
 import useInboxViewDate from "../../../hooks/useInboxViewDate";
-import Reload from "../../../components/Reload";
-import HeadshotChip from "../../../components/HeadshotChip";
 import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
+import InboxEntryListItem from "./InboxEntryListItem";
+import ReloadableScreen from "../../../components/ReloadableScreen";
 
 const InboxEntryType = {
     NewSessionAdded: 'NEW_SESSION_ADDED',
     FeedbackProvided: 'FEEDBACK_PROVIDED',
     Message: 'MESSAGE'
+}
+
+const convertInboxEntryForDisplay = (entry) => {
+    let displayText;
+    if (entry.type === InboxEntryType.NewSessionAdded) {
+        displayText = `${entry.actor.firstName} added a new session to your training plan`;
+    } else if (entry.type === InboxEntryType.FeedbackProvided) {
+        displayText = `${entry.actor.firstName} left feedback on your session`;
+    } else if (entry.type === InboxEntryType.Message) {
+        displayText = entry.metadata.messageContent;
+    }
+    return {
+        ...entry,
+        displayText: displayText,
+        displayDate: moment.unix(entry.creationDateEpochMillis / 1000).fromNow(),
+    }
 }
 
 const InboxScreen = () => {
@@ -27,35 +42,27 @@ const InboxScreen = () => {
     const [sessions, setSessions] = useState([]);
 
     const navigation = useNavigation();
-
-
     const {viewInbox} = useInboxViewDate();
     const {setError} = useError();
     const {playerId} = useAuth();
     const {httpClient} = useHttpClient();
+    const firstLoad = useRef(true);
 
-    const navigateToSession = (sessionNumber) => {
-        try {
-            sessionNumber = parseInt(sessionNumber);
-            if (!sessionNumber || sessionNumber <= 0) {
-                return;
-            }
-
-            const session = !!sessions
-                ? sessions.find(sess => sess.sessionNumber === sessionNumber)
-                : null;
-
-            if (!session) {
-                return;
-            }
-
-            navigation.navigate(PlayerScreenNames.Session, {
-                session: session
-            })
-        } catch (e) {
-            console.log(e);
+    const navigateToSession = useCallback((sessionNumber) => {
+        sessionNumber = parseInt(sessionNumber);
+        if (!sessionNumber || sessionNumber <= 0) {
+            return;
         }
-    }
+
+        const session = !!sessions ? sessions.find(sess => sess.sessionNumber === sessionNumber) : null;
+        if (!session) {
+            return;
+        }
+
+        navigation.navigate(PlayerScreenNames.Session, {
+            session: session
+        })
+    }, [sessions]);
 
     const getSessions = async () => {
         try {
@@ -76,21 +83,7 @@ const InboxScreen = () => {
     const getInboxEntriesLazy = async () => {
         try {
             const inboxEntries = await httpClient.getInboxForPlayer(playerId);
-            setEntries(inboxEntries.map(entry => {
-                let displayText;
-                if (entry.type === InboxEntryType.NewSessionAdded) {
-                    displayText = `${entry.actor.firstName} added a new session to your training plan`;
-                } else if (entry.type === InboxEntryType.FeedbackProvided) {
-                    displayText = `${entry.actor.firstName} left feedback on your session`;
-                } else if (entry.type === InboxEntryType.Message) {
-                    displayText = entry.metadata.messageContent;
-                }
-                return {
-                    ...entry,
-                    displayText: displayText,
-                    displayDate: moment.unix(entry.creationDateEpochMillis / 1000).fromNow(),
-                }
-            }));
+            setEntries(inboxEntries.map(convertInboxEntryForDisplay));
         } catch (e) {
             console.log(e);
             setError('An unexpected error occurred');
@@ -100,6 +93,10 @@ const InboxScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoad.current) {
+                firstLoad.current = false;
+                return;
+            }
             getSessions();
             getInboxEntriesLazy();
             viewInbox();
@@ -112,52 +109,57 @@ const InboxScreen = () => {
         viewInbox();
     }, []);
 
+    const extractKey = useCallback((item, index) => `${index}`, []);
+    const renderItem = useCallback(({item}) => {
+        return (
+            <InboxEntryListItem item={item}
+                                navigateToSession={navigateToSession}/>
+        )
+    }, [navigateToSession]);
+
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <View style={{flex: 1, paddingHorizontal: 15}}>
+        <SafeAreaView style={styles.safeAreaView}>
+            <View style={styles.container}>
                 <HeaderCenter title={'Inbox'}/>
 
-                {isLoading && (
-                    <View style={{paddingTop: 50}}>
-                        <Loader />
-                    </View>
-                )}
-                {!isLoading && (
-                    <>
-                        {hasError && (
-                            <View style={{height: 200}}>
-                                <Reload onReload={getInboxEntries}/>
-                            </View>
-                        )}
-                        {!hasError && (
-                            <>
-                                {entries.length === 0 && (
-                                    <ScrollView style={{flex: 1}}>
-                                        <EmptyPlaceholder text={'You inbox is empty'} />
-                                    </ScrollView>
-                                )}
-                                {entries.length > 0 && (
-                                    <FlatList keyExtractor={(item, index) => `${index}`}
-                                              data={entries}
-                                              contentContainerStyle={{marginTop: 10}}
-                                              showsVerticalScrollIndicator={false}
-                                              renderItem={({item}) => (
-                                                  <TouchableOpacity style={{flexDirection: 'row', marginBottom: 20, alignItems: 'center'}} onPress={() => navigateToSession(item.metadata.sessionNumber)}>
-                                                      <HeadshotChip image={{fileLocation: item.actor.image}} firstName={item.actor.firstName} lastName={item.actor.lastName} size={45}/>
-                                                      <View style={{flex: 1, justifyContent: 'flex-start', marginLeft: 10}}>
-                                                          <Text style={{flex: 1, flexWrap: 'wrap', fontWeight: '500'}}>{item.displayText}</Text>
-                                                          <Text style={{marginTop: 5, color: '#878787', fontWeight: '500', fontSize: 12}}>{item.displayDate}</Text>
-                                                      </View>
-                                                  </TouchableOpacity>
-                                              )}/>
-                                )}
-                            </>
-                        )}
-                    </>
-                )}
+                <ReloadableScreen isLoading={isLoading}
+                                  hasError={hasError}
+                                  onReload={getInboxEntries}
+                                  render={() => (
+                                      <>
+                                          {entries.length === 0 && (
+                                              <ScrollView style={styles.emptyScrollView}>
+                                                  <EmptyPlaceholder text={'You inbox is empty'} />
+                                              </ScrollView>
+                                          )}
+                                          {entries.length > 0 && (
+                                              <FlatList data={entries}
+                                                        contentContainerStyle={styles.listContainer}
+                                                        showsVerticalScrollIndicator={false}
+                                                        keyExtractor={extractKey}
+                                                        renderItem={renderItem}/>
+                                          )}
+                                      </>
+                                  )} />
             </View>
         </SafeAreaView>
     );
 };
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: 15
+    },
+    emptyScrollView: {
+        flex: 1
+    },
+    listContainer: {
+        marginTop: 10
+    }
+})
 
 export default InboxScreen;

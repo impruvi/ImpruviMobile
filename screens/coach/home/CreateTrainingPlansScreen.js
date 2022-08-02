@@ -1,10 +1,10 @@
-import {SafeAreaView, ScrollView, View} from 'react-native';
+import {SafeAreaView, ScrollView, View, StyleSheet} from 'react-native';
 import HeaderCenter from "../../../components/HeaderCenter";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import CreateTrainingsListItem from "../../../components/CreateTrainingsListItem";
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useRef, useState} from "react";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import useHttpClient from "../../../hooks/useHttpClient";
@@ -23,6 +23,7 @@ const CreateTrainingPlansScreen = ({route}) => {
     const {setError} = useError();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
+    const firstLoad = useRef(true);
 
     const getIncompletePlayerSessions = async () => {
         setIsLoading(true);
@@ -47,24 +48,27 @@ const CreateTrainingPlansScreen = ({route}) => {
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoad.current) {
+                firstLoad.current = false;
+                return;
+            }
             getIncompletePlayerSessionsLazy();
         }, [httpClient, navigation])
     );
 
-
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <View style={{flex: 1}}>
+        <SafeAreaView style={styles.safeAreaView}>
+            <View style={styles.container}>
                 <HeaderCenter title={'Create training plans'}
-                              left={<FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>}
+                              left={<FontAwesomeIcon icon={faAngleLeft} style={styles.backIcon} size={30}/>}
                               onLeftPress={navigation.goBack}/>
 
-                <ScrollView style={{paddingHorizontal: 15}}>
+                <ScrollView style={styles.scrollContainer}>
                     {isLoading && <Loader/>}
                     {!isLoading && (
                         <>
                             {hasError && (
-                                <View style={{height: 200}}>
+                                <View style={styles.loadingContainer}>
                                     <Reload onReload={getIncompletePlayerSessions}/>
                                 </View>
                             )}
@@ -84,5 +88,23 @@ const CreateTrainingPlansScreen = ({route}) => {
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    container: {
+        flex: 1
+    },
+    scrollContainer: {
+        paddingHorizontal: 15
+    },
+    loadingContainer: {
+        height: 200
+    },
+    backIcon: {
+        fontSize: 80
+    }
+});
 
 export default CreateTrainingPlansScreen;

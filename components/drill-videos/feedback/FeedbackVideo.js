@@ -1,111 +1,103 @@
-import {ActivityIndicator, Image, Text, TouchableOpacity, View} from 'react-native';
-import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../../util/drillUtil";
-import React, {useState} from "react";
-import {LinearGradient} from "expo-linear-gradient";
+import {StyleSheet, Text, View} from 'react-native';
+import React from "react";
 import {CoachScreenNames} from "../../../screens/ScreenNames";
 import {UserType} from "../../../constants/userType";
 import useAuth from "../../../hooks/useAuth";
 import {useNavigation} from "@react-navigation/native";
 import SubmitButton from "../SubmitButton";
 import Footer from "../Footer";
-import {isLastDrillInSession} from "../../../util/sessionUtil";
-import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 import CachedVideo from "../../CachedVideo";
-import InfoSheet from "../demo/InfoSheet";
+import DrillDetails from "../drill-details/DrillDetails";
+import NoContent from "../no-content/NoContent";
 
-const FeedbackVideo = ({isDrillFocused, isTabSelected, drill, session}) => {
+const FeedbackVideo = (
+    {
+        shouldRender,
+        shouldPlay,
 
-    const [feedbackStatus, setFeedbackStatus] = useState({});
-    const [isInfoShowing, setIsInfoShowing] = useState(false);
+        sessionNumber,
+        shouldShowSwipeUpIndicator,
+
+        drillId,
+        name,
+        description,
+        notes,
+        videoUri,
+        posterUri,
+
+        hasFeedback,
+        hasSubmission,
+        playerId,
+        isSubmitting
+    }) => {
 
     const {userType} = useAuth();
-
     const navigation = useNavigation();
 
-    const shouldShowSubmitFeedbackButton = () => {
-        return userType === UserType.Coach
-            && doesDrillHaveSubmission(drill)
-            && !doesDrillHaveFeedback(drill);
-    }
+    const shouldShowSubmitFeedbackButton = userType === UserType.Coach && !isSubmitting && hasSubmission && !hasFeedback;
 
-    const shouldShowActivityIndicator = () => {
-        if (!isTabSelected || !isDrillFocused) {
-            return false;
-        }
-
-        if (!doesDrillHaveFeedback(drill)) {
-            return false;
-        }
-        return !feedbackStatus.isLoaded || feedbackStatus.isBuffering;
-    }
     return (
-        <View key={drill.drillId} style={isTabSelected ? {flex: 1, position: 'relative'} : {display: 'none'}}>
-            {doesDrillHaveFeedback(drill) && (
+        <View style={shouldRender ? styles.container : styles.containerHidden}>
+            {hasFeedback && (
                 <CachedVideo
-                    style={{flex: 1}}
-                    videoSourceUri={(isTabSelected && isDrillFocused) || feedbackStatus.isLoaded
-                        ? drill.feedback.fileLocation
-                        : null}
-                    posterSourceUri={drill.feedbackThumbnail?.fileLocation}
+                    style={styles.video}
+                    videoSourceUri={videoUri}
+                    posterSourceUri={posterUri}
                     resizeMode="cover"
-                    shouldPlay={isTabSelected && isDrillFocused}
+                    shouldPlay={shouldPlay}
                     isLooping
-                    onPlaybackStatusUpdate={status => setFeedbackStatus(() => status)}
                 />
             )}
-            {!doesDrillHaveFeedback(drill) &&  (
-                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{color: 'white'}}>No feedback</Text>
-                </View>
-            )}
-            {shouldShowActivityIndicator() && (
-                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <ActivityIndicator size="small" color="white"/>
-                </View>
-            )}
-
-            <LinearGradient
-                colors={['rgba(0, 0, 0, .6)', 'transparent']}
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                style={{width: '100%', height: 400, position: 'absolute', bottom: 0, left: 0}} />
+            {!hasFeedback && <NoContent text={'No feedback'}/>}
 
             <Footer>
-                <View style={{width: '100%'}}>
-                    {!isLastDrillInSession(drill, session) && (
-                        <View style={{marginBottom: 20, alignItems: 'center', width: 60}}>
-                            <Image source={SwipeIconYellow} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
-                            <Text style={{color: 'white', textAlign: 'center', fontSize: 12}}>Swipe up for next drill</Text>
-                        </View>
-                    )}
-
-                    <Text style={{color: 'white', fontWeight: '600', marginBottom: 5, fontSize: 16}}>
-                        {drill.name} {!!session && `(drill ${session.drills.indexOf(drill) + 1}/${session.drills.length})`}
-                    </Text>
-                    <Text style={{color: 'white'}}>
-                        {drill.description.replace(/\n|\r/g, "")}
-                    </Text>
-                    <TouchableOpacity style={{paddingVertical: 5}} onPress={() => setIsInfoShowing(true)}>
-                        <Text style={{color: 'white', textDecorationLine: 'underline'}}>See more</Text>
-                    </TouchableOpacity>
+                <View style={styles.detailsContainer}>
+                    <DrillDetails name={name}
+                                  description={description}
+                                  notes={notes}
+                                  shouldShowSwipeUpIndicator={shouldShowSwipeUpIndicator}/>
                 </View>
-                <View style={{width: '100%', alignItems: 'center'}}>
-                    {shouldShowSubmitFeedbackButton() && (
+                <View style={styles.submitButtonContainer}>
+                    {shouldShowSubmitFeedbackButton && (
                         <SubmitButton onPress={() => {
                             navigation.navigate(CoachScreenNames.DrillFeedback, {
-                                session: session,
-                                drillId: drill.drillId
+                                playerId: playerId,
+                                sessionNumber: sessionNumber,
+                                drillId: drillId
                             })
                         }} text={'Submit feedback'}/>
                     )}
+                    {isSubmitting && (
+                        <Text style={styles.submittingText}>Submitting...</Text>
+                    )}
                 </View>
             </Footer>
-
-            <InfoSheet isOpen={isInfoShowing}
-                       onClose={() => setIsInfoShowing(false)}
-                       drill={drill}/>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative'
+    },
+    containerHidden: {
+        display: 'none'
+    },
+    video: {
+        flex: 1
+    },
+    detailsContainer: {
+        width: '100%'
+    },
+    submitButtonContainer: {
+        width: '100%',
+        alignItems: 'center'
+    },
+    submittingText: {
+        color: 'white',
+        fontWeight: '600'
+    }
+});
 
 export default FeedbackVideo;

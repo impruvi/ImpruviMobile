@@ -81,18 +81,28 @@ const DrillScreen = ({route}) => {
 
     return (
         <View style={{flex: 1, backgroundColor: 'black'}}>
-            <DemoVideos drill={drill}
-                        isDrillFocused={true}
-                        isTabSelected={true}
-                        isLast={true}/>
+            <DemoVideos shouldRender
+                        shouldPlay
+
+                        drillId={drill.drillId}
+                        name={drill.name}
+                        description={drill.description}
+                        notes={drill.notes}
+
+                        frontVideoUri={drill.demos.front.fileLocation}
+                        sideVideoUri={drill.demos.side.fileLocation}
+                        closeVideoUri={drill.demos.close.fileLocation}
+                        frontPosterUri={drill.demos.frontThumbnail.fileLocation}
+                        sidePosterUri={drill.demos.sideThumbnail.fileLocation}
+                        closePosterUri={drill.demos.closeThumbnail.fileLocation}/>
             <LinearGradient
-                colors={['rgba(0, 0, 0, .6)', 'transparent']}
+                colors={['rgba(0, 0, 0, .7)', 'transparent']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 style={{width: '100%', height: 200, position: 'absolute', top: 0, left: 0}} />
 
 
-            <VideoBackIcon onPress={() => navigation.goBack()} />
+            <VideoBackIcon onPress={navigation.goBack} />
 
             <View style={{position: 'absolute', right: 0}}>
                 <SafeAreaView>

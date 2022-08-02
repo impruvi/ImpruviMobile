@@ -13,6 +13,8 @@ import useInboxViewDate from "../../hooks/useInboxViewDate";
 import {Colors} from "../../constants/colors";
 import {SafeAreaView} from 'react-native-safe-area-context';
 
+const safeAreaEdges = ['bottom', 'left', 'right'];
+
 const TabBar = ({ state, descriptors, navigation }) => {
 
     const [numberOfUnreadInboxEntries, setNumberOfUnreadInboxEntries] = useState(0);
@@ -31,8 +33,8 @@ const TabBar = ({ state, descriptors, navigation }) => {
     }, [state, descriptors, navigation]);
 
     return (
-        <SafeAreaView edges={['bottom', 'left', 'right']}>
-            <View style={{paddingTop: 7, flexDirection: 'row', justifyContent: 'center'}}>
+        <SafeAreaView edges={safeAreaEdges}>
+            <View style={styles.container}>
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key];
                     const label =
@@ -66,7 +68,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
                     return (
                         <TouchableWithoutFeedback onPress={onPress} onLongPress={onLongPress} key={label}>
-                            <View style={{justifyContent: 'center', alignItems: 'center', width: 80, height: 50, marginHorizontal: 20}}>
+                            <View style={styles.content}>
                                 {label === PlayerScreenNames.Home && isFocused &&
                                     <>
                                         <Image source={HomeActiveDark} style={styles.icon}/>
@@ -98,8 +100,8 @@ const TabBar = ({ state, descriptors, navigation }) => {
                                         <Image source={InboxActiveDark} style={styles.icon}/>
                                         <Text style={styles.iconText}>Inbox</Text>
                                         {numberOfUnreadInboxEntries > 0 && (
-                                            <View style={{backgroundColor: Colors.Primary, height: 18, paddingHorizontal: 6, borderRadius: 30, position: 'absolute', top: -5, left: 42, alignItems: 'center', justifyContent: 'center'}}>
-                                                <Text style={{color: 'white', fontWeight: '500', fontSize: 11}}>{numberOfUnreadInboxEntries}</Text>
+                                            <View style={styles.inboxCountContainer}>
+                                                <Text style={styles.inboxCountText}>{numberOfUnreadInboxEntries}</Text>
                                             </View>
                                         )}
                                     </>
@@ -109,8 +111,8 @@ const TabBar = ({ state, descriptors, navigation }) => {
                                         <Image source={InboxDark} style={styles.icon}/>
                                         <Text style={styles.iconText}>Inbox</Text>
                                         {numberOfUnreadInboxEntries > 0 && (
-                                            <View style={{backgroundColor: Colors.Primary, height: 18, paddingHorizontal: 6, borderRadius: 30, position: 'absolute', top: -5, left: 42, alignItems: 'center', justifyContent: 'center'}}>
-                                                <Text style={{color: 'white', fontWeight: '500', fontSize: 11}}>{numberOfUnreadInboxEntries}</Text>
+                                            <View style={styles.inboxCountContainer}>
+                                                <Text style={styles.inboxCountText}>{numberOfUnreadInboxEntries}</Text>
                                             </View>
                                         )}
                                     </>
@@ -125,6 +127,18 @@ const TabBar = ({ state, descriptors, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        paddingTop: 7,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    content: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        height: 50,
+        marginHorizontal: 20
+    },
     icon: {
         height: 20,
         width: 25,
@@ -132,6 +146,22 @@ const styles = StyleSheet.create({
     },
     iconText: {
         marginTop: 5,
+        fontWeight: '500',
+        fontSize: 11
+    },
+    inboxCountContainer: {
+        backgroundColor: Colors.Primary,
+        height: 18,
+        paddingHorizontal: 6,
+        borderRadius: 30,
+        position: 'absolute',
+        top: -5,
+        left: 42,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    inboxCountText: {
+        color: 'white',
         fontWeight: '500',
         fontSize: 11
     }

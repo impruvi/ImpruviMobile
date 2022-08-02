@@ -56,7 +56,7 @@ const EditHeadshotScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Headshot'}/>
 

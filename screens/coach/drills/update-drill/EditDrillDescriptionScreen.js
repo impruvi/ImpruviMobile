@@ -18,7 +18,7 @@ const EditDrillDescriptionScreen = ({route}) => {
 
     return (
         <EditContainer>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Description'}/>
             <TextInput style={styles.input}

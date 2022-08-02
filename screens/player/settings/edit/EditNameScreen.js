@@ -46,7 +46,7 @@ const EditNameScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Name'}/>
             <View style={styles.inputContainer}>

@@ -9,11 +9,11 @@ const TermsAndConditionsScreen = () => {
     const navigation = useNavigation();
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={styles.safeAreaView}>
             <HeaderCenter title={'Terms and conditions'}
-                          left={<FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>}
+                          left={<FontAwesomeIcon icon={faAngleLeft} style={styles.backIcon} size={30}/>}
                           onLeftPress={navigation.goBack}/>
-            <ScrollView style={{paddingHorizontal: 20}}>
+            <ScrollView style={styles.scrollView}>
                 <Text style={styles.header1}>
                     Terms and Conditions of impruviapp.com
                 </Text>
@@ -665,6 +665,15 @@ const TermsAndConditionsScreen = () => {
 }
 
 const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    scrollView: {
+        paddingHorizontal: 20
+    },
+    backIcon: {
+        fontSize: 80
+    },
     header1: {
         fontSize: 18,
         fontWeight: '600',

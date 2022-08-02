@@ -45,7 +45,7 @@ const EditSchoolScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'School'}/>
             <TextInput style={styles.input} value={school} onChangeText={setSchool}/>

@@ -1,10 +1,10 @@
-import {SafeAreaView, Text, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../ScreenNames";
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import {doesEverySessionInPlanHaveSubmission} from "../../util/playerUtil";
@@ -28,32 +28,66 @@ const SessionCompleteScreen = () => {
         setSubscription(subscription);
     }
 
-    const onClose = () => {
+    const onClose = useCallback(() => {
         if (doesEverySessionInPlanHaveSubmission(subscription, sessions)) {
             navigation.navigate(PlayerScreenNames.TrainingPlanComplete);
         } else {
             navigation.navigate(PlayerScreenNames.Home)
         }
-    }
+    }, [subscription, sessions]);
 
     useEffect(() => {
         initialize();
     }, []);
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: Colors.Primary}}>
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20}}>
-                <TouchableOpacity style={{position: 'absolute', top: 0, left: 0, padding: 20}}
-                                  onPress={onClose} >
-                    <FontAwesomeIcon icon={faXmarkLarge} size={25} style={{color: 'white'}}/>
+        <SafeAreaView style={styles.safeAreaView}>
+            <View style={styles.container}>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose} >
+                    <FontAwesomeIcon icon={faXmarkLarge} size={25} style={styles.icon}/>
                 </TouchableOpacity>
 
-                <FontAwesomeIcon icon={faCheckCircle} size={120} style={{color: 'white'}}/>
-                <Text style={{color: 'white', fontSize: 35, fontWeight: '600', marginTop: 10}}>Session complete!</Text>
-                <Text style={{color: 'white', fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 15}}>Your coach will provide you feedback within 24 hours</Text>
+                <FontAwesomeIcon icon={faCheckCircle} size={120} style={styles.icon}/>
+                <Text style={styles.title}>Session complete!</Text>
+                <Text style={styles.subtitle}>Your coach will provide you feedback within 24 hours</Text>
             </View>
         </SafeAreaView>
     );
 };
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1,
+        backgroundColor: Colors.Primary
+    },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20
+    },
+    icon: {
+        color: 'white'
+    },
+    title: {
+        color: 'white',
+        fontSize: 35,
+        fontWeight: '600',
+        marginTop: 10
+    },
+    subtitle: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '500',
+        textAlign: 'center',
+        marginTop: 15
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        padding: 20
+    }
+})
 
 export default SessionCompleteScreen;

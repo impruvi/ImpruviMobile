@@ -1,29 +1,30 @@
 import {
-    Image,
     Keyboard,
     KeyboardAvoidingView,
     SafeAreaView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from "react-native";
 import useAuth from "../../hooks/useAuth";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import usePush from '../../hooks/usePush';
 import useHttpClient from "../../hooks/useHttpClient";
-import {Colors} from "../../constants/colors";
 import {StatusBar} from "expo-status-bar";
 import {useNavigation} from "@react-navigation/native";
 import {RootScreenNames} from "../ScreenNames";
 import useError from "../../hooks/useError";
-import LogoText from '../../assets/impruvi-logo-text.png';
+import LogoText from './LogoText';
 import * as Linking from "expo-linking";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import HeaderCenter from "../../components/HeaderCenter";
+import Input from "./Input";
+import Error from "./Error";
+import Button from "./Button";
+import Subtitle from "./Subtitle";
 
 
 const InvitationCodeScreen = () => {
@@ -56,51 +57,54 @@ const InvitationCodeScreen = () => {
         setIsSubmitting(false);
     }
 
+
+    const navigateToBecomeACoach = useCallback(() => {
+        Linking.openURL('https://impruviapp.com/become-a-coach');
+    }, []);
+
+    const navigateToTermsAndConditions = useCallback(() => {
+        navigation.navigate(RootScreenNames.TermsAndConditions);
+    }, []);
+
+
     return (
         <SafeAreaView style={styles.safeAreaView}>
             <HeaderCenter
                 left={(
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>
-                        <Text style={{fontWeight: '600', marginLeft: 3}}>Sign in</Text>
+                    <View style={styles.backToSignInButton}>
+                        <FontAwesomeIcon icon={faAngleLeft} style={styles.backToSignInButtonIcon} size={30}/>
+                        <Text style={styles.backToSignInButtonText}>Sign in</Text>
                     </View>
                 )}
                 onLeftPress={navigation.goBack}/>
 
-            <TouchableWithoutFeedback style={{flex: 1}} onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback style={styles.touchableWithoutFeedback} onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView style={styles.container} behavior={'padding'}>
                     <View style={styles.contentContainer}>
-                        <Image source={LogoText} style={{width: 160, height: 50, resizeMode: 'contain'}}/>
-                        <Text style={{fontWeight: '600', marginTop: 10, fontSize: 13}}>Don't have an invitation code?</Text>
-                        <TouchableOpacity style={{marginBottom: 30}} onPress={() => Linking.openURL('https://impruviapp.com/become-a-coach')}>
-                            <Text style={{fontSize: 13, fontWeight: '600', color: Colors.Primary, textDecorationLine: 'underline'}}>Contact us</Text>
-                        </TouchableOpacity>
+                        <LogoText />
+                        <Subtitle text={'Don\'t have an invitation code?'}
+                                  linkText={'Contact us'}
+                                  onPress={navigateToBecomeACoach}/>
 
-                        <TextInput style={styles.input}
-                                   value={invitationCode}
-                                   onChangeText={setInvitationCode}
-                                   autoCapitalize='characters'
-                                   autoCorrect={false}
-                                   placeholder="Enter your invitation code"/>
+                        <Input value={invitationCode}
+                               onChangeText={setInvitationCode}
+                               autoCapitalize='characters'
+                               placeholder="Enter your invitation code"/>
 
-                        <TouchableOpacity style={isSubmitting ? {...styles.button, backgroundColor: 'rgba(243, 81, 86, .6)'} : styles.button} onPress={submit}>
-                            {isSubmitting && (
-                                <Text style={styles.buttonText}>Validating...</Text>
-                            )}
-                            {!isSubmitting && (
-                                <Text style={styles.buttonText}>Continue</Text>
-                            )}
-                        </TouchableOpacity>
+                        <Button isSubmitting={isSubmitting}
+                                submit={submit}
+                                text={isSubmitting ? 'Validating...' : 'Continue'}/>
+
                         {!!invalidCodeError && !isSubmitting && (
-                            <Text style={styles.error}>{invalidCodeError}</Text>
+                            <Error errorText={invalidCodeError}/>
                         )}
 
-                        <View style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{color: '#999', justifyContent: 'center', marginRight: 2, fontSize: 13}}>
+                        <View style={styles.footer}>
+                            <Text style={styles.footerText}>
                                 By continuing you agree to our
                             </Text>
-                            <TouchableOpacity onPress={() => navigation.navigate(RootScreenNames.TermsAndConditions)} style={{padding: 3}}>
-                                <Text style={{fontSize: 13, textDecorationLine: 'underline', color: '#999'}}>terms and conditions</Text>
+                            <TouchableOpacity onPress={navigateToTermsAndConditions} style={styles.termsAndConditionsButton}>
+                                <Text style={styles.termsAndConditionsButtonText}>terms and conditions</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -116,6 +120,9 @@ const styles = StyleSheet.create({
     safeAreaView:  {
         flex: 1,
     },
+    touchableWithoutFeedback: {
+        flex: 1
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -127,39 +134,38 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: -80
     },
-    inputText: {
-        fontWeight: '600',
-        marginBottom: 5
-    },
-    input: {
-        width: '100%',
-        fontSize: 14,
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: '#fAfAfA',
-        borderWidth: 1,
-        borderColor: '#efefef',
-        borderRadius: 10,
-        marginBottom: 12,
-    },
-    button: {
-        width: '100%',
+    footer: {
+        marginTop: 15,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 15,
-        backgroundColor: Colors.Primary,
-        borderRadius: 10,
+        paddingHorizontal: 15
     },
-    buttonText: {
-        fontSize: 14,
+    footerText: {
+        color: '#999',
+        justifyContent: 'center',
+        marginRight: 2,
+        fontSize: 13
+    },
+    termsAndConditionsButton: {
+        padding: 3
+    },
+    termsAndConditionsButtonText: {
+        fontSize: 13,
+        textDecorationLine: 'underline',
+        color: '#999'
+    },
+    backToSignInButton: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    backToSignInButtonIcon: {
+        fontSize: 80
+    },
+    backToSignInButtonText: {
         fontWeight: '600',
-        color: 'white'
-    },
-    error: {
-        color: Colors.Primary,
-        textAlign: 'center',
-        marginTop: 10,
-        fontWeight: '500'
+        marginLeft: 3
     }
 })
 

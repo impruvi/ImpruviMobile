@@ -4,15 +4,15 @@ import {Colors} from "../../constants/colors";
 
 const DrillVideoTabs = ({selectedTab, setSelectedTab, hasSubmission, hasFeedback}) => {
     return (
-        <View style={{position: 'absolute', width: '100%', top: 0, left: 0}}>
-            <View style={{flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: 50}}>
+        <View style={styles.container}>
+            <View style={styles.content}>
                 <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Demo)}>
-                    <Text style={selectedTab === DrillVideoTab.Demo ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
+                    <Text style={selectedTab === DrillVideoTab.Demo ? styles.tabTextSelected : styles.tabText}>
                         Demo
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Submission)}>
-                    <Text style={selectedTab === DrillVideoTab.Submission ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
+                    <Text style={selectedTab === DrillVideoTab.Submission ? styles.tabTextSelected : styles.tabText}>
                         Submission
                     </Text>
                     {hasSubmission && (
@@ -20,7 +20,7 @@ const DrillVideoTabs = ({selectedTab, setSelectedTab, hasSubmission, hasFeedback
                     )}
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Feedback)}>
-                    <Text style={selectedTab === DrillVideoTab.Feedback ? {...styles.tabText, ...styles.tabTextSelected} : styles.tabText}>
+                    <Text style={selectedTab === DrillVideoTab.Feedback ? styles.tabTextSelected : styles.tabText}>
                         Feedback
                     </Text>
                     {hasFeedback && (
@@ -34,6 +34,19 @@ const DrillVideoTabs = ({selectedTab, setSelectedTab, hasSubmission, hasFeedback
 
 
 const styles = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        width: '100%',
+        top: 0,
+        left: 0
+    },
+    content: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 50
+    },
     tab: {
         paddingHorizontal: 10,
         paddingVertical: 10,

@@ -1,7 +1,7 @@
-import {SafeAreaView, View} from "react-native";
+import {SafeAreaView, View, StyleSheet} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import useHttpClient from "../../../hooks/useHttpClient";
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import useAuth from "../../../hooks/useAuth";
 import DrillList from "../../../components/drill-list/DrillList";
 import {PlayerScreenNames} from "../../ScreenNames";
@@ -18,6 +18,7 @@ const DrillsScreen = () => {
     const {setError} = useError();
     const {httpClient} = useHttpClient();
     const {playerId} = useAuth();
+    const firstLoad = useRef(true);
 
 
     const getDrills = async () => {
@@ -38,9 +39,18 @@ const DrillsScreen = () => {
         }
     }
 
+    const navigateToDrill = useCallback((drill) => {
+        navigation.navigate(PlayerScreenNames.Drill, {
+            drill: drill
+        });
+    }, []);
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoad.current) {
+                firstLoad.current = false;
+                return;
+            }
             getDrillsLazy();
         }, [httpClient, navigation])
     );
@@ -49,12 +59,11 @@ const DrillsScreen = () => {
         getDrills();
     }, []);
 
-
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <View style={{paddingHorizontal: 15, flex: 1}}>
+        <SafeAreaView style={styles.safeAreaView}>
+            <View style={styles.content}>
                 <DrillList drills={drills}
-                           onPressDrill={drill => navigation.navigate(PlayerScreenNames.Drill, {drill: drill})}
+                           onPressDrill={navigateToDrill}
                            isLoading={isLoading}
                            hasError={hasError}
                            reload={getDrills}/>
@@ -64,5 +73,15 @@ const DrillsScreen = () => {
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    content: {
+        paddingHorizontal: 15,
+        flex: 1
+    }
+})
 
 export default DrillsScreen;

@@ -18,7 +18,7 @@ const EditDrillNameScreen = ({route}) => {
 
     return (
         <EditContainer>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Name'}/>
             <TextInput style={styles.input} value={name} onChangeText={setName}/>

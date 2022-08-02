@@ -2,7 +2,7 @@ import EditHeader from "../../../../components/EditHeader";
 import EditContainer from "../../../../components/EditContainer";
 import {useNavigation} from "@react-navigation/native";
 import {useEffect, useState} from "react";
-import {Image, View} from "react-native";
+import {Image, View, StyleSheet} from "react-native";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
 import * as ImagePicker from "expo-image-picker";
@@ -56,17 +56,32 @@ const EditHeadshotScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Headshot'}/>
 
             {!!headshot && (
-                <View style={{width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
-                    <Image source={headshot} style={{width: 180, height: 180, borderRadius: 180, resizeMode: 'contain'}}/>
+                <View style={styles.imageContainer}>
+                    <Image source={headshot} style={styles.image}/>
                 </View>
             )}
         </EditContainer>
     )
 }
+
+const styles = StyleSheet.create({
+    imageContainer: {
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 50
+    },
+    image: {
+        width: 180,
+        height: 180,
+        borderRadius: 180,
+        resizeMode: 'contain'
+    }
+})
 
 export default EditHeadshotScreen;

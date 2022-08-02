@@ -45,7 +45,7 @@ const EditAboutScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'About'}/>
             <TextInput style={styles.input} value={about} onChangeText={setAbout} multiline/>

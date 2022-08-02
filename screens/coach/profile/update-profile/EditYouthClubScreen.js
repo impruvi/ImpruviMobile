@@ -45,7 +45,7 @@ const EditYouthClubScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Youth club'}/>
             <TextInput style={styles.input} value={youthClub} onChangeText={setYouthClub}/>

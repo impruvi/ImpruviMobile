@@ -18,7 +18,7 @@ const EditDrillCategoryScreen = ({route}) => {
 
     return (
         <EditContainer>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Category'}/>
             <Picker

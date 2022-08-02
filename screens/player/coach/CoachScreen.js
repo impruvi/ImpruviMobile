@@ -1,4 +1,4 @@
-import {SafeAreaView, ScrollView, Text, View} from 'react-native';
+import {SafeAreaView, ScrollView, Text, View, StyleSheet} from 'react-native';
 import {Colors} from "../../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
@@ -13,29 +13,34 @@ const CoachScreen = ({route}) => {
     const navigation = useNavigation();
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={styles.container}>
             <HeaderCenter title={'Your coach'}
-                          left={<FontAwesomeIcon icon={faAngleLeft} style={{fontSize: 80}} size={30}/>}
+                          left={<FontAwesomeIcon icon={faAngleLeft}
+                                                 style={styles.backIcon}
+                                                 size={30}/>}
                           onLeftPress={navigation.goBack}/>
 
-            <ScrollView style={{flex: 1, paddingHorizontal: 15}}>
-                <View style={{width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-                    <HeadshotChip image={coach.headshot} firstName={coach.firstName} lastName={coach.lastName} size={120}/>
-                    <View style={{marginVertical: 10, alignItems: 'center'}}>
-                        <Text style={{fontSize: 20, fontWeight: '600'}}>{coach.firstName} {coach.lastName}</Text>
-                        <Text style={{color: Colors.TextSecondary}}>{coach.position}</Text>
+            <ScrollView style={styles.scrollViewContainer}>
+                <View style={styles.header}>
+                    <HeadshotChip image={coach.headshot}
+                                  firstName={coach.firstName}
+                                  lastName={coach.lastName}
+                                  size={120}/>
+                    <View style={styles.headerTextContainer}>
+                        <Text style={styles.headerTitle}>{coach.firstName} {coach.lastName}</Text>
+                        <Text style={styles.headerSubtitle}>{coach.position}</Text>
                     </View>
                 </View>
-                <View style={{marginVertical: 3}}>
-                    <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>School</Text>
+                <View style={styles.section}>
+                    <Text style={styles.sectionHeader}>School</Text>
                     <Text>{coach.school}</Text>
                 </View>
-                <View style={{marginVertical: 3}}>
-                    <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>Youth club</Text>
+                <View style={styles.section}>
+                    <Text style={styles.sectionHeader}>Youth club</Text>
                     <Text>{coach.youthClub}</Text>
                 </View>
-                <View style={{marginVertical: 3, marginBottom: 100}}>
-                    <Text style={{fontWeight: '500', color: Colors.TextSecondary}}>About</Text>
+                <View style={styles.section}>
+                    <Text style={styles.sectionHeader}>About</Text>
                     <Text>
                         {coach.about}
                     </Text>
@@ -44,5 +49,41 @@ const CoachScreen = ({route}) => {
         </SafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    scrollViewContainer: {
+        flex: 1,
+        paddingHorizontal: 15
+    },
+    header: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    headerTextContainer: {
+        marginVertical: 10,
+        alignItems: 'center'
+    },
+    headerTitle: {
+        fontSize: 20,
+        fontWeight: '600'
+    },
+    headerSubtitle: {
+        color: Colors.TextSecondary
+    },
+    sectionHeader: {
+        fontWeight: '500',
+        color: Colors.TextSecondary
+    },
+    section: {
+        marginVertical: 3
+    },
+    backIcon: {
+        fontSize: 80
+    }
+});
 
 export default CoachScreen;

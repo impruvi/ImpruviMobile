@@ -1,4 +1,4 @@
-import {Image, Text, View} from "react-native";
+import {Image, Text, View, StyleSheet} from "react-native";
 import Lightning from "../../../../assets/icons/LightningDark.png";
 import {doesDrillHaveSubmission} from "../../../../util/drillUtil";
 import {doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
@@ -36,39 +36,29 @@ const Progress = ({sessions}) => {
 
 
     return (
-        <View style={{width: '100%', paddingHorizontal: 15, marginTop: 15}}>
-            <View style={{
-                marginTop: 10,
-                width: '100%',
-                shadowColor: 'black',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: .15,
-                shadowRadius: 4,
-                padding: 20,
-                borderRadius: 15,
-                backgroundColor: 'white'
-            }}>
-                <Text style={{fontWeight: '600', fontSize: 18}}>Progress this month</Text>
+        <View style={styles.container}>
+            <View style={styles.box}>
+                <Text style={styles.title}>Progress this month</Text>
                 {hasCompletedTrainingsForMonth && (
-                    <Text style={{marginTop: 5, color: '#6B6B6B', fontSize: 12,}}>
+                    <Text style={styles.completedTrainingText}>
                         🎉 You've completed all of your trainings for this month.
                         You will receive new trainings once your subscription is renewed
                     </Text>
                 )}
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 20}}>
-                    <View style={{alignItems: 'center', justifyContent: 'flex-end', width: '45%'}}>
-                        <Text style={{fontSize: 14, fontWeight: '600', textAlign: 'center'}}>Completed trainings</Text>
-                        <Text style={{fontSize: 35, marginTop: 8, fontWeight: '600'}}>
+                <View style={styles.content}>
+                    <View style={styles.statContainer}>
+                        <Text style={styles.statTitle}>Completed trainings</Text>
+                        <Text style={styles.statText}>
                             {numberOfSessionsCompleted}
-                            <Text style={{color: '#888', fontSize: 18}}>/ {totalNumberOfSessions}</Text>
+                            <Text style={styles.statSubtext}>/ {totalNumberOfSessions}</Text>
                         </Text>
                     </View>
-                    <Image source={Lightning} style={{width: 20, height: 20, resizeMode: 'contain', marginBottom: 5}}/>
-                    <View style={{alignItems: 'center', justifyContent: 'flex-end', width: '45%'}}>
-                        <Text style={{fontSize: 14, fontWeight: '600', textAlign: 'center'}}>Completed drills</Text>
-                        <Text style={{fontSize: 35, marginTop: 8, fontWeight: '600'}}>
+                    <Image source={Lightning} style={styles.icon}/>
+                    <View style={styles.statContainer}>
+                        <Text style={styles.statTitle}>Completed drills</Text>
+                        <Text style={styles.statText}>
                             {numberOfDrillsCompleted}
-                            <Text style={{color: '#888', fontSize: 18}}>/ {totalNumberOfDrills}</Text>
+                            <Text style={styles.statSubtext}>/ {totalNumberOfDrills}</Text>
                         </Text>
                     </View>
                 </View>
@@ -76,5 +66,64 @@ const Progress = ({sessions}) => {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: '100%',
+        paddingHorizontal: 15,
+        marginTop: 15
+    },
+    box: {
+        marginTop: 10,
+        width: '100%',
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: .15,
+        shadowRadius: 4,
+        padding: 20,
+        borderRadius: 15,
+        backgroundColor: 'white'
+    },
+    title: {
+        fontWeight: '600',
+        fontSize: 18
+    },
+    completedTrainingText: {
+        marginTop: 5,
+        color: '#6B6B6B',
+        fontSize: 12
+    },
+    content: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        marginTop: 20
+    },
+    statContainer: {
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        width: '45%'
+    },
+    statTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        textAlign: 'center'
+    },
+    statText: {
+        fontSize: 35,
+        marginTop: 8,
+        fontWeight: '600'
+    },
+    statSubtext: {
+        color: '#888',
+        fontSize: 18
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+        marginBottom: 5
+    }
+})
 
 export default Progress;

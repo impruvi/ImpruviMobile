@@ -1,5 +1,5 @@
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../../hooks/useHttpClient";
 import useAuth from "../../../hooks/useAuth";
@@ -33,6 +33,7 @@ const HomeScreen = () => {
     const {httpClient} = useHttpClient();
     const {coachId} = useAuth();
     const {setError} = useError();
+    const firstLoad = useRef();
 
     const initialize = async () => {
         setIsLoading(true);
@@ -64,13 +65,17 @@ const HomeScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoad.current) {
+                firstLoad.current = false;
+                return;
+            }
             initializeLazy();
         }, [httpClient, navigation])
     );
 
     return (
-        <View style={{flex: 1}}>
-            <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeAreaView}>
                 <HeaderCenter title={'Home'}
                               hasBorder={true}
                               right={(
@@ -82,12 +87,12 @@ const HomeScreen = () => {
                     <>
                         {hasError && <Reload onReload={initialize}/>}
                         {!hasError && (
-                            <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 15, paddingVertical: 15}}>
+                            <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
                                 <Text style={styles.title}>Review trainings</Text>
 
                                 {playerSessionsRequiringFeedback.length > 0 && playerSessionsRequiringFeedback.slice(0,3).map(playerSession => (
                                     <ReviewTrainingListItem playerSession={playerSession}
-                                                            subscription={findSubscription(playerSession.player, playersAndSubscriptionsRequiringTrainings)}
+                                                            subscription={findSubscription(playerSession.player, playerSessionsRequiringFeedback)}
                                                             key={playerSession.player.playerId}/>
                                 ))}
                                 {playerSessionsRequiringFeedback.length === 0 && (
@@ -130,6 +135,16 @@ const HomeScreen = () => {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    safeAreaView: {
+        flex: 1
+    },
+    scrollView: {
+        paddingHorizontal: 15,
+        paddingVertical: 15
+    },
     title: {
         fontSize: 18,
         fontWeight: '600'

@@ -11,6 +11,7 @@ import useLongRequest from "../../hooks/useLongRequest";
 import {generateThumbnail} from "../../util/thumbnailUtil";
 
 const DrillFeedbackScreen = ({route}) => {
+
     const [video, setVideo] = useState();
     const {setError} = useError();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,7 +19,7 @@ const DrillFeedbackScreen = ({route}) => {
     const {executeLongRequest} = useLongRequest();
     const navigation = useNavigation();
     const {coachId} = useAuth();
-    const {session, drillId} = route.params;
+    const {playerId, sessionNumber, drillId} = route.params;
 
     const onSubmit = async () => {
         try {
@@ -26,8 +27,8 @@ const DrillFeedbackScreen = ({route}) => {
             const thumbnail = await generateThumbnail(video);
             const input = {
                 coachId: coachId,
-                playerId: session.playerId,
-                sessionNumber: session.sessionNumber,
+                playerId: playerId,
+                sessionNumber: sessionNumber,
                 drillId: drillId,
                 video: video,
                 videoThumbnail: thumbnail

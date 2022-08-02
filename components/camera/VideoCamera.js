@@ -5,6 +5,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import * as ImagePicker from 'expo-image-picker';
 import VideoCameraOptions from "./options/VideoCameraOptions";
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {UIImagePickerControllerQualityType} from "expo-image-picker/src/ImagePicker.types";
 
 const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initialCountdown = 3, maximumDurationInSeconds = 5 * 60}) => {
 
@@ -24,8 +25,9 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Videos,
             allowsEditing: true,
-            aspect: [4, 3],
-            quality: .1,
+            aspect: [3, 4],
+            quality: 0,
+            videoQuality: UIImagePickerControllerQualityType.Low,
             videoMaxDuration: maximumDurationInSeconds
         });
 
@@ -54,7 +56,7 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
     }
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
+        <SafeAreaView style={styles.container}>
             <Camera style={styles.camera} type={cameraDirection} ref={cameraRef}>
                 <VideoCameraOptions initialCountdown={initialCountdown}
                                     startRecording={startRecording}
@@ -68,6 +70,10 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'black'
+    },
     camera: {
         flex: 1,
         position: 'relative',

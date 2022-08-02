@@ -1,87 +1,31 @@
 import {getSessionEquipment} from "../../../../util/equipmentAggregator";
 import Box from "../../../../components/Box";
-import {StyleSheet, Text, TouchableOpacity, useWindowDimensions, View} from "react-native";
+import {Dimensions, StyleSheet, Text, View} from "react-native";
 import CircularProgress from "react-native-circular-progress-indicator";
 import {doesDrillHaveSubmission} from "../../../../util/drillUtil";
-import {
-    canSubmitForSession,
-    doesAnyDrillHaveFeedback,
-    doesAnyDrillHaveSubmission,
-    doesEveryDrillHaveSubmission
-} from "../../../../util/sessionUtil";
+import {doesAnyDrillHaveSubmission, doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
 import {Colors} from "../../../../constants/colors";
 import Equipment from "../../../../components/Equipment";
-import {useNavigation} from "@react-navigation/native";
-import {PlayerScreenNames} from "../../../ScreenNames";
-import {DrillVideoTab} from "../../../../constants/drillVideoTab";
-
-const ActionButton = ({session, canSubmit}) => {
-
-    const navigation = useNavigation();
-
-    let backgroundColor;
-    let color;
-    let text;
-    let defaultSessionSelectedTab = DrillVideoTab.Demo;
-    if (doesEveryDrillHaveSubmission(session) && doesAnyDrillHaveFeedback(session)) {
-        backgroundColor = 'black';
-        color = 'white';
-        text = 'View feedback';
-        defaultSessionSelectedTab = DrillVideoTab.Feedback;
-    } else if (doesEveryDrillHaveSubmission(session)) {
-        backgroundColor = '#EEECEC';
-        color = 'black';
-        text = 'Awaiting feedback'
-    } else {
-        if (doesAnyDrillHaveSubmission(session)) {
-            text = 'Continue';
-            backgroundColor = Colors.Primary;
-            color = 'white';
-        } else if (canSubmit) {
-            text = 'Start';
-            backgroundColor = Colors.Primary;
-            color = 'white';
-        } else {
-            text = 'Preview';
-            backgroundColor = '#EEECEC';
-            color = 'black';
-        }
-    }
-
-    const startSession = () => {
-        navigation.navigate(PlayerScreenNames.Session, {
-            session: session,
-            selectedTab: defaultSessionSelectedTab
-        });
-    }
-
-    return (
-        <TouchableOpacity style={{...styles.actionButton, backgroundColor}}
-                          onPress={startSession}>
-            <Text style={{fontWeight: '600', color: color}}>{text}</Text>
-        </TouchableOpacity>
-    );
-}
+import ActionButton from "./ActionButton";
 
 const Session = ({session, canSubmit}) => {
 
-    const {width} = useWindowDimensions();
     const sessionEquipment  = getSessionEquipment(session);
 
     return (
-        <View style={{width: width, paddingHorizontal: 15, marginBottom: 10}}>
+        <View style={styles.container}>
             <Box>
-                <View style={{flexDirection: 'row', marginBottom: 10, alignItems: 'center'}}>
-                    <Text style={{fontWeight: '600', fontSize: 18}}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>
                         {canSubmit && doesAnyDrillHaveSubmission(session) && 'Current training'}
                         {canSubmit && !doesAnyDrillHaveSubmission(session) && 'Next training'}
                         {!canSubmit && `Training ${session.sessionNumber}`}
                     </Text>
                     {session.isIntroSession && (
-                        <Text style={{color: '#aaa', fontSize: 14, fontWeight: '500'}}> (Intro session)</Text>
+                        <Text style={styles.headerSubtext}> (Intro session)</Text>
                     )}
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={styles.content}>
                     <View>
                         <CircularProgress
                             value={session.drills.filter(doesDrillHaveSubmission).length}
@@ -93,12 +37,12 @@ const Session = ({session, canSubmit}) => {
                             valueSuffix={`/${session.drills.length}`}
                             title={'drills completed'}
                             titleColor={'#707070'}
-                            titleStyle={{fontWeight: 'bold', fontSize: 12}}
+                            titleStyle={styles.circularProgressTitle}
                         />
                     </View>
-                    <View style={{paddingLeft: 20, flex: 1}}>
-                        <View style={{flex: 1}}>
-                            <Text style={{fontWeight: '600', marginBottom: 5}}>Suggested equipment</Text>
+                    <View style={styles.equipmentContainer}>
+                        <View style={styles.equipmentContent}>
+                            <Text style={styles.equipmentTitle}>Suggested equipment</Text>
                             {sessionEquipment.map(equipment => (
                                 <Equipment equipment={equipment} key={equipment.equipmentType}/>
                             ))}
@@ -107,24 +51,48 @@ const Session = ({session, canSubmit}) => {
                                       canSubmit={canSubmit}/>
                     </View>
                 </View>
-                <View style={{alignItems: 'flex-end', marginTop: 4}}>
-                    <Text style={{color: '#AAA', fontSize: 12, fontWeight: '500'}}>
-                        {!doesEveryDrillHaveSubmission(session) && !canSubmit ? 'Complete previous training' : ''}
-                    </Text>
-                </View>
             </Box>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    actionButton: {
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 30,
-        padding: 15,
-        marginTop: 15
+    container: {
+        width: Dimensions.get('window').width,
+        paddingHorizontal: 15,
+        marginBottom: 10
+    },
+    header: {
+        flexDirection: 'row',
+        marginBottom: 10,
+        alignItems: 'center'
+    },
+    headerText: {
+        fontWeight: '600',
+        fontSize: 18
+    },
+    headerSubtext: {
+        color: '#aaa',
+        fontSize: 14,
+        fontWeight: '500'
+    },
+    content: {
+        flexDirection: 'row'
+    },
+    circularProgressTitle: {
+        fontWeight: 'bold',
+        fontSize: 12
+    },
+    equipmentContainer: {
+        paddingLeft: 20,
+        flex: 1
+    },
+    equipmentContent: {
+        flex: 1
+    },
+    equipmentTitle: {
+        fontWeight: '600',
+        marginBottom: 5
     }
 });
 

@@ -1,11 +1,11 @@
-import {ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, SafeAreaView, ScrollView, Text, View, StyleSheet} from 'react-native';
 import {CoachScreenNames} from "../ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../../constants/colors";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import HeaderCenter from "../../components/HeaderCenter";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useMemo, useState, useRef, useEffect} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
 import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
@@ -14,6 +14,7 @@ import PlayerTrainingListItem from "../../components/PlayerTrainingListItem";
 import {doesPlayerNeedMoreSessions, getNumberOfSessionsCreatedForSubscription} from "../../util/playerUtil";
 import {DayInMillis, getTimeRemainingDisplayText} from "../../util/timeUtil";
 import EmptyPlaceholder from "../../components/EmptyPlaceholder";
+import CreateTrainingsReminder from "./CreateTrainingsReminder";
 
 const PlayerScreen = ({route}) => {
 
@@ -27,7 +28,9 @@ const PlayerScreen = ({route}) => {
     const {setError} = useError();
     const {coachId} = useAuth();
 
-    const getPlayerSessionsLazy = async () => {
+    const playerId = player.playerId;
+
+    const getPlayerSessions = async () => {
         try {
             const allPlayerSessions = await httpClient.getPlayerSessionsForCoach(coachId);
             const sessions = allPlayerSessions.find(ps => ps.player.playerId === route.params.player.playerId).sessions;
@@ -38,57 +41,57 @@ const PlayerScreen = ({route}) => {
         }
     }
 
+    const navigateToCreatOrEditSession = useCallback(() => {
+        navigation.navigate(CoachScreenNames.CreateOrEditSession, {
+            playerId: playerId
+        });
+    }, [playerId]);
+
+
     useFocusEffect(
         useCallback(() => {
-            getPlayerSessionsLazy();
+            getPlayerSessions();
         }, [httpClient, navigation])
     );
 
+    const needsMoreSessions = useMemo(() => doesPlayerNeedMoreSessions(subscription, sessions), [subscription, sessions]);
+    const headerLeft = useMemo(() => (
+        <FontAwesomeIcon icon={faAngleLeft} size={25}/>
+    ), []);
+    const headerRight = useMemo(() => (
+        <View style={styles.addTrainingButtonContainer}>
+            <Text style={styles.addTrainingButtonText}>Add training</Text>
+        </View>
+    ), [])
+
     return (
-        <View style={{flex: 1}}>
-            <SafeAreaView style={{flex: 1}}>
-                <HeaderCenter left={<FontAwesomeIcon icon={faAngleLeft} size={25}/>}
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeAreaView}>
+                <HeaderCenter left={headerLeft}
                               onLeftPress={navigation.goBack}
-                              right={
-                                  <View style={{flexDirection: 'row'}}>
-                                      <Text style={{color: Colors.Primary, marginLeft: 5, fontWeight: '600'}}>Add training</Text>
-                                  </View>
-                              }
-                              onRightPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
-                                  playerId: player.playerId
-                              })}/>
+                              right={headerRight}
+                              onRightPress={navigateToCreatOrEditSession}/>
 
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={{alignItems: 'center', marginBottom: 10}}>
+                    <View style={styles.header}>
                         <HeadshotChip firstName={player.firstName} lastName={player.lastName} image={player.headshot} size={80}/>
-                        <Text style={{fontWeight: '600', marginTop: 3}}>{player.firstName} {player.lastName}</Text>
+                        <Text style={styles.headerText}>{player.firstName} {player.lastName}</Text>
                     </View>
 
-                    {doesPlayerNeedMoreSessions(subscription, sessions) && (
-                        <View style={{paddingHorizontal: 15}}>
-                            <View style={{padding: 20, borderWidth: 1, borderColor: Colors.Border, borderRadius: 15, marginBottom: 15}}>
-                                <Text style={{fontWeight: '500'}}>
-                                    {player.firstName} subscribed for {subscription.plan.numberOfTrainings} new training sessions.
-                                    Add {subscription.plan.numberOfTrainings - getNumberOfSessionsCreatedForSubscription(subscription, sessions)} more trainings
-                                </Text>
-                                <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginTop: 15, alignItems: 'center'}}>
-                                    <TouchableOpacity style={{paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, backgroundColor: Colors.Primary}} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
-                                        playerId: player.playerId
-                                    })}>
-                                        <Text style={{color: 'white', fontWeight: '500'}}>Add a training</Text>
-                                    </TouchableOpacity>
-                                    <Text style={{color: '#BEBEBE', fontSize: 12, fontWeight: '500'}}>{getTimeRemainingDisplayText(subscription.currentPeriodStartDateEpochMillis + DayInMillis)}</Text>
-                                </View>
-                            </View>
-                        </View>
+                    {needsMoreSessions && (
+                        <CreateTrainingsReminder playerId={player.playerId}
+                                                 firstName={player.firstName}
+                                                 numberOfTrainingsInSubscription={subscription.plan.numberOfTrainings}
+                                                 numberOfTrainingsCreatedForSubscription={getNumberOfSessionsCreatedForSubscription(subscription, sessions)}
+                                                 currentPeriodStartDateEpochMillis={subscription.currentPeriodStartDateEpochMillis}/>
                     )}
 
                     {sessions.map(session => (
                         <PlayerTrainingListItem key={session.sessionNumber}
                                                 session={session}
-                                                onDelete={getPlayerSessionsLazy}
+                                                onDelete={getPlayerSessions}
                                                 setIsDeleting={setIsDeleting}
-                                                player={player}/>
+                                                playerId={player.playerId}/>
                     ))}
                     {sessions.length === 0 && (
                         <EmptyPlaceholder text={'No trainings'} />
@@ -97,13 +100,51 @@ const PlayerScreen = ({route}) => {
             </SafeAreaView>
 
             {(isDeleting) && (
-                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, .6)'}}>
+                <View style={styles.submittingContainer}>
                     <ActivityIndicator size="small" color="black"/>
-                    <Text style={{fontSize: 15, fontWeight: '500', marginTop: 10}}>Deleting training...</Text>
+                    <Text style={styles.submittingText}>Deleting training...</Text>
                 </View>
             )}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    safeAreaView: {
+        flex: 1
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    headerText: {
+        fontWeight: '600',
+        marginTop: 3
+    },
+    submittingContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, .6)'
+    },
+    submittingText: {
+        fontSize: 15,
+        fontWeight: '500',
+        marginTop: 10
+    },
+    addTrainingButtonContainer: {
+        flexDirection: 'row'
+    },
+    addTrainingButtonText: {
+        color: Colors.Primary,
+        marginLeft: 5,
+        fontWeight: '600'
+    }
+})
 
 export default PlayerScreen;

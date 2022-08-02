@@ -4,15 +4,15 @@ import {Colors} from "../constants/colors";
 const EditHeader = ({onCancel, onSave, title}) => {
     return (
         <View style={styles.container}>
-            <View style={{position: 'absolute', left: 0}}>
-                <TouchableOpacity onPress={onCancel} style={{paddingVertical: 10, paddingRight: 10}}>
-                    <Text style={{color: Colors.TextSecondary}}>Cancel</Text>
+            <View style={styles.cancelButtonContainer}>
+                <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
             </View>
             <Text style={styles.title}>{title}</Text>
-            <View style={{position: 'absolute', right: 0}}>
-                <TouchableOpacity onPress={onSave} style={{paddingVertical: 10, paddingLeft: 10}}>
-                    <Text style={{color: Colors.Primary, fontWeight: '500'}}>Save</Text>
+            <View style={styles.saveButtonContainer}>
+                <TouchableOpacity onPress={onSave} style={styles.saveButton}>
+                    <Text style={styles.saveButtonText}>Save</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -33,6 +33,29 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 15,
         fontWeight: '600'
+    },
+    cancelButtonContainer: {
+        position: 'absolute',
+        left: 0
+    },
+    cancelButton: {
+        paddingVertical: 10,
+        paddingRight: 10
+    },
+    cancelButtonText: {
+        color: Colors.TextSecondary
+    },
+    saveButtonContainer: {
+        position: 'absolute',
+        right: 0
+    },
+    saveButton: {
+        paddingVertical: 10,
+        paddingLeft: 10
+    },
+    saveButtonText: {
+        color: Colors.Primary,
+        fontWeight: '500'
     }
 });
 

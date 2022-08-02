@@ -1,58 +1,105 @@
-import {ActivityIndicator, Image, useWindowDimensions, View} from "react-native";
+import {Dimensions, StyleSheet, View} from "react-native";
 import {DrillVideoTab} from "../../constants/drillVideoTab";
 import DemoVideos from "./demo/DemoVideos";
 import SubmissionVideo from "./submission/SubmissionVideo";
 import FeedbackVideo from "./feedback/FeedbackVideo";
+import OutstandingUpload from "./outstanding-upload/OutstandingUpload";
+import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
 import {LongRequestType} from "../../model/longRequest";
-import useLongRequest from "../../hooks/useLongRequest";
 
-const DrillVideos = ({session, drill, selectedTab, canSubmit, isDrillFocused}) => {
+const DrillVideos = (
+    {
+        selectedTab,
+        isFocused,
 
+        drill,
 
-    const {height} = useWindowDimensions();
-    const {outstandingLongRequests} = useLongRequest();
+        sessionNumber,
+        playerId,
+        canSubmit,
+        shouldShowSwipeUpIndicator,
+        outstandingLongRequest
+    }) => {
 
-    const getOutstandingRequestForDrill = () => {
-        const outstandingRequestsForDrill = outstandingLongRequests
-            .filter(request => request.operation === LongRequestType.CreateSubmission || request.operation === LongRequestType.CreateFeedback)
-            .filter(request => request.metadata.drillId === drill.drillId);
-        return outstandingRequestsForDrill.length > 0 ? outstandingRequestsForDrill[0] : null;
-    }
-
-    const outstandingRequestForDrill = getOutstandingRequestForDrill();
+    const hasSubmission = doesDrillHaveSubmission(drill);
+    const hasFeedback = doesDrillHaveFeedback(drill);
 
     return (
-        <View key={drill.drillId} style={{height: height, position: 'relative'}}>
-            <DemoVideos session={session}
-                        drill={drill}
-                        isDrillFocused={isDrillFocused}
-                        isTabSelected={selectedTab === DrillVideoTab.Demo}
-                        isSubmitting={!!outstandingRequestForDrill}
-                        canSubmit={canSubmit}/>
+        <View style={styles.container}>
+            <DemoVideos shouldRender={selectedTab === DrillVideoTab.Demo}
+                        shouldPlay={isFocused && selectedTab === DrillVideoTab.Demo}
 
-            <SubmissionVideo session={session}
-                             drill={drill}
-                             isDrillFocused={isDrillFocused}
-                             isTabSelected={selectedTab === DrillVideoTab.Submission}
-                             isSubmitting={!!outstandingRequestForDrill}/>
+                        sessionNumber={sessionNumber}
+                        shouldShowSwipeUpIndicator={shouldShowSwipeUpIndicator}
 
-            <FeedbackVideo session={session}
-                           drill={drill}
-                           isDrillFocused={isDrillFocused}
-                           isTabSelected={selectedTab === DrillVideoTab.Feedback}/>
+                        drillId={drill.drillId}
+                        name={drill.name}
+                        description={drill.description}
+                        notes={drill.notes}
 
-            {!!outstandingRequestForDrill && (
-                <View style={{position: 'absolute', top: 110, left: 10}}>
-                    <View style={{height: 100, width: 60, backgroundColor: 'white', borderRadius: 10, overflow: 'hidden', position: 'relative'}}>
-                        <Image source={outstandingRequestForDrill.metadata.thumbnail} style={{width: 60, height: 100}}/>
-                        <View style={{position: 'absolute', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, .3)', width: 60, height: 100}}>
-                            <ActivityIndicator size="small" color="white"/>
-                        </View>
-                    </View>
-                </View>
+                        frontVideoUri={drill.demos.front.fileLocation}
+                        sideVideoUri={drill.demos.side.fileLocation}
+                        closeVideoUri={drill.demos.close.fileLocation}
+                        frontPosterUri={drill.demos.frontThumbnail.fileLocation}
+                        sidePosterUri={drill.demos.sideThumbnail.fileLocation}
+                        closePosterUri={drill.demos.closeThumbnail.fileLocation}
+
+                        hasSubmission={hasSubmission}
+                        canSubmit={canSubmit}
+                        isSubmitting={!!outstandingLongRequest
+                            && outstandingLongRequest.operation === LongRequestType.CreateSubmission}/>
+
+            <SubmissionVideo shouldRender={selectedTab === DrillVideoTab.Submission}
+                             shouldPlay={isFocused && selectedTab === DrillVideoTab.Submission}
+
+                             sessionNumber={sessionNumber}
+                             shouldShowSwipeUpIndicator={shouldShowSwipeUpIndicator}
+
+                             drillId={drill.drillId}
+                             name={drill.name}
+                             description={drill.description}
+                             notes={drill.notes}
+                             videoUri={drill.submission?.fileLocation}
+                             posterUri={drill.submissionThumbnail?.fileLocation}
+
+                             hasSubmission={hasSubmission}
+                             hasFeedback={hasFeedback}
+                             playerId={playerId}
+                             isSubmitting={!!outstandingLongRequest &&
+                                 (outstandingLongRequest.operation === LongRequestType.CreateSubmission
+                                     || outstandingLongRequest.operation === LongRequestType.CreateFeedback)}/>
+
+            <FeedbackVideo shouldRender={selectedTab === DrillVideoTab.Feedback}
+                           shouldPlay={isFocused && selectedTab === DrillVideoTab.Feedback}
+
+                           sessionNumber={sessionNumber}
+                           shouldShowSwipeUpIndicator={shouldShowSwipeUpIndicator}
+
+                           drillId={drill.drillId}
+                           name={drill.name}
+                           description={drill.description}
+                           notes={drill.notes}
+                           videoUri={drill.feedback?.fileLocation}
+                           posterUri={drill.feedbackThumbnail?.fileLocation}
+
+                           hasFeedback={hasFeedback}
+                           hasSubmission={hasSubmission}
+                           playerId={playerId}
+                           isSubmitting={!!outstandingLongRequest
+                               && outstandingLongRequest.operation === LongRequestType.CreateFeedback}/>
+
+            {!!outstandingLongRequest && (
+                <OutstandingUpload imageUri={outstandingLongRequest.metadata.thumbnail.uri}/>
             )}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        height: Dimensions.get('window').height,
+        position: 'relative'
+    }
+});
 
 export default DrillVideos;

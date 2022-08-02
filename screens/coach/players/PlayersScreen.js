@@ -1,13 +1,4 @@
-import {
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableHighlight,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useRef, useState} from "react";
 import useHttpClient from "../../../hooks/useHttpClient";
@@ -16,13 +7,11 @@ import useError from "../../../hooks/useError";
 import Loader from "../../../components/Loader";
 import Reload from "../../../components/Reload";
 import {StatusBar} from "expo-status-bar";
-import {CoachScreenNames} from "../../ScreenNames";
-import {Colors} from "../../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faMagnifyingGlass, faXmarkCircle} from "@fortawesome/pro-light-svg-icons";
-import HeadshotChip from "../../../components/HeadshotChip";
 import {doesAnySessionRequireFeedback, doesPlayerNeedMoreSessions, findSubscription} from "../../../util/playerUtil";
 import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
+import PlayerListItem from "./PlayerListItem";
 
 
 function comparePlayerSessions( playerSession1, playerSession2 ) {
@@ -48,6 +37,7 @@ const PlayersScreen = () => {
     const {httpClient} = useHttpClient();
     const {coachId} = useAuth();
     const {setError} = useError();
+    const firstLoad = useRef(true);
 
     const getAllPlayerSessions = async () => {
         setIsLoading(true);
@@ -101,26 +91,30 @@ const PlayersScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoad.current) {
+                firstLoad.current = false;
+                return;
+            }
             getAllPlayerSessionsLazy();
         }, [httpClient, navigation])
     );
 
     return (
-        <View style={{flex: 1}}>
-            <SafeAreaView style={{flex: 1}}>
-                <View style={{paddingHorizontal: 15}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 10, backgroundColor: '#F7F7F7', borderRadius: 30}}>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} size={15} style={{marginHorizontal: 10, color: '#878787'}}/>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeAreaView}>
+                <View style={styles.header}>
+                    <View style={styles.searchBar}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size={15} style={styles.searchIcon}/>
                         <TextInput
                             ref={searchInputRef}
-                            style={{flex: 1, fontSize: 14, paddingVertical: 10}}
+                            style={styles.searchInput}
                             onChangeText={onSearchInputChange}
                             value={searchInput}
                             placeholder="Search your players"
                             placeholderTextColor="#878787"
                         />
-                        <TouchableOpacity style={{paddingHorizontal: 10, paddingVertical: 10}} onPress={clearSearchInput}>
-                            <FontAwesomeIcon icon={faXmarkCircle} size={18} style={{color: '#878787'}}/>
+                        <TouchableOpacity style={styles.clearSearchInputButton} onPress={clearSearchInput}>
+                            <FontAwesomeIcon icon={faXmarkCircle} size={18} style={styles.clearSearchInputIcon}/>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -135,18 +129,10 @@ const PlayersScreen = () => {
                                     <EmptyPlaceholder text={'No players'}/>
                                 )}
                                 {visiblePlayerSessions.map(playerSession => (
-                                    <TouchableHighlight underlayColor="#EFF3F4" onPress={() => navigation.navigate(CoachScreenNames.Player, {
-                                        player: playerSession.player,
-                                        subscription: findSubscription(playerSession.player, playersAndSubscriptions)
-                                    })} key={playerSession.player.playerId}>
-                                        <View style={{flexDirection: 'row', paddingVertical: 12, alignItems: 'center', paddingHorizontal: 15}}>
-                                            <View style={(doesAnySessionRequireFeedback(playerSession.sessions) || doesPlayerNeedMoreSessions(findSubscription(playerSession.player, playersAndSubscriptions), playerSession.sessions)) ? {backgroundColor: Colors.Primary, width: 6, height: 6, borderRadius: 6, marginRight: 8} : {width: 6, height: 6, borderRadius: 6, marginRight: 8}}/>
-                                            <HeadshotChip firstName={playerSession.player.firstName} lastName={playerSession.player.lastName} image={playerSession.player.headshot}/>
-                                            <View style={{flex: 1, paddingHorizontal: 10}}>
-                                                <Text style={{fontWeight: '500', fontSize: 14}}>{playerSession.player.firstName} {playerSession.player.lastName}</Text>
-                                            </View>
-                                        </View>
-                                    </TouchableHighlight>
+                                    <PlayerListItem key={playerSession.player.playerId}
+                                                    playerSession={playerSession}
+                                                    subscription={findSubscription(playerSession.player, playersAndSubscriptions)}
+                                                    actionRequired={doesAnySessionRequireFeedback(playerSession.sessions) || doesPlayerNeedMoreSessions(findSubscription(playerSession.player, playersAndSubscriptions), playerSession.sessions)}/>
                                 ))}
                             </ScrollView>
                         )}
@@ -160,24 +146,37 @@ const PlayersScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    subHeader: {
+    container: {
+        flex: 1
+    },
+    safeAreaView: {
+        flex: 1
+    },
+    header: {
+        paddingHorizontal: 15
+    },
+    searchBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginVertical: 10,
-        fontWeight: '600'
+        backgroundColor: '#F7F7F7',
+        borderRadius: 30
     },
-    sessionStat: {
-        width: '33%',
-        padding: 5,
-        justifyContent: 'flex-start',
-        alignItems: 'center'
+    searchIcon: {
+        marginHorizontal: 10,
+        color: '#878787'
     },
-    sessionStatValue: {
-        fontSize: 25,
-        fontWeight: '300'
+    searchInput: {
+        flex: 1,
+        fontSize: 14,
+        paddingVertical: 10
     },
-    sessionStatText: {
-        textAlign: 'center',
-        fontSize: 12,
-        color: Colors.TextSecondary
+    clearSearchInputButton: {
+        paddingHorizontal: 10,
+        paddingVertical: 10
+    },
+    clearSearchInputIcon: {
+        color: '#878787'
     }
 });
 

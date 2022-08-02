@@ -1,27 +1,28 @@
 import {
-    Image,
     Keyboard,
     KeyboardAvoidingView,
     SafeAreaView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from "react-native";
 import useAuth from "../../hooks/useAuth";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import usePush from '../../hooks/usePush';
 import useHttpClient from "../../hooks/useHttpClient";
 import {Colors} from "../../constants/colors";
 import {StatusBar} from "expo-status-bar";
 import useError from "../../hooks/useError";
-import LogoText from '../../assets/impruvi-logo-text.png';
+import LogoText from './LogoText';
 import * as Linking from 'expo-linking';
 import {RootScreenNames} from "../ScreenNames";
 import {useNavigation} from "@react-navigation/native";
-
+import Input from "./Input";
+import Error from "./Error";
+import Button from "./Button";
+import Subtitle from "./Subtitle";
 
 const SignInScreen = () => {
     const [email, setEmail] = useState('');
@@ -54,56 +55,53 @@ const SignInScreen = () => {
         setIsSubmitting(false);
     }
 
+    const navigateToInvitationCode = useCallback(() => {
+        navigation.navigate(RootScreenNames.InvitationCode);
+    }, []);
+
+    const navigateToWebsite = useCallback(() => {
+        Linking.openURL('https://impruviapp.com')
+    }, []);
+
     return (
         <SafeAreaView style={styles.safeAreaView}>
-            <TouchableWithoutFeedback style={{flex: 1}} onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback style={styles.touchableWithoutFeedback} onPress={Keyboard.dismiss}>
                 <KeyboardAvoidingView style={styles.container} behavior={'padding'}>
                     <View style={styles.contentContainer}>
-                        <Image source={LogoText} style={{width: 160, height: 50, resizeMode: 'contain'}}/>
-                        <Text style={{fontWeight: '600', marginTop: 10, fontSize: 13}}>Are you a coach?</Text>
-                        <TouchableOpacity style={{marginBottom: 30}} onPress={() => navigation.navigate(RootScreenNames.InvitationCode)}>
-                            <Text style={{fontSize: 13, fontWeight: '600', color: Colors.Primary, textDecorationLine: 'underline'}}>Enter your invitation code</Text>
-                        </TouchableOpacity>
+                        <LogoText />
+                        <Subtitle text={'Are you a coach?'}
+                                  linkText={'Enter your invitation code'}
+                                  onPress={navigateToInvitationCode}/>
 
-                        <TextInput style={styles.input}
-                                   value={email}
-                                   onChangeText={setEmail}
-                                   autoCapitalize='none'
-                                   autoCorrect={false}
-                                   placeholder="Enter your email"/>
-                        <TextInput style={styles.input}
-                                   value={password}
-                                   onChangeText={setPassword}
-                                   autoCapitalize='none'
-                                   autoCorrect={false}
-                                   secureTextEntry={true}
-                                   placeholder="Enter your password"/>
+                        <Input value={email}
+                               onChangeText={setEmail}
+                               autoCapitalize='none'
+                               placeholder="Enter your email"/>
+                        <Input value={password}
+                               onChangeText={setPassword}
+                               autoCapitalize='none'
+                               secureTextEntry
+                               placeholder="Enter your password"/>
 
-                        <TouchableOpacity style={isSubmitting ? {...styles.button, backgroundColor: 'rgba(243, 81, 86, .6)'} : styles.button} onPress={submit}>
-                            {isSubmitting && (
-                                <Text style={styles.buttonText}>Signing in...</Text>
-                            )}
-                            {!isSubmitting && (
-                                <Text style={styles.buttonText}>Sign in</Text>
-                            )}
-                        </TouchableOpacity>
+                        <Button isSubmitting={isSubmitting}
+                                submit={submit}
+                                text={isSubmitting ? 'Signing in...' : 'Sign in'}/>
+
                         {!!invalidCredentialsError && !isSubmitting && (
-                            <Text style={styles.error}>{invalidCredentialsError}</Text>
+                            <Error errorText={invalidCredentialsError}/>
                         )}
 
-                        <View style={{marginTop: 15, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15}}>
-                            <Text style={{color: '#999', justifyContent: 'center', marginRight: 2, fontSize: 13}}>
+                        <View style={styles.footer}>
+                            <Text style={styles.footerText}>
                                 Don't know what Imprüvi is?
                             </Text>
-                            <Text style={{color: '#999', justifyContent: 'center', marginRight: 2, fontSize: 13}}>
+                            <Text style={styles.footerText}>
                                 Don't have a custom coaching plan yet?
                             </Text>
-                            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Text style={{color: '#999', fontSize: 13}}>
-                                    Check us out at &nbsp;
-                                </Text>
-                                <TouchableOpacity onPress={() => Linking.openURL('https://impruviapp.com')}>
-                                    <Text style={{fontSize: 13, textDecorationLine: 'underline', color: Colors.Primary, fontWeight: '600'}}>impruviapp.com</Text>
+                            <View style={styles.footerLinkTextContainer}>
+                                <Text style={styles.footerLinkText}>Check us out at &nbsp;</Text>
+                                <TouchableOpacity onPress={navigateToWebsite}>
+                                    <Text style={styles.footerLink}>impruviapp.com</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -120,6 +118,9 @@ const styles = StyleSheet.create({
     safeAreaView:  {
         flex: 1,
     },
+    touchableWithoutFeedback: {
+        flex: 1
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -130,40 +131,33 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center'
     },
-    inputText: {
-        width: '100%',
-        fontWeight: '600',
-        marginBottom: 5
-    },
-    input: {
-        width: '100%',
-        fontSize: 14,
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        backgroundColor: '#fAfAfA',
-        borderWidth: 1,
-        borderColor: '#efefef',
-        borderRadius: 10,
-        marginBottom: 12,
-    },
-    button: {
-        width: '100%',
+    footer: {
+        marginTop: 15,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 15,
-        backgroundColor: Colors.Primary,
-        borderRadius: 10,
+        paddingHorizontal: 15
     },
-    buttonText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: 'white'
+    footerText: {
+        color: '#999',
+        justifyContent: 'center',
+        marginRight: 2,
+        fontSize: 13
     },
-    error: {
+    footerLinkTextContainer: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    footerLinkText: {
+        color: '#999',
+        fontSize: 13
+    },
+    footerLink: {
+        fontSize: 13,
+        textDecorationLine: 'underline',
         color: Colors.Primary,
-        textAlign: 'center',
-        marginTop: 10,
-        fontWeight: '500'
+        fontWeight: '600'
     }
 });
 

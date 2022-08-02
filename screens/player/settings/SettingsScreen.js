@@ -1,4 +1,4 @@
-import {Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import useAuth from "../../../hooks/useAuth";
 import HeaderCenter from "../../../components/HeaderCenter";
@@ -11,8 +11,7 @@ import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import HeadshotChip from "../../../components/HeadshotChip";
 import {useEffect, useState} from "react";
 import useHttpClient from "../../../hooks/useHttpClient";
-import Loader from "../../../components/Loader";
-import Reload from "../../../components/Reload";
+import ReloadableScreen from "../../../components/ReloadableScreen";
 
 
 const SettingsScreen = () => {
@@ -45,82 +44,90 @@ const SettingsScreen = () => {
     }, []);
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+        <SafeAreaView style={styles.safeAreaView}>
             <HeaderCenter title={'Settings'}
                           left={<FontAwesomeIcon icon={faAngleLeft} size={25}/>}
                           onLeftPress={navigation.goBack}/>
 
-            <ScrollView style={{flex: 1}}>
-                {isLoading && (
-                    <View style={{height: 200}}>
-                        <Loader />
-                    </View>
-                )}
-                {!isLoading && (
-                    <>
-                        {hasError && (
-                            <View style={{height: 200}}>
-                                <Reload onReload={getPlayer}/>
-                            </View>
-                        )}
-                        {!hasError && (
-                            <>
-                                <View style={{width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 20}}>
-                                    <HeadshotChip image={player.headshot} size={80} firstName={player.firstName} lastName={player.lastName}/>
-                                    <TouchableOpacity style={{padding: 10}} onPress={() => navigation.navigate(PlayerScreenNames.EditHeadshot, {
-                                        headshot: player.headshot,
-                                        player: player,
-                                        setPlayer: setPlayer
-                                    })}>
-                                        <Text>Change photo</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <FormOption title={'Name'}
-                                            onPress={() => navigation.navigate(PlayerScreenNames.EditName, {
-                                                firstName: player.firstName,
-                                                lastName: player.lastName,
-                                                player: player,
-                                                setPlayer: setPlayer
-                                            })}
-                                            textValue={`${player.firstName} ${player.lastName}`}
-                                            placeholder={'Enter your name'}
-                                            errorMessage={null}/>
-                                <FormOption title={'Email'}
-                                            onPress={() => navigation.navigate(PlayerScreenNames.EditEmail, {
-                                                email: player.email,
-                                                player: player,
-                                                setPlayer: setPlayer
-                                            })}
-                                            textValue={player.email}
-                                            placeholder={'Enter your email'}
-                                            errorMessage={null}/>
-                                <FormOption title={'Sign out'}
-                                            titleColor={Colors.Primary}
-                                            onPress={() => {
-                                                Alert.alert('Are you sure you want to sign out?', '', [
-                                                    {
-                                                        text: 'Confirm',
-                                                        onPress: signOut,
-                                                    },
-                                                    {
-                                                        text: 'Cancel',
-                                                        style: 'cancel',
-                                                    },
-                                                ]);
-                                            }}
-                                            textValue={''}
-                                            placeholder={''}
-                                            errorMessage={null}
-                                            shouldHideArrow={true}/>
-                            </>
-                        )}
-                    </>
-                )}
+            <ScrollView style={styles.scrollView}>
+                <ReloadableScreen isLoading={isLoading}
+                                  hasError={hasError}
+                                  onReload={getPlayer}
+                                  render={() => (
+                                      <>
+                                          <View style={styles.header}>
+                                              <HeadshotChip image={player.headshot} size={80} firstName={player.firstName} lastName={player.lastName}/>
+                                              <TouchableOpacity style={styles.headshotText} onPress={() => navigation.navigate(PlayerScreenNames.EditHeadshot, {
+                                                  headshot: player.headshot,
+                                                  player: player,
+                                                  setPlayer: setPlayer
+                                              })}>
+                                                  <Text>Change photo</Text>
+                                              </TouchableOpacity>
+                                          </View>
+                                          <FormOption title={'Name'}
+                                                      onPress={() => navigation.navigate(PlayerScreenNames.EditName, {
+                                                          firstName: player.firstName,
+                                                          lastName: player.lastName,
+                                                          player: player,
+                                                          setPlayer: setPlayer
+                                                      })}
+                                                      textValue={`${player.firstName} ${player.lastName}`}
+                                                      placeholder={'Enter your name'}
+                                                      errorMessage={null}/>
+                                          <FormOption title={'Email'}
+                                                      onPress={() => navigation.navigate(PlayerScreenNames.EditEmail, {
+                                                          email: player.email,
+                                                          player: player,
+                                                          setPlayer: setPlayer
+                                                      })}
+                                                      textValue={player.email}
+                                                      placeholder={'Enter your email'}
+                                                      errorMessage={null}/>
+                                          <FormOption title={'Sign out'}
+                                                      titleColor={Colors.Primary}
+                                                      onPress={() => {
+                                                          Alert.alert('Are you sure you want to sign out?', '', [
+                                                              {
+                                                                  text: 'Confirm',
+                                                                  onPress: signOut,
+                                                              },
+                                                              {
+                                                                  text: 'Cancel',
+                                                                  style: 'cancel',
+                                                              },
+                                                          ]);
+                                                      }}
+                                                      textValue={''}
+                                                      placeholder={''}
+                                                      errorMessage={null}
+                                                      shouldHideArrow={true}/>
+                                      </>
+                                  )} />
             </ScrollView>
 
             <StatusBar style="dark" />
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    scrollView: {
+        flex: 1
+    },
+    header: {
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 30,
+        marginBottom: 20
+    },
+    headshotText: {
+        padding: 10
+    }
+})
 
 export default SettingsScreen;

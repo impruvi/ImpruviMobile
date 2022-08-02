@@ -1,7 +1,7 @@
-import {Image, Text, View} from "react-native";
+import {Image, StyleSheet, Text, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import useHttpClient from "../../../hooks/useHttpClient";
@@ -10,8 +10,7 @@ import HeaderScrollView from "./header-scroll-view/HeaderScrollView";
 import Week from "./week/Week";
 import Header from "./header/Header";
 import Progress from "./progress/Progress";
-import Loader from "../../../components/Loader";
-import Reload from "../../../components/Reload";
+import ReloadableScreen from "../../../components/ReloadableScreen";
 
 
 const HomeScreen = () => {
@@ -26,6 +25,7 @@ const HomeScreen = () => {
     const {httpClient} = useHttpClient();
     const {playerId} = useAuth();
     const {setError} = useError();
+    const firstLoad = useRef(true);
 
     const getSessionsLazy = async () => {
         try {
@@ -59,6 +59,10 @@ const HomeScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoad.current) {
+                firstLoad.current = false;
+                return;
+            }
             getSessionsLazy();
         }, [httpClient, navigation])
     );
@@ -68,46 +72,55 @@ const HomeScreen = () => {
     }, []);
 
     return (
-        <View style={{flex: 1}}>
-            {isLoading && (
-                <View style={{height: 200}}>
-                    <Loader />
-                </View>
-            )}
-            {!isLoading && (
-                <>
-                    {hasError && (
-                        <View style={{height: 200}}>
-                            <Reload onReload={initialize}/>
-                        </View>
-                    )}
-                    {!hasError && (
-                        <HeaderScrollView imageFileLocation={coach?.headerImage?.fileLocation}>
-                            <Header player={player}
-                                    coach={coach}/>
-                            <Week sessions={sessions} />
+        <View style={styles.container}>
+            <ReloadableScreen isLoading={isLoading}
+                              hasError={hasError}
+                              onReload={initialize}
+                              render={() => (
+                                  <HeaderScrollView imageFileLocation={coach?.headerImage?.fileLocation}>
+                                      <Header player={player}
+                                              coach={coach}/>
+                                      <Week sessions={sessions} />
 
-                            {sessions.length > 0 && (
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15}}>
-                                    <View style={{flexDirection: 'row', flex: 1}}>
-                                        <Image source={SwipeIcon} style={{width: 20, height: 20}}/>
-                                        <Text style={{marginLeft: 5, color: '#6B6B6B', fontSize: 12, flex: 1, flexWrap: 'wrap'}}>
-                                            swipe to view past and future trainings
-                                        </Text>
-                                    </View>
-                                </View>
-                            )}
+                                      {sessions.length > 0 && (
+                                          <View style={styles.helpContainer}>
+                                              <Image source={SwipeIcon} style={styles.helpImage}/>
+                                              <Text style={styles.helpText}>
+                                                  swipe to view past and future trainings
+                                              </Text>
+                                          </View>
+                                      )}
 
-                            <Progress sessions={sessions}
-                                      playerId={playerId}/>
-                        </HeaderScrollView>
-                    )}
-                </>
-            )}
+                                      <Progress sessions={sessions}
+                                                playerId={playerId}/>
+                                  </HeaderScrollView>
+                              )}/>
 
             <StatusBar style="dark" />
         </View>
     )
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    helpContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        paddingHorizontal: 15
+    },
+    helpImage: {
+        width: 20,
+        height: 20
+    },
+    helpText: {
+        marginLeft: 5,
+        color: '#6B6B6B',
+        fontSize: 12,
+        flex: 1,
+        flexWrap: 'wrap'
+    }
+});
 
 export default HomeScreen;

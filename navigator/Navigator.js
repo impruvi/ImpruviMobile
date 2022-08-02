@@ -14,6 +14,7 @@ import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
 import SignInScreen from "../screens/authentication/SignInScreen";
 import UpdateAppScreen from "../screens/UpdateAppScreen";
 import useAuth from "../hooks/useAuth";
+import {useCallback} from 'react';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,10 @@ const RootNavigator = ({isCompatible, newAppVersionPreviewImage}) => {
             Animated.timing(errorAnimation, {toValue: -200, duration: 300, useNativeDriver: false}).start();
         }
     }, [error]);
+
+    const closeError = useCallback(() => {
+        setError(null);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -62,13 +67,13 @@ const RootNavigator = ({isCompatible, newAppVersionPreviewImage}) => {
                 )}
             </Stack.Navigator>
 
-            <Animated.View style={{position: 'absolute', top: errorAnimation, left: 0, width: '100%'}}>
-                <SafeAreaView style={{width: '100%'}}>
-                    <View style={{padding: 8, shadowColor: 'black', shadowOffset: { width: 0, height: 1 }, shadowOpacity: .3, shadowRadius: 4}}>
-                        <View style={{width: '100%', padding: 20, backgroundColor: 'rgba(255, 255, 255, .9)', borderRadius: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                            <Text style={{fontWeight: '600'}}>{error}</Text>
+            <Animated.View style={{...styles.errorContainer, top: errorAnimation}}>
+                <SafeAreaView style={styles.errorSafeAreaView}>
+                    <View style={styles.errorBox}>
+                        <View style={styles.content}>
+                            <Text style={styles.errorText}>{error}</Text>
 
-                            <TouchableOpacity style={{padding: 5}} onPress={() => setError(null)}>
+                            <TouchableOpacity style={styles.errorClose} onPress={closeError}>
                                 <FontAwesomeIcon icon={faXmarkLarge} size={20}/>
                             </TouchableOpacity>
                         </View>
@@ -86,6 +91,36 @@ const styles = StyleSheet.create({
     },
     cardStyle: {
         backgroundColor: 'white'
+    },
+    errorContainer: {
+        position: 'absolute',
+        left: 0,
+        width: '100%'
+    },
+    errorSafeAreaView: {
+        width: '100%'
+    },
+    errorBox: {
+        padding: 8,
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: .3,
+        shadowRadius: 4
+    },
+    content: {
+        width: '100%',
+        padding: 20,
+        backgroundColor: 'rgba(255, 255, 255, .9)',
+        borderRadius: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    errorText: {
+        fontWeight: '600'
+    },
+    errorClose: {
+        padding: 5
     }
 });
 

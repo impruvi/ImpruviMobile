@@ -46,10 +46,13 @@ const EditEmailScreen = ({route}) => {
 
     return (
         <EditContainer isSubmitting={isSubmitting}>
-            <EditHeader onCancel={() => navigation.goBack()}
+            <EditHeader onCancel={navigation.goBack}
                         onSave={onSave}
                         title={'Email'}/>
-            <TextInput style={styles.input} value={email} onChangeText={setEmail}/>
+            <TextInput style={styles.input}
+                       value={email}
+                       autoCapitalize='none'
+                       onChangeText={setEmail}/>
         </EditContainer>
     )
 };

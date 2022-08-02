@@ -1,118 +1,105 @@
-import React, {useState} from "react";
-import {ActivityIndicator, Image, Text, TouchableOpacity, View} from "react-native";
-import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../../util/drillUtil";
-import {LinearGradient} from "expo-linear-gradient";
+import React, {useCallback} from "react";
+import {StyleSheet, Text, View} from "react-native";
 import Footer from "../Footer";
 import SubmitButton from "../SubmitButton";
 import {CoachScreenNames} from "../../../screens/ScreenNames";
 import {useNavigation} from "@react-navigation/native";
 import useAuth from "../../../hooks/useAuth";
 import {UserType} from "../../../constants/userType";
-import {isLastDrillInSession} from "../../../util/sessionUtil";
-import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 import CachedVideo from "../../CachedVideo";
-import InfoSheet from "../demo/InfoSheet";
+import DrillDetails from "../drill-details/DrillDetails";
+import NoContent from "../no-content/NoContent";
 
-const SubmissionVideo = ({isDrillFocused, isTabSelected, drill, session, isSubmitting}) => {
+const SubmissionVideo = (
+    {
+        shouldRender,
+        shouldPlay,
 
-    const [submissionStatus, setSubmissionStatus] = useState({});
-    const [isInfoShowing, setIsInfoShowing] = useState(false);
+        sessionNumber,
+        shouldShowSwipeUpIndicator,
+
+        drillId,
+        name,
+        description,
+        notes,
+        videoUri,
+        posterUri,
+
+        hasSubmission,
+        hasFeedback,
+        playerId,
+        isSubmitting
+    }) => {
 
     const navigation = useNavigation();
     const {userType} = useAuth();
 
-    const shouldShowActivityIndicator = () => {
-        if (!isDrillFocused || !isTabSelected) {
-            return false;
-        }
+    const openSubmitFeedbackScreen = useCallback(() => {
+        navigation.navigate(CoachScreenNames.DrillFeedback, {
+            playerId: playerId,
+            sessionNumber: sessionNumber,
+            drillId: drillId
+        });
+    }, [playerId, sessionNumber, drillId]);
 
-        if (!doesDrillHaveSubmission(drill)) {
-            return false;
-        }
-        return !submissionStatus.isLoaded || submissionStatus.isBuffering;
-    }
-
-    const shouldShowSubmitButton = () => {
-        return userType === UserType.Coach
-            && !isSubmitting
-            && doesDrillHaveSubmission(drill)
-            && !doesDrillHaveFeedback(drill);
-    }
-
-    const shouldShowSubmittingButton = () => {
-        return isSubmitting;
-    }
+    const shouldShowSubmitFeedbackButton = userType === UserType.Coach && !isSubmitting && hasSubmission && !hasFeedback;
 
     return (
-        <View key={drill.drillId} style={isTabSelected ? {flex: 1, position: 'relative'} : {display: 'none'}}>
-            {doesDrillHaveSubmission(drill) && (
+        <View style={shouldRender ? styles.container : styles.containerHidden}>
+            {hasSubmission && (
                 <CachedVideo
-                    style={{flex: 1}}
-                    videoSourceUri={(isTabSelected && isDrillFocused) || submissionStatus.isLoaded
-                        ? drill.submission.fileLocation
-                        : null}
-                    posterSourceUri={drill.submissionThumbnail?.fileLocation}
+                    style={styles.video}
+                    videoSourceUri={videoUri}
+                    posterSourceUri={posterUri}
                     resizeMode="cover"
-                    shouldPlay={isTabSelected && isDrillFocused}
+                    shouldPlay={shouldPlay}
                     isLooping
-                    onPlaybackStatusUpdate={status => setSubmissionStatus(() => status)}
                 />
             )}
-            {!doesDrillHaveSubmission(drill) &&  (
-                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <Text style={{color: 'white'}}>No submission</Text>
-                </View>
-            )}
-            {shouldShowActivityIndicator() && (
-                <View style={{position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <ActivityIndicator size="small" color="white"/>
-                </View>
-            )}
-
-            <LinearGradient
-                colors={['rgba(0, 0, 0, .6)', 'transparent']}
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                style={{width: '100%', height: 400, position: 'absolute', bottom: 0, left: 0}} />
+            {!hasSubmission && <NoContent text={'No submission'}/>}
 
             <Footer>
-                <View style={{width: '100%'}}>
-                    {!isLastDrillInSession(drill, session) && (
-                        <View style={{marginBottom: 20, alignItems: 'center', width: 60}}>
-                            <Image source={SwipeIconYellow} style={{width: 35, height: 35, resizeMode: 'contain'}}/>
-                            <Text style={{color: 'white', textAlign: 'center', fontSize: 12}}>Swipe up for next drill</Text>
-                        </View>
-                    )}
-
-                    <Text style={{color: 'white', fontWeight: '600', marginBottom: 5, fontSize: 16}}>
-                        {drill.name} {!!session && `(drill ${session.drills.indexOf(drill) + 1}/${session.drills.length})`}
-                    </Text>
-                    <Text style={{color: 'white'}}>
-                        {drill.description.replace(/\n|\r/g, "")}
-                    </Text>
-                    <TouchableOpacity style={{paddingVertical: 5}} onPress={() => setIsInfoShowing(true)}>
-                        <Text style={{color: 'white', textDecorationLine: 'underline'}}>See more</Text>
-                    </TouchableOpacity>
+                <View style={styles.detailsContainer}>
+                    <DrillDetails name={name}
+                                  description={description}
+                                  notes={notes}
+                                  shouldShowSwipeUpIndicator={shouldShowSwipeUpIndicator}/>
                 </View>
-                <View style={{width: '100%', alignItems: 'center'}}>
-                    {shouldShowSubmitButton() && (
-                        <SubmitButton onPress={() => navigation.navigate(CoachScreenNames.DrillFeedback, {
-                            session: session,
-                            drillId: drill.drillId
-                        })} text={'Submit feedback'} />
+                <View style={styles.submitButtonContainer}>
+                    {shouldShowSubmitFeedbackButton && (
+                        <SubmitButton onPress={openSubmitFeedbackScreen} text={'Submit feedback'}/>
                     )}
-                    {shouldShowSubmittingButton() && (
-                        <Text style={{color: 'white', fontWeight: '600'}}>Submitting...</Text>
+                    {isSubmitting && (
+                        <Text style={styles.submittingText}>Submitting...</Text>
                     )}
                 </View>
             </Footer>
-
-            <InfoSheet isOpen={isInfoShowing}
-                       onClose={() => setIsInfoShowing(false)}
-                       drill={drill}/>
-
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative'
+    },
+    containerHidden: {
+        display: 'none'
+    },
+    video: {
+        flex: 1
+    },
+    detailsContainer: {
+        width: '100%'
+    },
+    submitButtonContainer: {
+        width: '100%',
+        alignItems: 'center'
+    },
+    submittingText: {
+        color: 'white',
+        fontWeight: '600'
+    }
+});
 
 export default SubmissionVideo;

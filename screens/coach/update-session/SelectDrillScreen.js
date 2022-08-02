@@ -1,23 +1,20 @@
-import {SafeAreaView, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {CoachScreenNames} from "../../ScreenNames";
-import Loader from "../../../components/Loader";
-import Reload from "../../../components/Reload";
 import DrillList from "../../../components/drill-list/DrillList";
 import {StatusBar} from "expo-status-bar";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import useHttpClient from "../../../hooks/useHttpClient";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import HeaderCenter from "../../../components/HeaderCenter";
-import EmptyPlaceholder from "../../../components/EmptyPlaceholder";
 
 const SelectDrillScreen = ({route}) => {
 
     const {onSelectDrill} = route.params;
 
     const [drills, setDrills] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
     const navigation = useNavigation();
@@ -28,11 +25,6 @@ const SelectDrillScreen = ({route}) => {
     const getDrillsForCoach = async () => {
         setIsLoading(true);
         setHasError(false);
-        await getDrillsForCoachLazy();
-        setIsLoading(false);
-    }
-
-    const getDrillsForCoachLazy = async () => {
         try {
             const result = await httpClient.getDrillsForCoach(coachId);
             setDrills(result.drills);
@@ -41,51 +33,52 @@ const SelectDrillScreen = ({route}) => {
             setError('An error occurred. Please try again.');
             setHasError(true);
         }
+        setIsLoading(false);
     }
+
+    const onPressDrill = useCallback((drill) => {
+        navigation.navigate(CoachScreenNames.EditDrillSelectionDetails, {
+            drill: drill,
+            onSelectDrill: (drill) => {
+                onSelectDrill(drill);
+                navigation.goBack();
+            }
+        });
+    }, []);
 
     useEffect(() => {
         getDrillsForCoach();
     }, []);
 
-    useFocusEffect(
-        useCallback(() => {
-            getDrillsForCoachLazy();
-        }, [httpClient, navigation])
-    );
+    const headerLeft = useMemo(() => <Text>Cancel</Text>, []);
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={styles.safeAreaView}>
             <HeaderCenter title={'Select a drill'}
-                          left={<Text>Cancel</Text>}
+                          left={headerLeft}
                           onLeftPress={navigation.goBack}/>
 
-            {isLoading && <Loader/>}
-            {!isLoading && (
-                <>
-                    {hasError && <Reload onReload={getDrillsForCoach}/>}
-                    {!hasError && (
-                        <View style={{flex: 1, paddingHorizontal: 15}}>
-                            {!!drills && drills.length > 0 && (
-                                <DrillList drills={drills}
-                                           onPressDrill={drill => navigation.navigate(CoachScreenNames.EditDrillSelectionDetails, {
-                                               drill: drill,
-                                               onSelectDrill: (drill) => {
-                                                   onSelectDrill(drill);
-                                                   navigation.goBack()
-                                               }
-                                           })}/>
-                            )}
-                            {(!drills || drills.length === 0) && (
-                                <EmptyPlaceholder text={'No drills'} />
-                            )}
-                        </View>
-                    )}
-                </>
-            )}
+            <View style={styles.content}>
+                <DrillList drills={drills}
+                           onPressDrill={onPressDrill}
+                           reload={getDrillsForCoach}
+                           hasError={hasError}
+                           isLoading={isLoading}/>
+            </View>
 
             <StatusBar style="dark" />
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 15
+    }
+})
 
 export default SelectDrillScreen;

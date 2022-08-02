@@ -7,6 +7,7 @@ import {useNavigation} from "@react-navigation/native";
 import {CameraStates} from "../cameraStates";
 import {useCallback, useState} from "react";
 import VideoCounter from "../VideoCounter";
+import RecordButton from "./RecordButton";
 
 const VideoCameraOptions = ({startRecording, stopRecording, cameraDirection, setCameraDirection, pickVideo, initialCountdown}) => {
 
@@ -25,17 +26,17 @@ const VideoCameraOptions = ({startRecording, stopRecording, cameraDirection, set
         }
     }, [countDown, setCountDown]);
 
-    const startRecord = () => {
+    const startRecord = useCallback(() => {
         setCameraState(CameraStates.Recording);
         startRecording();
-    }
+    }, []);
 
-    const stopRecord = () => {
+    const stopRecord = useCallback(() => {
         setCameraState(CameraStates.Ready);
         stopRecording();
-    }
+    }, []);
 
-    const onClickRecord = useCallback(async () => {
+    const onClickRecord = useCallback(() => {
         if (cameraState === CameraStates.Ready) {
             if (countDown > 0) {
                 setCameraState(CameraStates.CountDown);
@@ -49,68 +50,61 @@ const VideoCameraOptions = ({startRecording, stopRecording, cameraDirection, set
         }
     }, [cameraState, setCameraState, startRecord, stopRecord]);
 
+    const switchCameraDirection = useCallback(() => {
+        if (cameraDirection === CameraType.back) {
+            setCameraDirection(CameraType.front);
+        } else {
+            setCameraDirection(CameraType.back);
+        }
+    }, [cameraDirection])
+
     return (
-        <View style={{flex: 1, position: 'relative'}}>
+        <View style={styles.container}>
             {cameraState === CameraStates.Ready && (
-                <TouchableOpacity onPress={() => navigation.goBack()} style={{padding: 20}}>
-                    <View style={styles.icon}>
-                        <FontAwesomeIcon icon={faXmarkLarge} style={{color: 'white'}} size={23}/>
+                <TouchableOpacity onPress={navigation.goBack} style={styles.closeButtonContainer}>
+                    <View style={styles.iconContainer}>
+                        <FontAwesomeIcon icon={faXmarkLarge} style={styles.icon} size={23}/>
                     </View>
                 </TouchableOpacity>
             )}
             {cameraState === CameraStates.Recording && (
-                <View style={{position: 'absolute', top: 0, left: 0, width: '100%', alignItems: 'center', paddingTop: 10}}>
-                    <View style={{paddingVertical: 5, paddingHorizontal: 15, backgroundColor: 'rgba(241, 42, 80, 1)', borderRadius: 10}}>
-                        <VideoCounter style={{color: 'white', fontSize: 25}} onTimeout={stopRecord}/>
+                <View style={styles.recordingCounterContainer}>
+                    <View style={styles.recordingCounterContainerInner}>
+                        <VideoCounter style={styles.recordingCounter} onTimeout={stopRecord}/>
                     </View>
                 </View>
             )}
             {cameraState === CameraStates.CountDown && (
-                <View style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                    <Countdown
-                        start={countDown}
-                        style={{fontSize: 150, fontWeight: '700', color: 'white'}}
-                        onCompletion={startRecord}/>
+                <View style={styles.countdownContainer}>
+                    <Countdown start={countDown} style={styles.countdown} onCompletion={startRecord}/>
                 </View>
             )}
             {cameraState === CameraStates.Ready && (
                 <View style={styles.buttonSideContainer}>
-                    <TouchableOpacity
-                        style={styles.buttonSide}
-                        onPress={onClickTimer}>
-                        <View style={styles.icon}>
-                            <FontAwesomeIcon icon={faStopwatch} style={{color: 'white', marginBottom: 4, marginRight: 4}} size={25}/>
-                            <View style={{position: 'absolute', bottom: 10, left: 23, backgroundColor: 'white', borderRadius: 10, paddingHorizontal: 4, paddingVertical: 1}}>
-                                <Text style={{fontWeight: '700', fontSize: 10, letterSpacing: -.7}}>{countDown}<Text style={{fontSize: 8}}>s</Text></Text>
+                    <TouchableOpacity style={styles.buttonSide} onPress={onClickTimer}>
+                        <View style={styles.iconContainer}>
+                            <FontAwesomeIcon icon={faStopwatch} style={styles.timerIcon} size={25}/>
+                            <View style={styles.timerIconTextContainer}>
+                                <Text style={styles.timerIconText}>{countDown}<Text style={styles.timerIconTextSmall}>s</Text></Text>
                             </View>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.buttonSide}
-                        onPress={() => {
-                            setCameraDirection(cameraDirection === CameraType.back ? CameraType.front : CameraType.back);
-                        }}>
-                        <View style={styles.icon}>
-                            <FontAwesomeIcon icon={faRotate} style={{color: 'white'}} size={25}/>
+                    <TouchableOpacity style={styles.buttonSide} onPress={switchCameraDirection}>
+                        <View style={styles.iconContainer}>
+                            <FontAwesomeIcon icon={faRotate} style={styles.icon} size={25}/>
                         </View>
                     </TouchableOpacity>
                 </View>
             )}
             <View style={styles.buttonBottomContainer}>
-                <TouchableOpacity style={{width: 85, height: 85, borderColor: 'rgba(241, 42, 80, .5)', borderRadius: 90, borderWidth: 7, alignItems: 'center', justifyContent: 'center'}} onPress={onClickRecord}>
-                    {cameraState === CameraStates.Ready && (
-                        <View style={{width: 60, height: 60, backgroundColor: 'rgba(241, 42, 80, 1)', borderRadius: 80}} />
-                    )}
-                    {cameraState !== CameraStates.Ready && (
-                        <View style={{width: 30, height: 30, backgroundColor: 'rgba(241, 42, 80, 1)', borderRadius: 4}} />
-                    )}
-                </TouchableOpacity>
+                <RecordButton isRecording={cameraState !== CameraStates.Ready}
+                              startRecording={onClickRecord}/>
                 {cameraState === CameraStates.Ready && (
                     <TouchableOpacity
                         style={styles.buttonBottom}
                         onPress={pickVideo}>
-                        <View style={styles.icon}>
-                            <FontAwesomeIcon icon={faPhotoFilm} style={{color: 'white'}} size={25}/>
+                        <View style={styles.iconContainer}>
+                            <FontAwesomeIcon icon={faPhotoFilm} style={styles.icon} size={25}/>
                         </View>
                     </TouchableOpacity>
                 )}
@@ -120,6 +114,10 @@ const VideoCameraOptions = ({startRecording, stopRecording, cameraDirection, set
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative'
+    },
     buttonBottomContainer: {
         position: 'absolute',
         left: 0,
@@ -154,13 +152,73 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'white',
     },
-    icon: {
+    iconContainer: {
         backgroundColor: 'rgba(0,0,0,.3)',
         width: 50,
         height: 50,
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    icon: {
+        color: 'white'
+    },
+    timerIcon: {
+        color: 'white',
+        marginBottom: 4,
+        marginRight: 4
+    },
+    timerIconTextContainer: {
+        position: 'absolute',
+        bottom: 10,
+        left: 23,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        paddingHorizontal: 4,
+        paddingVertical: 1
+    },
+    timerIconText: {
+        fontWeight: '700',
+        fontSize: 10,
+        letterSpacing: -.7
+    },
+    timerIconTextSmall: {
+        fontSize: 8
+    },
+    closeButtonContainer: {
+        padding: 20
+    },
+    recordingCounterContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        alignItems: 'center',
+        paddingTop: 10
+    },
+    recordingCounterContainerInner: {
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        backgroundColor: 'rgba(241, 42, 80, 1)',
+        borderRadius: 10
+    },
+    recordingCounter: {
+        color: 'white',
+        fontSize: 25
+    },
+    countdownContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    countdown: {
+        fontSize: 150,
+        fontWeight: '700',
+        color: 'white'
     }
 });
 

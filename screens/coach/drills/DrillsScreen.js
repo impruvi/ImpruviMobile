@@ -1,14 +1,15 @@
-import {SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import useHttpClient from "../../../hooks/useHttpClient";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {StatusBar} from "expo-status-bar";
 import {CoachScreenNames} from '../../ScreenNames';
 import {Colors} from '../../../constants/colors';
 import DrillList from "../../../components/drill-list/DrillList";
 import useLongRequest from "../../../hooks/useLongRequest";
+import AddDrillButton from "./AddDrillButton";
 
 const DrillsScreen = () => {
 
@@ -21,6 +22,8 @@ const DrillsScreen = () => {
     const {httpClient} = useHttpClient();
     const {coachId} = useAuth();
     const {setError} = useError();
+    const firstLoadLongRequests = useRef(true);
+    const firstLoadNavigation = useRef(true);
 
     const getDrillsForCoach = async () => {
         setIsLoading(true);
@@ -45,35 +48,61 @@ const DrillsScreen = () => {
     }, []);
 
     useEffect(() => {
+        if (firstLoadLongRequests.current) {
+            firstLoadLongRequests.current = false;
+            return;
+        }
         getDrillsForCoachLazy();
     }, [outstandingLongRequests]);
 
     useFocusEffect(
         useCallback(() => {
+            if (firstLoadNavigation.current) {
+                firstLoadNavigation.current = false;
+                return;
+            }
             getDrillsForCoachLazy();
         }, [httpClient, navigation])
     );
 
+    const onPressDrill = useCallback(drill => {
+        navigation.navigate(CoachScreenNames.Drill, {
+            drill: drill
+        });
+    }, []);
+
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <View style={{flex: 1, paddingHorizontal: 15}}>
+        <SafeAreaView style={styles.safeAreaView}>
+            <View style={styles.container}>
                 <DrillList drills={drills}
                            isLoading={isLoading}
                            hasError={hasError}
                            reload={getDrillsForCoach}
-                           onPressDrill={drill => navigation.navigate(CoachScreenNames.Drill, {
-                               drill: drill
-                           })}
-                           optionRight={(
-                               <TouchableOpacity onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditDrill)}
-                                                 style={{padding: 5, flexDirection: 'row'}}>
-                                   <Text style={{color: Colors.Primary, marginLeft: 5, fontWeight: '600'}}>Add a drill</Text>
-                               </TouchableOpacity>
-                           )}/>
+                           onPressDrill={onPressDrill}
+                           optionRight={<AddDrillButton />}/>
             </View>
             <StatusBar style="dark" />
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    safeAreaView: {
+        flex: 1
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: 15
+    },
+    button: {
+        padding: 5,
+        flexDirection: 'row'
+    },
+    buttonText: {
+        color: Colors.Primary,
+        marginLeft: 5,
+        fontWeight: '600'
+    }
+})
 
 export default DrillsScreen;

@@ -1,5 +1,5 @@
-import {Alert, Image, SafeAreaView, ScrollView, Text, TouchableHighlight, TouchableOpacity, View} from 'react-native';
-import {useState} from "react";
+import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useCallback, useState} from "react";
 import {Colors} from "../../constants/colors";
 import {CoachScreenNames} from "../ScreenNames";
 import {useNavigation} from "@react-navigation/native";
@@ -7,8 +7,8 @@ import useError from "../../hooks/useError";
 import useHttpClient from "../../hooks/useHttpClient";
 import Loader from "../../components/Loader";
 import HeaderCenter from "../../components/HeaderCenter";
-import ThreeDotsBlack from '../../assets/icons/ThreeDotsBlack.png';
 import EmptyPlaceholder from "../../components/EmptyPlaceholder";
+import DrillListItem from "./DrillListItem";
 
 const CreateOrEditSessionScreen = ({route}) => {
 
@@ -22,19 +22,26 @@ const CreateOrEditSessionScreen = ({route}) => {
     const {httpClient} = useHttpClient();
 
     const onSelectDrill = (drill) => {
+        console.log('selected drill', drill.drillId);
+        console.log('current drills', drills.map(drill => drill.drillId));
         if (drills.filter(d => d.drillId === drill.drillId).length > 0) {
+            console.log('already contained');
             setDrills(drills.map(d => d.drillId === drill.drillId ? drill : d));
         } else {
             setDrills([...drills, drill]);
         }
-    }
+    };
 
-    const onRemoveDrill = (drill) => {
+    const onRemoveDrill = useCallback((drill) => {
         setDrills(drills.filter(d => d.drillId !== drill.drillId));
-    }
+    }, [drills]);
 
-    const onSubmit = async () => {
-        if (isSubmitting || drills.length < 4) {
+    const onSubmit = useCallback(async () => {
+        if (isSubmitting) {
+            return;
+        }
+
+        if (drills.length < 4) {
             Alert.alert('You must add at least 4 drills', '', [
                 {
                     text: 'Ok',
@@ -62,9 +69,9 @@ const CreateOrEditSessionScreen = ({route}) => {
             setError('An error occurred. Please try again.');
             setIsSubmitting(false);
         }
-    }
+    }, [isSubmitting, playerId, session, drills]);
 
-    const onOptionClick = (drill) => {
+    const onOptionClick = useCallback((drill) => {
         Alert.alert(`${drill.name}`, '', [
             {
                 text: 'Delete',
@@ -84,60 +91,87 @@ const CreateOrEditSessionScreen = ({route}) => {
                 style: 'cancel',
             },
         ]);
-    }
+    }, [onRemoveDrill, onSelectDrill]);
 
-    const navigateToDrill = (drill) => {
-        navigation.navigate(CoachScreenNames.Drill, {
-            drill: drill
+    const onAddDrillPress = useCallback(() => {
+        navigation.navigate(CoachScreenNames.SelectDrill, {
+            onSelectDrill: onSelectDrill
         });
-    }
+    }, [onSelectDrill]);
 
     return (
-        <View style={{flex: 1}}>
-            <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeAreaView}>
                 <HeaderCenter title={!!session ? `Training ${session.sessionNumber}` : 'Add a training'}
                               left={<Text>Cancel</Text>}
                               onLeftPress={navigation.goBack}
-                              right={<Text style={{color: Colors.Primary, marginLeft: 5, fontWeight: '600'}}>Add drill</Text>}
-                              onRightPress={() => navigation.navigate(CoachScreenNames.SelectDrill, {
-                                  onSelectDrill: onSelectDrill
-                              })}/>
+                              right={<Text style={styles.addDrillButton}>Add drill</Text>}
+                              onRightPress={onAddDrillPress}/>
 
-                <View style={{flex: 1, paddingHorizontal: 15}}>
-                    <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+                <View style={styles.content}>
+                    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
                         {(!drills || drills.length === 0) && (
                             <EmptyPlaceholder text={'No drills'}/>
                         )}
                         {!!drills && drills.map((drill, idx) => (
-                            <TouchableHighlight onPress={() => navigateToDrill(drill)} underlayColor="#EFF3F4" key={drill.drillId}>
-                                <View style={{flexDirection: 'row', paddingVertical: 15, alignItems: 'center', borderBottomWidth: 1, borderColor: Colors.Border}}>
-                                    <View style={{flex: 1}}>
-                                        <Text style={{fontWeight: '500', fontSize: 14}}>{drill.name} (Drill {idx + 1})</Text>
-                                        <Text style={{color: '#505050', marginTop: 3}}>{drill.notes}</Text>
-                                    </View>
-                                    <TouchableOpacity style={{padding: 10}} onPress={() => onOptionClick(drill)}>
-                                        <Image source={ThreeDotsBlack} style={{width: 20, height: 20, resizeMode: 'contain'}}/>
-                                    </TouchableOpacity>
-                                </View>
-                            </TouchableHighlight>
+                            <DrillListItem drill={drill}
+                                           idx={idx}
+                                           onOptionClick={onOptionClick}
+                                           key={drill.drillId}/>
                         ))}
                     </ScrollView>
-                    <View style={{paddingBottom: 10}}>
-                        <TouchableOpacity style={{backgroundColor: Colors.Primary, padding: 15, alignItems: 'center', borderRadius: 30, marginTop: 20}}
-                                          onPress={onSubmit}>
-                            <Text style={{color: 'white', fontWeight: '500'}}>{!!session ? 'Update training' : 'Create training'}</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={styles.submitButton} onPress={onSubmit}>
+                        <Text style={styles.submitButtonText}>{!!session ? 'Update training' : 'Create training'}</Text>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView>
 
-            {(isSubmitting) && (
-                <View style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(255, 255, 255, .6)'}}>
+            {isSubmitting && (
+                <View style={styles.submittingOverlayContainer}>
                     <Loader text={'Creating training...'}/>
                 </View>
             )}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    safeAreaView: {
+        flex: 1
+    },
+    addDrillButton: {
+        color: Colors.Primary,
+        marginLeft: 5,
+        fontWeight: '600'
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 15
+    },
+    scrollView: {
+        flex: 1
+    },
+    submitButton: {
+        backgroundColor: Colors.Primary,
+        padding: 15,
+        alignItems: 'center',
+        borderRadius: 10,
+        marginTop: 20,
+        marginBottom: 10
+    },
+    submitButtonText: {
+        color: 'white',
+        fontWeight: '500'
+    },
+    submittingOverlayContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(255, 255, 255, .6)'
+    }
+});
 
 export default CreateOrEditSessionScreen;

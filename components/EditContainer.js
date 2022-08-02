@@ -1,23 +1,42 @@
-import {ActivityIndicator, SafeAreaView, useWindowDimensions, View} from 'react-native';
+import {ActivityIndicator, Dimensions, SafeAreaView, View, StyleSheet} from 'react-native';
 
 const EditContainer = ({children, isSubmitting}) => {
-    const {height} = useWindowDimensions();
-
     return (
-        <View style={{flex: 1, position: 'relative', backgroundColor: 'white'}}>
-            <SafeAreaView style={{flex: 1}}>
-                <View style={{paddingHorizontal: 20}}>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeAreaView}>
+                <View style={styles.content}>
                     {children}
                 </View>
             </SafeAreaView>
 
             {isSubmitting && (
-                <View style={{position: 'absolute', width: '100%', height: height, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, .6)'}}>
+                <View style={styles.submittingContainer}>
                     <ActivityIndicator size="small" color="black"/>
                 </View>
             )}
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative',
+    },
+    safeAreaView: {
+        flex: 1
+    },
+    content: {
+        paddingHorizontal: 20
+    },
+    submittingContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: Dimensions.get('window').height,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, .6)'
+    }
+})
 
 export default EditContainer;

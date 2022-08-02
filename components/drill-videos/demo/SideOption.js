@@ -1,9 +1,9 @@
 import {Image, StyleSheet, Text, TouchableOpacity} from "react-native";
 
-const SideOption = ({icon, text, onPress, color = 'white', marginBottom = 15}) => {
+const SideOption = ({icon, text, onPress, noMargin}) => {
     return (
-        <TouchableOpacity onPress={onPress} style={{...styles.container, marginBottom: marginBottom}}>
-            <Image source={icon} style={{width: 30, height: 30, resizeMode: 'contain'}}/>
+        <TouchableOpacity onPress={onPress} style={noMargin ? styles.containerNoMargin : styles.container}>
+            <Image source={icon} style={styles.icon}/>
             <Text style={styles.text}>{text}</Text>
         </TouchableOpacity>
     )
@@ -16,12 +16,19 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 20,
+        marginBottom: 15
+    },
+    containerNoMargin: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 48,
+        height: 48,
+        borderRadius: 20,
     },
     icon: {
-        color: 'white',
-        textShadowColor: 'rgba(0, 0, 0, .6)',
-        textShadowOffset: {width: 1, height: 1},
-        textShadowRadius: 2
+        width: 30,
+        height: 30,
+        resizeMode: 'contain'
     },
     text: {
         color: 'white',

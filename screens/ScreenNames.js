@@ -68,6 +68,4 @@ export const PlayerScreenNames = {
     Coach: 'PlayerCoach',
 
     Onboarding: 'PlayerOnboarding',
-
-    NoCoach: 'PlayerNoCoach',
 }

@@ -1,6 +1,7 @@
-import {Alert, Image, Text, TouchableHighlight, TouchableOpacity, View} from "react-native";
+import {Alert, Image, Text, TouchableHighlight, TouchableOpacity, View, StyleSheet} from "react-native";
 import {Colors} from "../constants/colors";
 import {
+    doesAnyDrillHaveSubmission,
     doesEveryDrillHaveFeedback,
     doesEveryDrillHaveSubmission,
     getCompletedDateEpochMillis,
@@ -14,18 +15,19 @@ import useHttpClient from "../hooks/useHttpClient";
 import useError from "../hooks/useError";
 import {DayInMillis, getTimeRemainingDisplayText} from "../util/timeUtil";
 import {DrillVideoTab} from "../constants/drillVideoTab";
+import {useCallback} from "react";
 
-const PlayerTrainingListItem = ({player, session, setIsDeleting, onDelete}) => {
+const PlayerTrainingListItem = ({playerId, session, setIsDeleting, onDelete}) => {
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {setError} = useError();
 
-    const deleteTraining = async (session) => {
+    const deleteTraining = useCallback(async (session) => {
         setIsDeleting(true);
         try {
             await httpClient.deleteSession({
-                playerId: player.playerId,
+                playerId: playerId,
                 sessionNumber: session.sessionNumber
             });
             await onDelete();
@@ -34,9 +36,9 @@ const PlayerTrainingListItem = ({player, session, setIsDeleting, onDelete}) => {
             setError('An error occurred. Please try again.');
         }
         setIsDeleting(false);
-    }
+    }, [session, playerId]);
 
-    const onOptionsClick = (session) => {
+    const onOptionsClick = useCallback(() => {
         Alert.alert(`Training ${session.sessionNumber}`, '', [
             {
                 text: 'Delete',
@@ -66,7 +68,7 @@ const PlayerTrainingListItem = ({player, session, setIsDeleting, onDelete}) => {
             {
                 text: 'Edit',
                 onPress: () => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
-                    playerId: player.playerId,
+                    playerId: playerId,
                     session: session
                 }),
                 style: 'default',
@@ -76,67 +78,149 @@ const PlayerTrainingListItem = ({player, session, setIsDeleting, onDelete}) => {
                 style: 'cancel',
             },
         ]);
-    }
+    }, [session, playerId]);
 
-    const isCompleted = () => {
-        return doesEveryDrillHaveFeedback(session);
-    }
+    const navigateToSession = useCallback(() => {
+        navigation.navigate(CoachScreenNames.Session, {
+            session: session
+        });
+    }, [session]);
 
-    const needsFeedback = () => {
-        return doesEveryDrillHaveSubmission(session) && !doesEveryDrillHaveFeedback(session);
-    }
+    const navigateToSessionSubmission = useCallback(() => {
+        navigation.navigate(CoachScreenNames.Session, {
+            session: session,
+            tab: DrillVideoTab.Submission
+        })
+    }, [session]);
 
-    const isIncomplete = () => {
-        return !doesEveryDrillHaveSubmission(session);
-    }
 
-    const getTimeToProvideFeedback = (session) => {
-        return getTimeRemainingDisplayText(getCompletedDateEpochMillis(session) + DayInMillis);
-    }
+    const areAllSubmissionsComplete = doesEveryDrillHaveSubmission(session);
+    const isAllFeedbackProvided = doesEveryDrillHaveFeedback(session);
+    const needsFeedback = areAllSubmissionsComplete && !isAllFeedbackProvided;
+    const canEdit = !doesAnyDrillHaveSubmission(session);
+    const timeToProvideFeedback = getTimeRemainingDisplayText(getCompletedDateEpochMillis(session) + DayInMillis);
 
     return (
-        <TouchableHighlight onPress={() => navigation.navigate(CoachScreenNames.Session, {
-            session: session
-        })} underlayColor="#EFF3F4" key={session.sessionNumber} style={{paddingHorizontal: 15}}>
-            <View style={{width: '100%', flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderColor: Colors.Border}}>
-                <View style={needsFeedback() ? {backgroundColor: Colors.Primary, width: 6, height: 6, borderRadius: 6, marginRight: 8} : {width: 6, height: 6, borderRadius: 6, marginRight: 8}}/>
-                <View style={{flex: 1}}>
-                    <Text style={isCompleted() ? {color: '#BEBEBE', fontSize: 14, fontWeight: '500'} : {fontSize: 14, fontWeight: '500'}}>
+        <TouchableHighlight onPress={navigateToSession} underlayColor="#EFF3F4" style={styles.touchableHighlight}>
+            <View style={styles.container}>
+                <View style={needsFeedback ? styles.feedbackIconActive : styles.feedbackIcon}/>
+                <View style={styles.detailsContainer}>
+                    <Text style={isAllFeedbackProvided ? styles.detailsTitleCompleted : styles.detailsTitle}>
                         Training {session.sessionNumber} {session.sessionNumber === 1 && (
-                            <Text style={{color: '#aaa'}}>
+                            <Text style={styles.detailsSubtext}>
                                 (Intro session)
                             </Text>)}
                     </Text>
-                    <Text style={isCompleted() ? {color: '#BEBEBE', marginTop: 3} : {color: '#505050', marginTop: 3}}>
-                        {!doesEveryDrillHaveSubmission(session)
+                    <Text style={isAllFeedbackProvided ? styles.detailsSubtitleCompleted : styles.detailsSubtitle}>
+                        {!areAllSubmissionsComplete
                             ? `${session.drills.length} drills`
                             : `${getNumberOfCompletedFeedbacks(session)}/${session.drills.length} feedbacks provided`}
                     </Text>
                 </View>
-                {isCompleted() && (
-                    <Text style={{color: '#BEBEBE', fontSize: 12, fontWeight: '500'}}>
+                {isAllFeedbackProvided && (
+                    <Text style={styles.completedTimeText}>
                         Completed on {moment.unix(getCompletedDateEpochMillis(session) / 1000).format("MM/DD/YYYY")}
                     </Text>
                 )}
-                {needsFeedback() && (
-                    <View style={{alignItems: 'center'}}>
-                        <TouchableOpacity style={{backgroundColor: '#F1F1F1', paddingVertical: 7, paddingHorizontal: 12, borderRadius: 20}} onPress={() => navigation.navigate(CoachScreenNames.Session, {
-                            session: session,
-                            tab: DrillVideoTab.Submission
-                        })}>
-                            <Text style={{color: Colors.Primary, fontWeight: '500'}}>Provide feedback</Text>
+                {needsFeedback && (
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={navigateToSessionSubmission}>
+                            <Text style={styles.buttonText}>Provide feedback</Text>
                         </TouchableOpacity>
-                        <Text style={{marginTop: 3, color: '#BEBEBE', fontSize: 12}}>{getTimeToProvideFeedback(session)}</Text>
+                        <Text style={styles.timeRemainingText}>
+                            {timeToProvideFeedback}
+                        </Text>
                     </View>
                 )}
-                {isIncomplete() && (
-                    <TouchableOpacity style={{padding: 10}} onPress={() => onOptionsClick(session)}>
-                        <Image source={ThreeDotsBlack} style={{width: 20, height: 20, resizeMode: 'contain'}} />
+                {canEdit && (
+                    <TouchableOpacity style={styles.optionsButton} onPress={onOptionsClick}>
+                        <Image source={ThreeDotsBlack} style={styles.optionsIcon} />
                     </TouchableOpacity>
                 )}
             </View>
         </TouchableHighlight>
     );
 }
+
+const styles = StyleSheet.create({
+    touchableHighlight: {
+        paddingHorizontal: 15
+    },
+    container: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderColor: Colors.Border
+    },
+    detailsContainer: {
+        flex: 1
+    },
+    detailsTitleCompleted: {
+        color: '#BEBEBE',
+        fontSize: 14,
+        fontWeight: '500'
+    },
+    detailsTitle: {
+        fontSize: 14,
+        fontWeight: '500'
+    },
+    detailsSubtext: {
+        color: '#aaa'
+    },
+    detailsSubtitleCompleted: {
+        color: '#BEBEBE',
+        marginTop: 3
+    },
+    detailsSubtitle: {
+        color: '#505050',
+        marginTop: 3
+    },
+    feedbackIconActive: {
+        backgroundColor: Colors.Primary,
+        width: 6,
+        height: 6,
+        borderRadius: 6,
+        marginRight: 8
+    },
+    feedbackIcon: {
+        width: 6,
+        height: 6,
+        borderRadius: 6,
+        marginRight: 8
+    },
+    buttonContainer: {
+        alignItems: 'center'
+    },
+    button: {
+        backgroundColor: '#F1F1F1',
+        paddingVertical: 7,
+        paddingHorizontal: 12,
+        borderRadius: 20
+    },
+    buttonText: {
+        color: Colors.Primary,
+        fontWeight: '500'
+    },
+    completedTimeText: {
+        color: '#BEBEBE',
+        fontSize: 12,
+        fontWeight: '500'
+    },
+    timeRemainingText: {
+        marginTop: 3,
+        color: '#BEBEBE',
+        fontSize: 12
+    },
+    optionsButton: {
+        padding: 10
+    },
+    optionsIcon: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain'
+    }
+})
 
 export default PlayerTrainingListItem;
