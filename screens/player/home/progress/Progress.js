@@ -1,4 +1,4 @@
-import {Image, Text, View, StyleSheet} from "react-native";
+import {Image, StyleSheet, Text, View} from "react-native";
 import Lightning from "../../../../assets/icons/LightningDark.png";
 import {doesDrillHaveSubmission} from "../../../../util/drillUtil";
 import {doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";

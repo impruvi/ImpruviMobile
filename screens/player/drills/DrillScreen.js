@@ -1,6 +1,6 @@
 import VideoBackIcon from "../../../components/VideoBackIcon";
 import {StatusBar} from "expo-status-bar";
-import {View, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useNavigation} from "@react-navigation/native";
 import DemoVideos from "../../../components/drill-videos/demo/DemoVideos";
 import {LinearGradient} from "expo-linear-gradient";

@@ -1,4 +1,4 @@
-import {ActivityIndicator, Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Video} from "expo-av";
 import {Colors} from "../../constants/colors";
 import {SafeAreaView} from 'react-native-safe-area-context';

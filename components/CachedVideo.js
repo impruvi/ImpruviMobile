@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import shorthash from "shorthash";
 import * as FileSystem from "expo-file-system";
-import {Video, Audio} from "expo-av";
+import {Audio, Video} from "expo-av";
 import {addFileCacheMapping, getFileCacheMapping} from "../file-cache/fileCache";
 
 const CachedVideo = ({videoSourceUri, posterSourceUri, style, resizeMode, shouldPlay, isLooping, playbackRate, isMuted}) => {

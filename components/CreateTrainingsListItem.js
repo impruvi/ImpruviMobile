@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import HeadshotChip from "./HeadshotChip";
 import {CoachScreenNames} from "../screens/ScreenNames";
 import {Colors} from "../constants/colors";

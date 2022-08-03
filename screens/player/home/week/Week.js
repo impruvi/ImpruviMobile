@@ -1,10 +1,9 @@
-import {FlatList, View, StyleSheet} from "react-native";
+import {FlatList, StyleSheet, View} from "react-native";
 import {canSubmitForSession, doesEveryDrillHaveSubmission} from "../../../../util/sessionUtil";
 import Session from "./Session";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import EmptyPlaceholder from "../../../../components/EmptyPlaceholder";
 import Box from "../../../../components/Box";
-import {useCallback} from 'react';
 
 
 const Week = ({sessions}) => {

@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import HeadshotChip from "./HeadshotChip";
 import {doesDrillHaveFeedback} from "../util/drillUtil";
 import {CoachScreenNames} from "../screens/ScreenNames";
@@ -6,7 +6,7 @@ import {DrillVideoTab} from "../constants/drillVideoTab";
 import {Colors} from "../constants/colors";
 import {useNavigation} from "@react-navigation/native";
 import {DayInMillis, getTimeRemainingDisplayText} from "../util/timeUtil";
-import {getCompletedDateEpochMillis} from "../util/sessionUtil";
+import {getCompletedDateEpochMillis, getFirstDrillIdWithoutFeedback} from "../util/sessionUtil";
 import {useCallback} from "react";
 
 const ReviewTrainingListItem = ({playerSession, subscription}) => {
@@ -24,10 +24,11 @@ const ReviewTrainingListItem = ({playerSession, subscription}) => {
         });
     }, [playerSession, subscription]);
 
-    const onButtonPress = useCallback(() => {
+    const onProvideFeedbackPress = useCallback(() => {
         navigation.navigate(CoachScreenNames.Session, {
             session: playerSession.session,
-            tab: DrillVideoTab.Submission
+            tab: DrillVideoTab.Submission,
+            drillId: getFirstDrillIdWithoutFeedback(playerSession.session)
         });
     }, [playerSession]);
 
@@ -49,7 +50,7 @@ const ReviewTrainingListItem = ({playerSession, subscription}) => {
                 </Text>
             </View>
             <View style={styles.actionsContainer}>
-                <TouchableOpacity style={styles.button} onPress={onButtonPress}>
+                <TouchableOpacity style={styles.button} onPress={onProvideFeedbackPress}>
                     <Text style={styles.buttonText}>Provide feedback</Text>
                 </TouchableOpacity>
                 <Text style={styles.timeText}>{getTimeToProvideFeedback(playerSession.session)}</Text>

@@ -1,4 +1,4 @@
-import {SafeAreaView, View, StyleSheet} from "react-native";
+import {SafeAreaView, StyleSheet, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import useHttpClient from "../../../hooks/useHttpClient";
 import {useCallback, useEffect, useRef, useState} from 'react';

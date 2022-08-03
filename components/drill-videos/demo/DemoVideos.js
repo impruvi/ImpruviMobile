@@ -15,7 +15,6 @@ import HelpPopup from "./help/HelpPopup";
 import Footer from "../Footer";
 import CachedVideo from "../../CachedVideo";
 import DrillDetails from "../drill-details/DrillDetails";
-import useLongRequest from "../../../hooks/useLongRequest";
 
 
 const DemoVideos = (

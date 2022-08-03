@@ -1,4 +1,4 @@
-import {SafeAreaView, TouchableOpacity, View, StyleSheet} from "react-native";
+import {SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 

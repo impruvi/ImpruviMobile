@@ -1,4 +1,4 @@
-import {Modal, View, StyleSheet} from "react-native";
+import {Modal, StyleSheet, View} from "react-native";
 import {useEffect, useState} from "react";
 
 const ModalWithBackdrop = ({children, visible, close, onBackdropPress}) => {

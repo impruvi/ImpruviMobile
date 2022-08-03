@@ -1,13 +1,13 @@
 import {FlatList, StyleSheet, View} from 'react-native';
-import {useFocusEffect, useIsFocused, useNavigation} from "@react-navigation/native";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useIsFocused, useNavigation} from "@react-navigation/native";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import VideoBackIcon from "../../components/VideoBackIcon";
 import {DrillVideoTab} from "../../constants/drillVideoTab";
 import useHttpClient from "../../hooks/useHttpClient";
 import {StatusBar} from "expo-status-bar";
 import DrillVideoTabs from "../../components/drill-videos/DrillVideoTabs";
-import {doesEveryDrillHaveFeedback, doesEveryDrillHaveSubmission} from "../../util/sessionUtil";
-import {CoachScreenNames, PlayerScreenNames} from "../ScreenNames";
+import {doesEveryDrillHaveFeedback} from "../../util/sessionUtil";
+import {CoachScreenNames} from "../ScreenNames";
 import useLongRequest from "../../hooks/useLongRequest";
 import {doesDrillHaveFeedback, doesDrillHaveSubmission} from "../../util/drillUtil";
 import SessionListItem from "./SessionListItem";
@@ -17,7 +17,7 @@ import {LongRequestType} from "../../model/longRequest";
 const SessionScreen = ({route}) => {
 
     const [session, setSession] = useState(route.params.session);
-    const [currentDrillId, setCurrentDrillId] = useState();
+    const [currentDrillId, setCurrentDrillId] = useState(route.params.drillId);
     const [selectedTab, setSelectedTab] = useState(!!route.params.tab ? route.params.tab : DrillVideoTab.Demo);
     const [outstandingRequestsForSession, setOutstandingRequestsForSession] = useState([]);
 
@@ -54,6 +54,7 @@ const SessionScreen = ({route}) => {
         onOutstandingRequestsChange();
     }, [outstandingLongRequests]);
 
+    const initialScrollIndex = useMemo(() => session.drills.map(drill => drill.drillId).indexOf(route.params.drillId), []);
     const lastDrillId = session.drills[session.drills.length - 1].drillId;
     const hasSubmission = doesDrillHaveSubmission(session.drills.find(drill => drill.drillId === currentDrillId));
     const hasFeedback = doesDrillHaveFeedback(session.drills.find(drill => drill.drillId === currentDrillId));
@@ -88,6 +89,7 @@ const SessionScreen = ({route}) => {
             <FlatList
                 pagingEnabled
                 data={session.drills}
+                initialScrollIndex={initialScrollIndex}
                 onViewableItemsChanged={viewableItemsChanged}
                 viewabilityConfig={viewConfig}
                 showsVerticalScrollIndicator={false}

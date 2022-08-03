@@ -16,20 +16,27 @@ export const doesEveryDrillHaveFeedback = (session) => {
     return session.drills.every(doesDrillHaveFeedback);
 }
 
-export const isLastDrillInSession = (drill, session) => {
-    if (!session || !session.drills || session.drills.length === 0) {
-        return false;
+export const getFirstDrillIdWithoutSubmission = (session) => {
+    const drillIds = session.drills
+        .filter(drill => !doesDrillHaveSubmission(drill))
+        .map(drill => drill.drillId);
+    if (drillIds.length === 0) {
+        return null;
+    } else {
+        return drillIds [0];
     }
-    return drill.drillId === session.drills[session.drills.length - 1].drillId
 }
 
-export const isFirstDrillInSession = (drill, session) => {
-    if (!session || !session.drills || session.drills.length === 0) {
-        return false;
+export const getFirstDrillIdWithoutFeedback = (session) => {
+    const drillIds = session.drills
+        .filter(drill => !doesDrillHaveFeedback(drill))
+        .map(drill => drill.drillId);
+    if (drillIds.length === 0) {
+        return null;
+    } else {
+        return drillIds [0];
     }
-    return drill.drillId === session.drills[0].drillId
 }
-
 
 export const getNextSession = (sessions) => {
     const incompleteSessions = sessions.filter(session => !doesEveryDrillHaveSubmission(session));
@@ -46,22 +53,6 @@ export const getLastSession = (sessions) => {
     }
     return sessions.find(sess => sess.sessionNumber === lastSessionNumber);
 }
-
-// export const isNextSession = (sessions, session) => {
-//     if (!session) {
-//         return false;
-//     }
-//     const nextSession = getNextSession(sessions);
-//     return !!nextSession && nextSession.sessionNumber === session.sessionNumber;
-// }
-//
-// export const isLastSession = (sessions, session) => {
-//     if (!session) {
-//         return false;
-//     }
-//     const lastSession = getLastSession(sessions);
-//     return !!lastSession && lastSession.sessionNumber === session.sessionNumber;
-// }
 
 export const canSubmitForSession = (sessions, session) => {
     if (!session || !sessions || sessions.length === 0) {

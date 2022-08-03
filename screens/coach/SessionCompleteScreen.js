@@ -1,4 +1,4 @@
-import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";

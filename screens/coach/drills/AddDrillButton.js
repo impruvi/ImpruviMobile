@@ -1,13 +1,10 @@
-import {memo} from 'react';
+import {memo, useCallback} from 'react';
 import {CoachScreenNames} from "../../ScreenNames";
-import {Text, TouchableOpacity, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useNavigation} from "@react-navigation/native";
-import {useCallback} from 'react';
 import {Colors} from "../../../constants/colors";
 
 const AddDrillButton = () => {
-
-    console.log('add drill button render');
 
     const navigation = useNavigation();
 

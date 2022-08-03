@@ -1,4 +1,4 @@
-import {Image, Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import SwipeIconYellow from "../../../assets/icons/SwipeYellow.png";
 import React, {useCallback, useState} from "react";
 import InfoSheet from "./InfoSheet";

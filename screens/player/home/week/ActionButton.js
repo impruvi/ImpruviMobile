@@ -3,11 +3,12 @@ import {DrillVideoTab} from "../../../../constants/drillVideoTab";
 import {
     doesAnyDrillHaveFeedback,
     doesAnyDrillHaveSubmission,
-    doesEveryDrillHaveSubmission
+    doesEveryDrillHaveSubmission,
+    getFirstDrillIdWithoutSubmission
 } from "../../../../util/sessionUtil";
 import {Colors} from "../../../../constants/colors";
 import {PlayerScreenNames} from "../../../ScreenNames";
-import {Text, TouchableOpacity, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 
 const ActionButton = ({session, canSubmit}) => {
 
@@ -16,6 +17,7 @@ const ActionButton = ({session, canSubmit}) => {
     let backgroundColor;
     let color;
     let text;
+    let drillId;
     let defaultSessionSelectedTab = DrillVideoTab.Demo;
     if (doesEveryDrillHaveSubmission(session) && doesAnyDrillHaveFeedback(session)) {
         backgroundColor = 'black';
@@ -31,6 +33,7 @@ const ActionButton = ({session, canSubmit}) => {
             text = 'Continue';
             backgroundColor = Colors.Primary;
             color = 'white';
+            drillId = getFirstDrillIdWithoutSubmission(session);
         } else if (canSubmit) {
             text = 'Start';
             backgroundColor = Colors.Primary;
@@ -45,7 +48,8 @@ const ActionButton = ({session, canSubmit}) => {
     const startSession = () => {
         navigation.navigate(PlayerScreenNames.Session, {
             session: session,
-            selectedTab: defaultSessionSelectedTab
+            selectedTab: defaultSessionSelectedTab,
+            drillId: drillId
         });
     }
 

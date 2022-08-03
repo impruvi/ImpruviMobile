@@ -1,10 +1,10 @@
-import {SafeAreaView, ScrollView, View, StyleSheet} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import HeaderCenter from "../../../components/HeaderCenter";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import CreateTrainingsListItem from "../../../components/CreateTrainingsListItem";
-import {useCallback, useMemo, useRef, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
 import useHttpClient from "../../../hooks/useHttpClient";

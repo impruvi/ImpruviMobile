@@ -1,5 +1,5 @@
 import {memo} from 'react';
-import {Text, View, StyleSheet} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 
 const Title = ({text, value, includeMargin}) => {
     return (

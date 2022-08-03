@@ -1,4 +1,4 @@
-import {ActivityIndicator, Text, View, StyleSheet} from "react-native";
+import {ActivityIndicator, StyleSheet, Text, View} from "react-native";
 
 const Loader = ({color = 'black', text}) => {
     return (

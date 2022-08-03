@@ -1,5 +1,5 @@
-import React, {useEffect, useRef} from 'react';
-import {Animated, SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
+import React, {useCallback, useEffect, useRef} from 'react';
+import {Animated, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import InvitationCodeScreen from "../screens/authentication/InvitationCodeScreen";
 
@@ -14,7 +14,6 @@ import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
 import SignInScreen from "../screens/authentication/SignInScreen";
 import UpdateAppScreen from "../screens/UpdateAppScreen";
 import useAuth from "../hooks/useAuth";
-import {useCallback} from 'react';
 
 const Stack = createStackNavigator();
 

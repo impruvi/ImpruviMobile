@@ -20,7 +20,6 @@ export const LongRequestProvider = ({children}) => {
         const requestsJSON = await AsyncStorage.getItem('outstandingLongRequests');
         if (!!requestsJSON) {
             const requests = JSON.parse(requestsJSON);
-
             setOutstandingRequests(requests);
             await executeRequests(requests);
         }

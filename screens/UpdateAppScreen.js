@@ -1,5 +1,4 @@
-import {SafeAreaView, View, ScrollView, Image, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import { Dimensions } from 'react-native';
+import {Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors} from "../constants/colors";
 import * as Linking from "expo-linking";
 

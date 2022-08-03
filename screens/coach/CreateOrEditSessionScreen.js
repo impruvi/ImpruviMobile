@@ -22,10 +22,7 @@ const CreateOrEditSessionScreen = ({route}) => {
     const {httpClient} = useHttpClient();
 
     const onSelectDrill = (drill) => {
-        console.log('selected drill', drill.drillId);
-        console.log('current drills', drills.map(drill => drill.drillId));
         if (drills.filter(d => d.drillId === drill.drillId).length > 0) {
-            console.log('already contained');
             setDrills(drills.map(d => d.drillId === drill.drillId ? drill : d));
         } else {
             setDrills([...drills, drill]);

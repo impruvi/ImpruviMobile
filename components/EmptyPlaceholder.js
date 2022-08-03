@@ -1,4 +1,4 @@
-import {Image, Text, View, StyleSheet} from "react-native";
+import {Image, StyleSheet, Text, View} from "react-native";
 import EmptyGreyIcon from "../assets/icons/EmptyGrey.png";
 
 const EmptyPlaceholder = ({text}) => {

@@ -1,4 +1,4 @@
-import {Animated, Image, ScrollView, useWindowDimensions, StyleSheet} from "react-native";
+import {Animated, ScrollView, StyleSheet, useWindowDimensions} from "react-native";
 import HeaderBackground from "../../../../assets/images/StadiumHeaderBackground.png";
 import {useState} from 'react';
 import CachedImage from "../../../../components/CachedImage";

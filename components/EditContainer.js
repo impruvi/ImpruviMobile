@@ -1,4 +1,4 @@
-import {ActivityIndicator, Dimensions, SafeAreaView, View, StyleSheet} from 'react-native';
+import {ActivityIndicator, Dimensions, SafeAreaView, StyleSheet, View} from 'react-native';
 
 const EditContainer = ({children, isSubmitting}) => {
     return (

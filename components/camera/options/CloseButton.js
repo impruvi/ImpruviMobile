@@ -1,5 +1,5 @@
 import {memo} from 'react';
-import {TouchableOpacity, View, StyleSheet} from "react-native";
+import {StyleSheet, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 

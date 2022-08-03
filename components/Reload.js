@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faArrowRotateRight} from "@fortawesome/pro-regular-svg-icons";
 

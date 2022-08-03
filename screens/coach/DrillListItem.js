@@ -1,5 +1,5 @@
 import {memo, useCallback} from 'react';
-import {Image, Text, TouchableHighlight, TouchableOpacity, View, StyleSheet} from "react-native";
+import {Image, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View} from "react-native";
 import {Colors} from "../../constants/colors";
 import ThreeDotsBlack from "../../assets/icons/ThreeDotsBlack.png";
 import {CoachScreenNames} from "../ScreenNames";

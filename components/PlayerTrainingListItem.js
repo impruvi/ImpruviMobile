@@ -1,10 +1,11 @@
-import {Alert, Image, Text, TouchableHighlight, TouchableOpacity, View, StyleSheet} from "react-native";
+import {Alert, Image, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View} from "react-native";
 import {Colors} from "../constants/colors";
 import {
     doesAnyDrillHaveSubmission,
     doesEveryDrillHaveFeedback,
     doesEveryDrillHaveSubmission,
     getCompletedDateEpochMillis,
+    getFirstDrillIdWithoutFeedback,
     getNumberOfCompletedFeedbacks
 } from "../util/sessionUtil";
 import moment from "moment";
@@ -80,16 +81,17 @@ const PlayerTrainingListItem = ({playerId, session, setIsDeleting, onDelete}) =>
         ]);
     }, [session, playerId]);
 
-    const navigateToSession = useCallback(() => {
+    const onPreviewSessionPress = useCallback(() => {
         navigation.navigate(CoachScreenNames.Session, {
             session: session
         });
     }, [session]);
 
-    const navigateToSessionSubmission = useCallback(() => {
+    const onProvideFeedbackPress = useCallback(() => {
         navigation.navigate(CoachScreenNames.Session, {
             session: session,
-            tab: DrillVideoTab.Submission
+            tab: DrillVideoTab.Submission,
+            drillId: getFirstDrillIdWithoutFeedback(session)
         })
     }, [session]);
 
@@ -101,7 +103,7 @@ const PlayerTrainingListItem = ({playerId, session, setIsDeleting, onDelete}) =>
     const timeToProvideFeedback = getTimeRemainingDisplayText(getCompletedDateEpochMillis(session) + DayInMillis);
 
     return (
-        <TouchableHighlight onPress={navigateToSession} underlayColor="#EFF3F4" style={styles.touchableHighlight}>
+        <TouchableHighlight onPress={onPreviewSessionPress} underlayColor="#EFF3F4" style={styles.touchableHighlight}>
             <View style={styles.container}>
                 <View style={needsFeedback ? styles.feedbackIconActive : styles.feedbackIcon}/>
                 <View style={styles.detailsContainer}>
@@ -124,7 +126,7 @@ const PlayerTrainingListItem = ({playerId, session, setIsDeleting, onDelete}) =>
                 )}
                 {needsFeedback && (
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={navigateToSessionSubmission}>
+                        <TouchableOpacity style={styles.button} onPress={onProvideFeedbackPress}>
                             <Text style={styles.buttonText}>Provide feedback</Text>
                         </TouchableOpacity>
                         <Text style={styles.timeRemainingText}>

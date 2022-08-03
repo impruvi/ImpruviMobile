@@ -1,4 +1,4 @@
-import {TextInput, StyleSheet} from "react-native";
+import {StyleSheet, TextInput} from "react-native";
 
 const Input = ({value, onChangeText, autoCapitalize, secureTextEntry, placeholder}) => {
     return (

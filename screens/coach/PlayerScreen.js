@@ -1,18 +1,17 @@
-import {ActivityIndicator, SafeAreaView, ScrollView, Text, View, StyleSheet} from 'react-native';
+import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {CoachScreenNames} from "../ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faAngleLeft} from "@fortawesome/pro-light-svg-icons";
 import {Colors} from "../../constants/colors";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import HeaderCenter from "../../components/HeaderCenter";
-import {useCallback, useMemo, useState, useRef, useEffect} from "react";
+import {useCallback, useMemo, useState} from "react";
 import useHttpClient from "../../hooks/useHttpClient";
 import useError from "../../hooks/useError";
 import useAuth from "../../hooks/useAuth";
 import HeadshotChip from "../../components/HeadshotChip";
 import PlayerTrainingListItem from "../../components/PlayerTrainingListItem";
 import {doesPlayerNeedMoreSessions, getNumberOfSessionsCreatedForSubscription} from "../../util/playerUtil";
-import {DayInMillis, getTimeRemainingDisplayText} from "../../util/timeUtil";
 import EmptyPlaceholder from "../../components/EmptyPlaceholder";
 import CreateTrainingsReminder from "./CreateTrainingsReminder";
 

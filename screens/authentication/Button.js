@@ -1,4 +1,4 @@
-import {TouchableOpacity, StyleSheet, Text} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {Colors} from "../../constants/colors";
 
 const Button = ({isSubmitting, submit, text}) => {

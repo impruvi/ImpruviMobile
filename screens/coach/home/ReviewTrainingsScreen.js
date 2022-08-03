@@ -1,4 +1,4 @@
-import {SafeAreaView, ScrollView, View, StyleSheet} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import HeaderCenter from "../../../components/HeaderCenter";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";

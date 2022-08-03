@@ -1,6 +1,6 @@
 import {memo, useCallback} from 'react';
 import HeadshotChip from "../../../components/HeadshotChip";
-import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
 const InboxEntryListItem = ({item, navigateToSession}) => {
 

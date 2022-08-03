@@ -18,10 +18,9 @@ const SessionScreen = ({route}) => {
 
     const [session, setSession] = useState(route.params.session);
     const [canSubmit, setCanSubmit] = useState(false);
-    const [outstandingRequestsForSession, setOutstandingRequestsForSession] = useState([]);
-
     const [currentDrillId, setCurrentDrillId] = useState(route.params.drillId);
     const [selectedTab, setSelectedTab] = useState(!!route.params.selectedTab ? route.params.selectedTab : DrillVideoTab.Demo);
+    const [outstandingRequestsForSession, setOutstandingRequestsForSession] = useState([]);
 
     const {outstandingLongRequests} = useLongRequest();
     const isFocused = useIsFocused();

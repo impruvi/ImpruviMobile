@@ -1,8 +1,8 @@
-import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import useHttpClient from "../../../hooks/useHttpClient";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {StatusBar} from "expo-status-bar";
 import {CoachScreenNames} from '../../ScreenNames';
@@ -47,23 +47,23 @@ const DrillsScreen = () => {
         getDrillsForCoach();
     }, []);
 
-    useEffect(() => {
-        if (firstLoadLongRequests.current) {
-            firstLoadLongRequests.current = false;
-            return;
-        }
-        getDrillsForCoachLazy();
-    }, [outstandingLongRequests]);
-
-    useFocusEffect(
-        useCallback(() => {
-            if (firstLoadNavigation.current) {
-                firstLoadNavigation.current = false;
-                return;
-            }
-            getDrillsForCoachLazy();
-        }, [httpClient, navigation])
-    );
+    // useEffect(() => {
+    //     if (firstLoadLongRequests.current) {
+    //         firstLoadLongRequests.current = false;
+    //         return;
+    //     }
+    //     getDrillsForCoachLazy();
+    // }, [outstandingLongRequests]);
+    //
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         if (firstLoadNavigation.current) {
+    //             firstLoadNavigation.current = false;
+    //             return;
+    //         }
+    //         getDrillsForCoachLazy();
+    //     }, [httpClient, navigation])
+    // );
 
     const onPressDrill = useCallback(drill => {
         navigation.navigate(CoachScreenNames.Drill, {

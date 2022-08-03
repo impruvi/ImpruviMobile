@@ -1,5 +1,5 @@
 import ModalWithBackdrop from "../../../ModalWithBackdrop";
-import {Dimensions, FlatList, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {Dimensions, FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useCallback, useRef, useState} from "react";
 import {HelpPopupSlides} from "./slides";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";

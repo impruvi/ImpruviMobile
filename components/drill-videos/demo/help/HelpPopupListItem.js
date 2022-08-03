@@ -1,5 +1,5 @@
 import {memo} from 'react';
-import {Dimensions, Image, Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import {HelpPopupSlides} from "./slides";
 

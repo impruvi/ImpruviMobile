@@ -1,10 +1,10 @@
-import {SafeAreaView, Text, TouchableOpacity, View, StyleSheet} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {PlayerScreenNames} from "../ScreenNames";
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
-import {useEffect, useState, useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import {doesEverySessionInPlanHaveSubmission} from "../../util/playerUtil";

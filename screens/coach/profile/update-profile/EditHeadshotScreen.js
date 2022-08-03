@@ -2,7 +2,7 @@ import EditHeader from "../../../../components/EditHeader";
 import EditContainer from "../../../../components/EditContainer";
 import {useNavigation} from "@react-navigation/native";
 import {useEffect, useState} from "react";
-import {Image, View, StyleSheet} from "react-native";
+import {Image, StyleSheet, View} from "react-native";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
 import * as ImagePicker from "expo-image-picker";

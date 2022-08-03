@@ -29,11 +29,13 @@ const DrillScreen = ({route}) => {
         try {
             const coach = await httpClient.getCoach(coachId);
             if (!!coach.introSessionDrills.find(d => d.drillId === drill.drillId)) {
-                Alert.alert(`You can not delete an intro session drill?`, '', [
+                Alert.alert(`You can not delete an intro session drill`, '', [
                     {
                         text: 'Ok',
                     }
-                ])
+                ]);
+                setIsDeleting(false);
+                return;
             }
             await httpClient.deleteDrill(drill.drillId);
             navigation.goBack();
