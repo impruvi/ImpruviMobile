@@ -2,7 +2,7 @@ import {SafeAreaView, StyleSheet, View} from 'react-native';
 import useHttpClient from "../../../hooks/useHttpClient";
 import useAuth from "../../../hooks/useAuth";
 import useError from "../../../hooks/useError";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {StatusBar} from "expo-status-bar";
 import {CoachScreenNames} from '../../ScreenNames';
