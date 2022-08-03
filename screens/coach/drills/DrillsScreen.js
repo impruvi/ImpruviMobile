@@ -47,23 +47,23 @@ const DrillsScreen = () => {
         getDrillsForCoach();
     }, []);
 
-    // useEffect(() => {
-    //     if (firstLoadLongRequests.current) {
-    //         firstLoadLongRequests.current = false;
-    //         return;
-    //     }
-    //     getDrillsForCoachLazy();
-    // }, [outstandingLongRequests]);
-    //
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         if (firstLoadNavigation.current) {
-    //             firstLoadNavigation.current = false;
-    //             return;
-    //         }
-    //         getDrillsForCoachLazy();
-    //     }, [httpClient, navigation])
-    // );
+    useEffect(() => {
+        if (firstLoadLongRequests.current) {
+            firstLoadLongRequests.current = false;
+            return;
+        }
+        getDrillsForCoachLazy();
+    }, [outstandingLongRequests]);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (firstLoadNavigation.current) {
+                firstLoadNavigation.current = false;
+                return;
+            }
+            getDrillsForCoachLazy();
+        }, [httpClient, navigation])
+    );
 
     const onPressDrill = useCallback(drill => {
         navigation.navigate(CoachScreenNames.Drill, {
