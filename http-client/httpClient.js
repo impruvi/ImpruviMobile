@@ -3,11 +3,14 @@ import {DrillVideoAngle} from "../constants/drillVideoAngle";
 import {isRemoteMedia} from '../util/fileUtil';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {addFileCacheMapping} from "../file-cache/fileCache";
+import getEnvVars from "../environment";
+
+console.log(getEnvVars().apiUrl);
 
 class HttpClient {
 
     #client = apiClientFactory.newClient({
-        invokeUrl: 'https://a70qx1uv76.execute-api.us-west-2.amazonaws.com/prod',
+        invokeUrl: getEnvVars().apiUrl,
         region: 'us-west-2',
         accessKey: 'AKIAXTDBP63P4IWBNXM6',
         secretKey: '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',
