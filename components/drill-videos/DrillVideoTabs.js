@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {DrillVideoTab} from "../../constants/drillVideoTab";
 import {Colors} from "../../constants/colors";
 

@@ -1,4 +1,4 @@
-import {StyleSheet, View} from "react-native";
+import {Alert, StyleSheet, View} from "react-native";
 import {useState} from "react";
 import VideoCamera from "../../components/camera/VideoCamera";
 import VideoPreview from "../../components/camera/VideoPreview";
@@ -8,6 +8,7 @@ import useError from "../../hooks/useError";
 import {LongRequest, LongRequestType} from "../../model/longRequest";
 import useLongRequest from "../../hooks/useLongRequest";
 import {generateThumbnail} from "../../util/thumbnailUtil";
+import * as Linking from "expo-linking";
 
 
 const DrillSubmissionScreen = ({route}) => {
@@ -41,10 +42,22 @@ const DrillSubmissionScreen = ({route}) => {
         }
     }
 
+    const onNoAccess = () => {
+        navigation.goBack();
+        Alert.alert('You must enable access to your camera roll.', '', [
+            {
+                text: 'Settings',
+                onPress: () => Linking.openURL("app-settings:"),
+            }
+        ]);
+    }
+
     return (
         <View style={styles.container}>
             {!video && (
-                <VideoCamera setVideo={setVideo} maximumDurationInSeconds={30}/>
+                <VideoCamera setVideo={setVideo}
+                             maximumDurationInSeconds={30}
+                             onNoAccess={onNoAccess}/>
             )}
             {!!video && (
                 <VideoPreview

@@ -37,7 +37,6 @@ const getButtonInfo = (session, canSubmit, subscriptionCurrentPeriodStartDateEpo
                 backgroundColor: Colors.Primary,
                 color: 'white',
                 text: 'Continue',
-                defaultSessionSelectedTab: DrillVideoTab.Feedback,
                 drillId: getFirstDrillIdWithoutSubmission(session)
             }
         } else if (canSubmit) {

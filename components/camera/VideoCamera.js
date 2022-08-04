@@ -1,22 +1,23 @@
 import {CameraType} from "expo-camera/build/Camera.types";
 import {Camera} from "expo-camera";
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet} from "react-native";
 import {useCallback, useEffect, useRef, useState} from "react";
 import * as ImagePicker from 'expo-image-picker';
 import VideoCameraOptions from "./options/VideoCameraOptions";
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {UIImagePickerControllerQualityType} from "expo-image-picker/src/ImagePicker.types";
 
-const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initialCountdown = 3, maximumDurationInSeconds = 5 * 60}) => {
+const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initialCountdown = 3, maximumDurationInSeconds = 5 * 60 , onNoAccess}) => {
 
     const cameraRef = useRef();
     const [cameraDirection, setCameraDirection] = useState(initialCameraDirection);
-    const [hasPermission, setHasPermission] = useState(null);
 
     useEffect(() => {
         (async () => {
             const { status } = await Camera.requestCameraPermissionsAsync();
-            setHasPermission(status === 'granted');
+            if (status !== 'granted') {
+                onNoAccess();
+            }
         })();
     }, []);
 
@@ -47,13 +48,6 @@ const VideoCamera = ({setVideo, initialCameraDirection = CameraType.back, initia
     const stopRecording = useCallback(async () => {
         cameraRef.current.stopRecording();
     }, [cameraRef]);
-
-    if (hasPermission === null) {
-        return <View />;
-    }
-    if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
-    }
 
     return (
         <SafeAreaView style={styles.container}>

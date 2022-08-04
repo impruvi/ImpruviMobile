@@ -69,7 +69,9 @@ const InboxScreen = () => {
     const getSubscriptionCurrentPeriodStartDateEpochMillis = async () => {
         try {
             const subscription = await httpClient.getSubscription(playerId);
-            setSubscriptionCurrentPeriodStartDateEpochMillis(subscription.currentPeriodStartDateEpochMillis);
+            if (!!subscription) {
+                setSubscriptionCurrentPeriodStartDateEpochMillis(subscription.currentPeriodStartDateEpochMillis);
+            }
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');

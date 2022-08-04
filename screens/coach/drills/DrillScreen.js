@@ -1,6 +1,6 @@
 import VideoBackIcon from "../../../components/VideoBackIcon";
 import {StatusBar} from "expo-status-bar";
-import {Alert, Image, SafeAreaView, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {Alert, Image, SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useIsFocused, useNavigation} from "@react-navigation/native";
 import DemoVideos from "../../../components/drill-videos/demo/DemoVideos";
 import {LinearGradient} from "expo-linear-gradient";
