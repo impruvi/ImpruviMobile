@@ -13,6 +13,7 @@ const SessionListItem = (
         playerId,
         shouldShowSwipeUpIndicator,
         canSubmit,
+        isExpired,
         outstandingLongRequest
     }) => {
 
@@ -26,6 +27,7 @@ const SessionListItem = (
                 playerId={playerId}
                 shouldShowSwipeUpIndicator={shouldShowSwipeUpIndicator}
                 canSubmit={canSubmit}
+                isExpired={isExpired}
                 outstandingLongRequest={outstandingLongRequest}/>
             <LinearGradient
                 colors={['rgba(0, 0, 0, .7)', 'transparent']}

@@ -30,8 +30,8 @@ const EditNameScreen = ({route}) => {
             setIsSubmitting(true);
             const newPlayer = {
                 ...route.params.player,
-                firstName: firstName,
-                lastName: lastName
+                firstName: firstName.trim(),
+                lastName: lastName.trim()
             };
             const updatedPlayer = await httpClient.updatePlayer(newPlayer);
             route.params.setPlayer(updatedPlayer)

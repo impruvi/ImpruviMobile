@@ -1,3 +1,4 @@
+import * as FileSystem from "expo-file-system";
 
 
 export const isRemoteMedia = (media) => {
@@ -9,4 +10,12 @@ export const isRemoteMediaUri = (uri) => {
     return uri.startsWith('https://');
 }
 
+export const doesLocalFileExist = async (localUri) => {
+    try {
+        const fileInfo = await FileSystem.getInfoAsync(localUri);
+        return !!fileInfo && fileInfo.exists;
+    } catch (err) {
+        return false;
+    }
+}
 

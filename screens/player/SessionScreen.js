@@ -40,6 +40,8 @@ const SessionScreen = ({route}) => {
     const hasViewedFeedback = session.hasViewedFeedback;
     const doesSessionHaveFeedback = doesAnyDrillHaveFeedback(session);
     const sessionNumber = session.sessionNumber;
+    const subscriptionCurrentPeriodStartDateEpochMillis = route.params.subscriptionCurrentPeriodStartDateEpochMillis;
+    const sessionCreationDateEpochMillis = session.creationDateEpochMillis;
 
     const onScrollToIndexFailed = useCallback((info) => {
         const wait = new Promise(resolve => setTimeout(resolve, 0));
@@ -60,7 +62,7 @@ const SessionScreen = ({route}) => {
 
     const getCanSubmit = async () => {
         const sessions = await httpClient.getPlayerSessions(playerId);
-        const canSubmit = canSubmitForSession(sessions, session);
+        const canSubmit = canSubmitForSession(sessions, session, subscriptionCurrentPeriodStartDateEpochMillis);
         setCanSubmit(canSubmit);
     }
 
@@ -107,9 +109,10 @@ const SessionScreen = ({route}) => {
                 playerId={playerId}
                 shouldShowSwipeUpIndicator={currentDrillId !== lastDrillId}
                 canSubmit={canSubmit}
+                isExpired={sessionCreationDateEpochMillis < subscriptionCurrentPeriodStartDateEpochMillis}
                 outstandingLongRequest={getOutstandingRequestForDrill(item.drillId)}/>
         );
-    }, [selectedTab, currentDrillId, sessionNumber, playerId, lastDrillId, canSubmit, isFocused, outstandingRequestsForSession]);
+    }, [selectedTab, currentDrillId, sessionNumber, playerId, lastDrillId, canSubmit, isFocused, outstandingRequestsForSession, sessionCreationDateEpochMillis, subscriptionCurrentPeriodStartDateEpochMillis]);
 
     const extractKey = useCallback((item) => {
         return item.drillId;

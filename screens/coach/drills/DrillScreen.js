@@ -1,7 +1,7 @@
 import VideoBackIcon from "../../../components/VideoBackIcon";
 import {StatusBar} from "expo-status-bar";
-import {Alert, Image, SafeAreaView, TouchableOpacity, View} from 'react-native';
-import {useNavigation} from "@react-navigation/native";
+import {Alert, Image, SafeAreaView, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {useIsFocused, useNavigation} from "@react-navigation/native";
 import DemoVideos from "../../../components/drill-videos/demo/DemoVideos";
 import {LinearGradient} from "expo-linear-gradient";
 import React, {useState} from "react";
@@ -13,12 +13,17 @@ import Loader from "../../../components/Loader";
 import useAuth from "../../../hooks/useAuth";
 
 
+const gradientColors = ['rgba(0, 0, 0, .7)', 'transparent'];
+const gradientStart = { x: 0, y: 0 };
+const gradientEnd = { x: 0, y: 1 };
+
 const DrillScreen = ({route}) => {
 
     const {drill} = route.params;
 
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const isFocused = useIsFocused();
     const navigation = useNavigation();
     const {coachId} = useAuth();
     const {httpClient} = useHttpClient();
@@ -82,9 +87,9 @@ const DrillScreen = ({route}) => {
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: 'black'}}>
+        <View style={styles.container}>
             <DemoVideos shouldRender
-                        shouldPlay
+                        shouldPlay={isFocused}
 
                         drillId={drill.drillId}
                         name={drill.name}
@@ -98,24 +103,24 @@ const DrillScreen = ({route}) => {
                         sidePosterUri={drill.demos.sideThumbnail.fileLocation}
                         closePosterUri={drill.demos.closeThumbnail.fileLocation}/>
             <LinearGradient
-                colors={['rgba(0, 0, 0, .7)', 'transparent']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={{width: '100%', height: 200, position: 'absolute', top: 0, left: 0}} />
+                colors={gradientColors}
+                start={gradientStart}
+                end={gradientEnd}
+                style={styles.gradient} />
 
 
             <VideoBackIcon onPress={navigation.goBack} />
 
-            <View style={{position: 'absolute', right: 0}}>
+            <View style={styles.editButtonContainer}>
                 <SafeAreaView>
-                    <TouchableOpacity onPress={onOptionsPress} style={{width: 40, height: 40, justifyContent: 'center', alignItems: 'center', marginRight: 15}}>
-                        <Image source={ThreeDotsWhiteIcon} style={{width: 26, height: 26, resizeMode: 'contain'}}/>
+                    <TouchableOpacity onPress={onOptionsPress} style={styles.editButton}>
+                        <Image source={ThreeDotsWhiteIcon} style={styles.editIcon}/>
                     </TouchableOpacity>
                 </SafeAreaView>
             </View>
 
             {isDeleting && (
-                <View style={{position: 'absolute', width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, .6)'}}>
+                <View style={styles.submittingContainer}>
                     <Loader text={'Deleting...'} color={'white'}/>
                 </View>
             )}
@@ -124,5 +129,41 @@ const DrillScreen = ({route}) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'black'
+    },
+    gradient: {
+        width: '100%',
+        height: 200,
+        position: 'absolute',
+        top: 0,
+        left: 0
+    },
+    editButtonContainer: {
+        position: 'absolute',
+        right: 0
+    },
+    editButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 15
+    },
+    editIcon: {
+        width: 26,
+        height: 26,
+        resizeMode: 'contain'
+    },
+    submittingContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, .6)'
+    }
+})
 
 export default DrillScreen;

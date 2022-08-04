@@ -8,7 +8,7 @@ import {Colors} from "../../../../constants/colors";
 import Equipment from "../../../../components/Equipment";
 import ActionButton from "./ActionButton";
 
-const Session = ({session, canSubmit}) => {
+const Session = ({session, canSubmit, subscriptionCurrentPeriodStartDateEpochMillis}) => {
 
     const sessionEquipment  = getSessionEquipment(session);
 
@@ -48,6 +48,7 @@ const Session = ({session, canSubmit}) => {
                             ))}
                         </View>
                         <ActionButton session={session}
+                                      subscriptionCurrentPeriodStartDateEpochMillis={subscriptionCurrentPeriodStartDateEpochMillis}
                                       canSubmit={canSubmit}/>
                     </View>
                 </View>

@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         paddingHorizontal: 15,
-        marginTop: 15
+        marginVertical: 15,
     },
     box: {
         marginTop: 10,

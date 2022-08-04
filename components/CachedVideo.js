@@ -3,6 +3,7 @@ import shorthash from "shorthash";
 import * as FileSystem from "expo-file-system";
 import {Audio, Video} from "expo-av";
 import {addFileCacheMapping, getFileCacheMapping} from "../file-cache/fileCache";
+import {doesLocalFileExist} from "../util/fileUtil";
 
 const CachedVideo = ({videoSourceUri, posterSourceUri, style, resizeMode, shouldPlay, isLooping, playbackRate, isMuted}) => {
 
@@ -28,8 +29,8 @@ const CachedVideo = ({videoSourceUri, posterSourceUri, style, resizeMode, should
         const localUri = await getFileCacheMapping(videoSourceUri);
 
         if (!!localUri) {
-            const f = await FileSystem.getInfoAsync(localUri);
-            if (f.exists) { // check that file was not cleared out of the cache
+            const exists = doesLocalFileExist(localUri);
+            if (exists) { // check that file was not cleared out of the cache
                 setVideoUri(localUri);
                 return;
             }
@@ -49,8 +50,8 @@ const CachedVideo = ({videoSourceUri, posterSourceUri, style, resizeMode, should
         const localUri = await getFileCacheMapping(posterSourceUri);
 
         if (!!localUri) {
-            const f = await FileSystem.getInfoAsync(localUri);
-            if (f.exists) { // check that file was not cleared out of the cache
+            const exists = doesLocalFileExist(localUri);
+            if (exists) { // check that file was not cleared out of the cache
                 setPosterUri(localUri);
                 return;
             }

@@ -25,7 +25,7 @@ const getMatchingDrills = (drills, category, searchInput) => {
     });
 }
 
-const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRight}) => {
+const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRight, emptySubtext}) => {
 
     const [visibleDrills, setVisibleDrills] = useState(drills || []);
 
@@ -85,7 +85,7 @@ const DrillList = ({drills, onPressDrill, isLoading, hasError, reload, optionRig
                                       )}
                                       {visibleDrills.length === 0 && (
                                           <ScrollView style={styles.scrollViewContainer}>
-                                              <EmptyPlaceholder text={'No drills'}/>
+                                              <EmptyPlaceholder text={'No drills'} subText={emptySubtext}/>
                                           </ScrollView>
                                       )}
                                   </>

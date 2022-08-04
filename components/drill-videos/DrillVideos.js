@@ -17,6 +17,7 @@ const DrillVideos = (
         sessionNumber,
         playerId,
         canSubmit,
+        isExpired,
         shouldShowSwipeUpIndicator,
         outstandingLongRequest
     }) => {
@@ -46,6 +47,7 @@ const DrillVideos = (
 
                         hasSubmission={hasSubmission}
                         canSubmit={canSubmit}
+                        isExpired={isExpired}
                         isSubmitting={!!outstandingLongRequest
                             && outstandingLongRequest.operation === LongRequestType.CreateSubmission}/>
 

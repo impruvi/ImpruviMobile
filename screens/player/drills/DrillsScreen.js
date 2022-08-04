@@ -66,7 +66,8 @@ const DrillsScreen = () => {
                            onPressDrill={navigateToDrill}
                            isLoading={isLoading}
                            hasError={hasError}
-                           reload={getDrills}/>
+                           reload={getDrills}
+                           emptySubtext={'Drills will be added here once you complete them in a training session'}/>
             </View>
 
             <StatusBar style="dark" />

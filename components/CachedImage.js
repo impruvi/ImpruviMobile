@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import shorthash from 'shorthash';
 import * as FileSystem from 'expo-file-system';
 import {Image} from 'react-native';
-import {isRemoteMediaUri} from "../util/fileUtil";
+import {doesLocalFileExist, isRemoteMediaUri} from "../util/fileUtil";
 import {addFileCacheMapping, getFileCacheMapping} from "../file-cache/fileCache";
 
 const CachedImage = ({sourceUri, style}) => {
@@ -15,11 +15,11 @@ const CachedImage = ({sourceUri, style}) => {
             return;
         }
 
-        const localUri = await getFileCacheMapping(sourceUri);
+        let localUri = await getFileCacheMapping(sourceUri);
 
         if (!!localUri) {
-            const f = await FileSystem.getInfoAsync(localUri);
-            if (f.exists) { // check that file was not cleared out of the cache
+            const exists = await doesLocalFileExist(localUri);
+            if (exists) { // check that file was not cleared out of the cache
                 setUri(localUri);
                 return;
             }
@@ -35,8 +35,10 @@ const CachedImage = ({sourceUri, style}) => {
         getUri();
     }, [sourceUri]);
 
-    return <Image style={style}
-                  source={{uri: uri}} />
+    return (
+        <Image style={style}
+               source={{uri: uri}} />
+    )
 }
 
 export default CachedImage;

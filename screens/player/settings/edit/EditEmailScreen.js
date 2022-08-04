@@ -31,7 +31,7 @@ const EditEmailScreen = ({route}) => {
             setIsSubmitting(true);
             const newPlayer = {
                 ...route.params.player,
-                email: email,
+                email: email.trim(),
             };
             const updatedPlayer = await httpClient.updatePlayer(newPlayer);
             route.params.setPlayer(updatedPlayer)

@@ -54,16 +54,18 @@ export const getLastSession = (sessions) => {
     return sessions.find(sess => sess.sessionNumber === lastSessionNumber);
 }
 
-export const canSubmitForSession = (sessions, session) => {
+export const canSubmitForSession = (sessions, session, subscriptionCurrentPeriodStartDateEpochMillis) => {
     if (!session || !sessions || sessions.length === 0) {
         return false;
     }
-    const nextSession = getNextSession(sessions);
+
+    const sessionsForMonth = sessions.filter(sess => sess.creationDateEpochMillis >= subscriptionCurrentPeriodStartDateEpochMillis);
+    const nextSession = getNextSession(sessionsForMonth);
     if (!nextSession || nextSession.sessionNumber !== session.sessionNumber) {
         return false;
     }
 
-    const lastSession = getLastSession(sessions);
+    const lastSession = getLastSession(sessionsForMonth);
     return !lastSession || doesAnyDrillHaveFeedback(lastSession);
 }
 

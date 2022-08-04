@@ -16,6 +16,7 @@ import ReloadableScreen from "../../../components/ReloadableScreen";
 const HomeScreen = () => {
 
     const [player, setPlayer] = useState();
+    const [subscriptionCurrentPeriodStartDateEpochMillis, setSubscriptionCurrentPeriodStartDateEpochMillis] = useState();
     const [coach, setCoach] = useState();
     const [sessions, setSessions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -40,14 +41,20 @@ const HomeScreen = () => {
     const initialize = async () => {
         setIsLoading(true);
         try {
-            const [player, sessions] = await Promise.all([
+            const [player, sessions, subscription] = await Promise.all([
                 httpClient.getPlayer(playerId),
-                httpClient.getPlayerSessions(playerId)
+                httpClient.getPlayerSessions(playerId),
+                httpClient.getSubscription(playerId)
             ]);
-            const coach = await httpClient.getCoach(player.coachId);
+            if (!!player.coachId) {
+                const coach = await httpClient.getCoach(player.coachId);
+                setCoach(coach);
+            }
             setPlayer(player);
-            setCoach(coach);
             setSessions(sessions);
+            if (!!subscription) {
+                setSubscriptionCurrentPeriodStartDateEpochMillis(subscription.currentPeriodStartDateEpochMillis)
+            }
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
@@ -80,7 +87,8 @@ const HomeScreen = () => {
                                   <HeaderScrollView imageFileLocation={coach?.headerImage?.fileLocation}>
                                       <Header player={player}
                                               coach={coach}/>
-                                      <Week sessions={sessions} />
+                                      <Week sessions={sessions}
+                                            subscriptionCurrentPeriodStartDateEpochMillis={subscriptionCurrentPeriodStartDateEpochMillis}/>
 
                                       {sessions.length > 0 && (
                                           <View style={styles.helpContainer}>

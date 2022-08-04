@@ -1,33 +1,35 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from "react-native";
 import {DrillVideoTab} from "../../constants/drillVideoTab";
 import {Colors} from "../../constants/colors";
 
 const DrillVideoTabs = ({selectedTab, setSelectedTab, hasSubmission, hasFeedback}) => {
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
-                <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Demo)}>
-                    <Text style={selectedTab === DrillVideoTab.Demo ? styles.tabTextSelected : styles.tabText}>
-                        Demo
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Submission)}>
-                    <Text style={selectedTab === DrillVideoTab.Submission ? styles.tabTextSelected : styles.tabText}>
-                        Submission
-                    </Text>
-                    {hasSubmission && (
-                        <View style={styles.dot}/>
-                    )}
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Feedback)}>
-                    <Text style={selectedTab === DrillVideoTab.Feedback ? styles.tabTextSelected : styles.tabText}>
-                        Feedback
-                    </Text>
-                    {hasFeedback && (
-                        <View style={styles.dot}/>
-                    )}
-                </TouchableOpacity>
-            </View>
+            <SafeAreaView>
+                <View style={styles.content}>
+                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Demo)}>
+                        <Text style={selectedTab === DrillVideoTab.Demo ? styles.tabTextSelected : styles.tabText}>
+                            Demo
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Submission)}>
+                        <Text style={selectedTab === DrillVideoTab.Submission ? styles.tabTextSelected : styles.tabText}>
+                            Submission
+                        </Text>
+                        {hasSubmission && (
+                            <View style={styles.dot}/>
+                        )}
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.tab} onPress={() => setSelectedTab(DrillVideoTab.Feedback)}>
+                        <Text style={selectedTab === DrillVideoTab.Feedback ? styles.tabTextSelected : styles.tabText}>
+                            Feedback
+                        </Text>
+                        {hasFeedback && (
+                            <View style={styles.dot}/>
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
         </View>
     )
 }
@@ -45,13 +47,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: 50
+        height: 40,
+        marginTop: 5,
     },
     tab: {
         paddingHorizontal: 10,
-        paddingVertical: 10,
+        paddingVertical: 5,
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     tabText: {
         color: Colors.TextLightSecondary,

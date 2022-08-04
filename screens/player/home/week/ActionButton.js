@@ -10,53 +10,71 @@ import {Colors} from "../../../../constants/colors";
 import {PlayerScreenNames} from "../../../ScreenNames";
 import {StyleSheet, Text, TouchableOpacity} from "react-native";
 
-const ActionButton = ({session, canSubmit}) => {
+const getButtonInfo = (session, canSubmit, subscriptionCurrentPeriodStartDateEpochMillis) => {
+    if (session.creationDateEpochMillis < subscriptionCurrentPeriodStartDateEpochMillis) {
+        return {
+            backgroundColor: 'black',
+            color: 'white',
+            text: 'View',
+        }
+    }
+    if (doesEveryDrillHaveSubmission(session) && doesAnyDrillHaveFeedback(session)) {
+        return {
+            backgroundColor: 'black',
+            color: 'white',
+            text: 'View feedback',
+            defaultSessionSelectedTab: DrillVideoTab.Feedback
+        }
+    } else if (doesEveryDrillHaveSubmission(session)) {
+        return {
+            backgroundColor: '#EEECEC',
+            color: 'black',
+            text: 'Awaiting feedback',
+        }
+    } else {
+        if (doesAnyDrillHaveSubmission(session)) {
+            return {
+                backgroundColor: Colors.Primary,
+                color: 'white',
+                text: 'Continue',
+                defaultSessionSelectedTab: DrillVideoTab.Feedback,
+                drillId: getFirstDrillIdWithoutSubmission(session)
+            }
+        } else if (canSubmit) {
+            return {
+                backgroundColor: Colors.Primary,
+                color: 'white',
+                text: 'Start',
+            }
+        } else {
+            return {
+                backgroundColor: '#EEECEC',
+                color: 'black',
+                text: 'Preview',
+            }
+        }
+    }
+}
+
+const ActionButton = ({session, canSubmit, subscriptionCurrentPeriodStartDateEpochMillis}) => {
 
     const navigation = useNavigation();
 
-    let backgroundColor;
-    let color;
-    let text;
-    let drillId;
-    let defaultSessionSelectedTab = DrillVideoTab.Demo;
-    if (doesEveryDrillHaveSubmission(session) && doesAnyDrillHaveFeedback(session)) {
-        backgroundColor = 'black';
-        color = 'white';
-        text = 'View feedback';
-        defaultSessionSelectedTab = DrillVideoTab.Feedback;
-    } else if (doesEveryDrillHaveSubmission(session)) {
-        backgroundColor = '#EEECEC';
-        color = 'black';
-        text = 'Awaiting feedback'
-    } else {
-        if (doesAnyDrillHaveSubmission(session)) {
-            text = 'Continue';
-            backgroundColor = Colors.Primary;
-            color = 'white';
-            drillId = getFirstDrillIdWithoutSubmission(session);
-        } else if (canSubmit) {
-            text = 'Start';
-            backgroundColor = Colors.Primary;
-            color = 'white';
-        } else {
-            text = 'Preview';
-            backgroundColor = '#EEECEC';
-            color = 'black';
-        }
-    }
+    const info = getButtonInfo(session, canSubmit, subscriptionCurrentPeriodStartDateEpochMillis);
 
     const startSession = () => {
         navigation.navigate(PlayerScreenNames.Session, {
             session: session,
-            selectedTab: defaultSessionSelectedTab,
-            drillId: drillId
+            selectedTab: info.defaultSessionSelectedTab,
+            drillId: info.drillId,
+            subscriptionCurrentPeriodStartDateEpochMillis: subscriptionCurrentPeriodStartDateEpochMillis
         });
     }
 
     return (
-        <TouchableOpacity style={{...styles.actionButton, backgroundColor}}
+        <TouchableOpacity style={{...styles.actionButton, backgroundColor: info.backgroundColor}}
                           onPress={startSession}>
-            <Text style={{...styles.text, color: color}}>{text}</Text>
+            <Text style={{...styles.text, color: info.color}}>{info.text}</Text>
         </TouchableOpacity>
     );
 }

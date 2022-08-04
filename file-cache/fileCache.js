@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
 export const getFileCacheMapping = async (remoteUri) => {
     const mappings = await getMappings();
     return mappings[remoteUri];

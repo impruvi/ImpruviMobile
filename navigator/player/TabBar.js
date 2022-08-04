@@ -20,7 +20,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
     const [numberOfUnreadInboxEntries, setNumberOfUnreadInboxEntries] = useState(0);
     const {httpClient} = useHttpClient();
     const {playerId} = useAuth();
-    const {lastViewedDateEpochMillis} = useInboxViewDate();
+    const {isLoadingLastViewedDateEpochMillis, lastViewedDateEpochMillis} = useInboxViewDate();
 
     const getNumberOfUnreadInboxEntries = async () => {
         const inboxEntries = await httpClient.getInboxForPlayer(playerId);
@@ -30,7 +30,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
     useEffect(() => {
         getNumberOfUnreadInboxEntries();
-    }, [state, descriptors, navigation]);
+    }, [state, descriptors, navigation, lastViewedDateEpochMillis]);
 
     return (
         <SafeAreaView edges={safeAreaEdges}>
@@ -110,7 +110,7 @@ const TabBar = ({ state, descriptors, navigation }) => {
                                     <>
                                         <Image source={InboxDark} style={styles.icon}/>
                                         <Text style={styles.iconText}>Inbox</Text>
-                                        {numberOfUnreadInboxEntries > 0 && (
+                                        {numberOfUnreadInboxEntries > 0 && !isLoadingLastViewedDateEpochMillis && (
                                             <View style={styles.inboxCountContainer}>
                                                 <Text style={styles.inboxCountText}>{numberOfUnreadInboxEntries}</Text>
                                             </View>

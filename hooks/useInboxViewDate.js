@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const InboxViewDateContext = createContext({});
 
 export const InboxViewDateProvider = ({children}) => {
+    const [isLoadingLastViewedDateEpochMillis, setIsLoadingLastViewedDateEpochMillis] = useState(true);
     const [lastViewedDateEpochMillis, setLastViewedDateEpochMillis] = useState(0);
 
     useEffect(() => {
@@ -11,6 +12,7 @@ export const InboxViewDateProvider = ({children}) => {
             if (!!value) {
                 setLastViewedDateEpochMillis(parseInt(value));
             }
+            setIsLoadingLastViewedDateEpochMillis(false);
         });
     }, []);
 
@@ -22,8 +24,9 @@ export const InboxViewDateProvider = ({children}) => {
 
     const memoedValue = useMemo(() => ({
         lastViewedDateEpochMillis,
+        isLoadingLastViewedDateEpochMillis,
         viewInbox,
-    }), [lastViewedDateEpochMillis, viewInbox]);
+    }), [lastViewedDateEpochMillis, isLoadingLastViewedDateEpochMillis, viewInbox]);
 
     return (
         <InboxViewDateContext.Provider value={memoedValue}>

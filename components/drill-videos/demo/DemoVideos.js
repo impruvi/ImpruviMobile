@@ -39,6 +39,7 @@ const DemoVideos = (
 
         hasSubmission,
         canSubmit,
+        isExpired,
         isSubmitting
     }) => {
 
@@ -74,20 +75,30 @@ const DemoVideos = (
     const shouldShowSubmittedText = !!sessionNumber && userType === UserType.Player && hasSubmission;
 
     const onSubmitButtonPress = useCallback(() => {
-        if (canSubmit) {
-            navigation.navigate(PlayerScreenNames.DrillSubmission, {
-                sessionNumber: sessionNumber,
-                drillId: drillId
-            });
-        } else {
+        if (isExpired) {
+            Alert.alert('Session expired',
+                'This session is a part of a previous month. You must complete the sessions within the month they were assigned.', [
+                    {
+                        text: 'Ok',
+                    },
+                ]);
+            return;
+        }
+        if (!canSubmit) {
             Alert.alert('Please complete your previous sessions',
                 'Submit videos and receive feedback for all of the training sessions preceding this session.', [
-                {
-                    text: 'Ok',
-                },
-            ]);
+                    {
+                        text: 'Ok',
+                    },
+                ]);
+            return;
         }
-    }, [canSubmit, sessionNumber, drillId]);
+
+        navigation.navigate(PlayerScreenNames.DrillSubmission, {
+            sessionNumber: sessionNumber,
+            drillId: drillId
+        });
+    }, [canSubmit, isExpired, sessionNumber, drillId]);
 
     return (
         <View style={shouldRender ? styles.container : styles.containerHidden}>

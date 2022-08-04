@@ -6,7 +6,7 @@ import EmptyPlaceholder from "../../../../components/EmptyPlaceholder";
 import Box from "../../../../components/Box";
 
 
-const Week = ({sessions}) => {
+const Week = ({sessions, subscriptionCurrentPeriodStartDateEpochMillis}) => {
 
     const [currentSessionIndex, setCurrentSessionIndex] = useState();
     const [currentSession, setCurrentSession] = useState();
@@ -30,13 +30,15 @@ const Week = ({sessions}) => {
     }, [currentSessionIndex, sessions]);
 
     useEffect(() => {
-        const incompleteSessions = sessions.filter(session => !doesEveryDrillHaveSubmission(session) || !session.hasViewedFeedback);
+        const incompleteSessions = sessions
+            .filter(session => session.creationDateEpochMillis >= subscriptionCurrentPeriodStartDateEpochMillis)
+            .filter(session => !doesEveryDrillHaveSubmission(session) || !session.hasViewedFeedback);
         const initialSessionIndex = incompleteSessions.length > 0
             ? sessions.indexOf(incompleteSessions[0])
             : sessions.length - 1;
         setCurrentSessionIndex(initialSessionIndex);
         setCurrentSession(sessions[initialSessionIndex]);
-    }, []);
+    }, [subscriptionCurrentPeriodStartDateEpochMillis]);
 
     const onScrollToIndexFailed = useCallback(info => {
         const wait = new Promise(resolve => setTimeout(resolve, 0));
@@ -50,7 +52,8 @@ const Week = ({sessions}) => {
     const renderItem = useCallback(({item}) => {
         return (
             <Session session={item}
-                     canSubmit={canSubmitForSession(sessions, item)}/>
+                     subscriptionCurrentPeriodStartDateEpochMillis={subscriptionCurrentPeriodStartDateEpochMillis}
+                     canSubmit={canSubmitForSession(sessions, item, subscriptionCurrentPeriodStartDateEpochMillis)}/>
         );
     }, [sessions]);
 

@@ -39,6 +39,7 @@ const InboxScreen = () => {
     const [hasError, setHasError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [entries, setEntries] = useState([]);
+    const [subscriptionCurrentPeriodStartDateEpochMillis, setSubscriptionCurrentPeriodStartDateEpochMillis] = useState();
     const [sessions, setSessions] = useState([]);
 
     const navigation = useNavigation();
@@ -60,9 +61,20 @@ const InboxScreen = () => {
         }
 
         navigation.navigate(PlayerScreenNames.Session, {
-            session: session
+            session: session,
+            subscriptionCurrentPeriodStartDateEpochMillis: subscriptionCurrentPeriodStartDateEpochMillis
         })
     }, [sessions]);
+
+    const getSubscriptionCurrentPeriodStartDateEpochMillis = async () => {
+        try {
+            const subscription = await httpClient.getSubscription(playerId);
+            setSubscriptionCurrentPeriodStartDateEpochMillis(subscription.currentPeriodStartDateEpochMillis);
+        } catch (e) {
+            console.log(e);
+            setError('An error occurred. Please try again.');
+        }
+    }
 
     const getSessions = async () => {
         try {
@@ -106,6 +118,7 @@ const InboxScreen = () => {
     useEffect(() => {
         getSessions();
         getInboxEntries();
+        getSubscriptionCurrentPeriodStartDateEpochMillis();
         viewInbox();
     }, []);
 
