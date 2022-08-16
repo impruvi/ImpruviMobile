@@ -28,8 +28,8 @@ export const getSessionsInCurrentPlan = (subscription, sessions) => {
         return [];
     }
     return sessions.filter(session =>
-        !session.isIntroSession && session.creationDateEpochMillis > subscription.currentPeriodStartDateEpochMillis
-    )
+        !session.isIntroSession && session.creationDateEpochMillis >= subscription.currentPeriodStartDateEpochMillis
+    );
 }
 
 export const doesAnySessionRequireFeedback = (sessions) => {

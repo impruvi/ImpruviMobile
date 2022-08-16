@@ -108,7 +108,7 @@ const PlayerTrainingListItem = ({playerId, session, setIsDeleting, onDelete}) =>
                 <View style={needsFeedback ? styles.feedbackIconActive : styles.feedbackIcon}/>
                 <View style={styles.detailsContainer}>
                     <Text style={isAllFeedbackProvided ? styles.detailsTitleCompleted : styles.detailsTitle}>
-                        Training {session.sessionNumber} {session.sessionNumber === 1 && (
+                        Training {session.sessionNumber} {session.isIntroSession && (
                             <Text style={styles.detailsSubtext}>
                                 (Intro session)
                             </Text>)}

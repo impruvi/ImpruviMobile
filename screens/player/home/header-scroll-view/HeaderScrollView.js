@@ -1,4 +1,4 @@
-import {Animated, ScrollView, StyleSheet, useWindowDimensions} from "react-native";
+import {Animated, ScrollView, StyleSheet, useWindowDimensions, Image} from "react-native";
 import HeaderBackground from "../../../../assets/images/StadiumHeaderBackground.png";
 import {useState} from 'react';
 import CachedImage from "../../../../components/CachedImage";
@@ -23,7 +23,7 @@ const HeaderScrollView = ({children, imageFileLocation}) => {
                         setOffset(e.nativeEvent.contentOffset.y);
                     }}>
             <Animated.View style={[{...styles.animatedView, top: top, height: height}]}>
-                <CachedImage sourceUri={!!imageFileLocation ? imageFileLocation : HeaderBackground.uri} style={{height: height, width: width}}/>
+                <CachedImage sourceUri={!!imageFileLocation ? imageFileLocation : Image.resolveAssetSource(HeaderBackground).uri} style={{height: height, width: width}}/>
             </Animated.View>
 
             {children}
