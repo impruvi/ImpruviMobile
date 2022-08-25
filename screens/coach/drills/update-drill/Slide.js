@@ -1,6 +1,7 @@
 import {StyleSheet, View} from "react-native";
 import Title from "./Title";
-import Slider from "react-native-slider";
+import Slider from '@react-native-community/slider';
+
 import {Colors} from "../../../../constants/colors";
 
 const maximumTrackTintColor = '#EFF3F4';

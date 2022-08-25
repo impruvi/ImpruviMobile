@@ -12,11 +12,11 @@ import React, {useEffect, useRef, useState,} from 'react';
 import {LogBox} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {LongRequestProvider} from "./hooks/useLongRequest";
-import AppLoading from 'expo-app-loading';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {UserType} from "./constants/userType";
 import Constants from "expo-constants";
 import HttpClient from "./http-client/httpClient";
+import * as SplashScreen from 'expo-splash-screen';
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -97,11 +97,18 @@ export default function App() {
     }
 
     const initialize = async () => {
-        await Promise.all([
-            initializeAuth(),
-            initializeAppCompatibility()
-        ]);
-        setIsReady(true);
+        try {
+            await SplashScreen.preventAutoHideAsync();
+            await Promise.all([
+                initializeAuth(),
+                initializeAppCompatibility()
+            ]);
+            await SplashScreen.hideAsync();
+        } catch (e) {
+            console.warn(e);
+        } finally {
+            setIsReady(true)
+        }
     }
 
     useEffect(() => {
@@ -109,17 +116,18 @@ export default function App() {
     }, []);
 
     if (!isReady) {
-        return <AppLoading/>
+        return null;
     }
 
     return (
-        <NavigationContainer theme={{
-          ...DefaultTheme,
-          colors: {
-              ...DefaultTheme.colors,
-              background: 'white'
-          },
-        }}>
+        <NavigationContainer
+            theme={{
+                ...DefaultTheme,
+              colors: {
+                  ...DefaultTheme.colors,
+                  background: 'white'
+              },
+            }}>
             <SafeAreaProvider>
                 <BottomSheetModalProvider>
                     <InboxViewDateProvider>

@@ -15,6 +15,7 @@ import HeaderCenter from "../../../components/HeaderCenter";
 import {generateThumbnail} from "../../../util/thumbnailUtil";
 import useLongRequest from "../../../hooks/useLongRequest";
 import {LongRequest, LongRequestType} from "../../../model/longRequest";
+import {StatusBar} from "expo-status-bar";
 
 const Fields = {
     Name: 'NAME',
@@ -283,6 +284,8 @@ const CreateOrEditDrillScreen = ({route}) => {
                     </Text>
                 </View>
             )}
+
+            <StatusBar style="dark" />
         </View>
     )
 }
