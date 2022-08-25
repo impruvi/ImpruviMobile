@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import shorthash from "shorthash";
 import * as FileSystem from "expo-file-system";
-import {Audio, Video} from "expo-av";
+import {Audio, InterruptionModeAndroid, InterruptionModeIOS, Video} from "expo-av";
 import {addFileCacheMapping, getFileCacheMapping} from "../file-cache/fileCache";
 import {doesLocalFileExist} from "../util/fileUtil";
 
@@ -75,10 +75,10 @@ const CachedVideo = ({videoSourceUri, posterSourceUri, style, resizeMode, should
     useEffect(() => {
         Audio.setAudioModeAsync({
             allowsRecordingIOS: false,
-            interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+            interruptionModeIOS: InterruptionModeIOS.DoNotMix,
             playsInSilentModeIOS: true,
             shouldDuckAndroid: true,
-            interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+            interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
             playThroughEarpieceAndroid: false,
         });
     }, []);

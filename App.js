@@ -17,6 +17,26 @@ import {UserType} from "./constants/userType";
 import Constants from "expo-constants";
 import HttpClient from "./http-client/httpClient";
 import * as SplashScreen from 'expo-splash-screen';
+import './mockDataDog';
+import { DdSdkReactNative, DdSdkReactNativeConfiguration } from '@datadog/mobile-react-native';
+import { DdRumReactNavigationTracking } from '@datadog/mobile-react-navigation';
+
+
+if (!__DEV__) {
+    const config = new DdSdkReactNativeConfiguration(
+        "puba5b1f98e8ec9e9f100f647841e5f0be1",
+        "prod",
+        "b85ef3ba-2809-44f0-8a79-e70667b35e44",
+        true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
+        true, // track XHR Resources
+        true // track Errors
+    );
+    config.site = "US";
+    config.nativeCrashReportEnabled = true;
+    config.sessionSamplingRate = 100;
+
+    DdSdkReactNative.initialize(config);
+}
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -41,6 +61,7 @@ export default function App() {
 
     const notificationListener = useRef();
     const responseListener = useRef();
+    const navigationRef = useRef();
 
     useEffect(() => {
 
@@ -127,6 +148,10 @@ export default function App() {
                   ...DefaultTheme.colors,
                   background: 'white'
               },
+            }}
+            ref={navigationRef}
+            onReady={() => {
+                DdRumReactNavigationTracking.startTrackingViews(navigationRef.current)
             }}>
             <SafeAreaProvider>
                 <BottomSheetModalProvider>
