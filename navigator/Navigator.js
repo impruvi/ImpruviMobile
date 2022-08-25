@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {Animated, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import InvitationCodeScreen from "../screens/authentication/InvitationCodeScreen";
 
 import {RootScreenNames} from '../screens/ScreenNames';
 import PlayerNavigator from "./player/PlayerNavigator";
@@ -10,10 +9,9 @@ import useError from "../hooks/useError";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {UserType} from "../constants/userType";
-import TermsAndConditionsScreen from "../screens/TermsAndConditionsScreen";
-import SignInScreen from "../screens/authentication/SignInScreen";
 import UpdateAppScreen from "../screens/UpdateAppScreen";
 import useAuth from "../hooks/useAuth";
+import AuthNavigator from "./auth/AuthNavigator";
 
 const Stack = createStackNavigator();
 
@@ -46,11 +44,7 @@ const RootNavigator = ({isCompatible, newAppVersionPreviewImage}) => {
                 {isCompatible && (
                     <>
                         {!userType && (
-                            <Stack.Group>
-                                <Stack.Screen name={RootScreenNames.SignIn} component={SignInScreen}/>
-                                <Stack.Screen name={RootScreenNames.InvitationCode} component={InvitationCodeScreen}/>
-                                <Stack.Screen name={RootScreenNames.TermsAndConditions} component={TermsAndConditionsScreen}/>
-                            </Stack.Group>
+                            <Stack.Screen name={RootScreenNames.AuthNavigator} component={AuthNavigator} />
                         )}
                         {!!userType && (
                             <>

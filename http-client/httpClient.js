@@ -5,8 +5,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {addFileCacheMapping} from "../file-cache/fileCache";
 import getEnvVars from "../environment";
 
-console.log(getEnvVars().apiUrl);
-
 class HttpClient {
 
     #client = apiClientFactory.newClient({
@@ -24,14 +22,60 @@ class HttpClient {
             return response.data;
         } catch (err) {
             console.log(err);
-            console.log(err.response.status);
             return {
                 isCompatible: true // default to true since it is overwhelmingly likely to be the case
             }
         }
     }
 
-    signIn = async (email, password, expoPushToken) => {
+    initiateSignUp = async ({email, password, firstName, lastName}) => {
+        try {
+            const response = await this.#client.invokeApi({}, '/player/sign-up/initiate', 'POST', {}, {
+                email,
+                password,
+                firstName,
+                lastName
+            });
+            return {
+                success: true,
+                ...response.data
+            };
+        } catch (err) {
+            console.log(err.response.status);
+            if (err.response.status === 403 || err.response.status === 400) {
+                return {
+                    success: false
+                }
+            }
+
+            throw err
+        }
+    }
+
+    completeSignUp = async ({playerId, verificationCode, expoPushToken}) => {
+        try {
+            const response = await this.#client.invokeApi({}, '/player/sign-up/complete', 'POST', {}, {
+                playerId,
+                expoPushToken,
+                code: verificationCode
+            });
+            return {
+                success: true,
+                ...response.data
+            };
+        } catch (err) {
+            console.log(err.response.status);
+            if (err.response.status === 403 || err.response.status === 400) {
+                return {
+                    success: false
+                }
+            }
+
+            throw err
+        }
+    }
+
+    signIn = async ({email, password, expoPushToken}) => {
         try {
             const response = await this.#client.invokeApi({}, '/player/sign-in', 'POST', {}, {
                 email,
@@ -171,6 +215,33 @@ class HttpClient {
 
             throw err
         }
+    }
+
+    listCoaches = async () => {
+        const response = await this.#client.invokeApi({}, '/coaches/list', 'POST', {}, {
+            limit: -1
+        });
+        return response.data.coaches;
+    }
+
+    createSubscription = async ({token, coachId, stripeProductId, stripePriceId}) => {
+        await this.#client.invokeApi({}, '/player/subscription/create', 'POST', {}, {
+            token: token,
+            subscriptionPlanRef: {
+                coachId: coachId,
+                stripeProductId: stripeProductId,
+                stripePriceId: stripePriceId
+            }
+        });
+    }
+
+    getSubscriptionPlan = async ({stripeProductId, stripePriceId}) => {
+        const result = await this.#client.invokeApi({}, '/subscription-plan/get', 'POST', {}, {
+            stripeProductId,
+            stripePriceId
+        });
+
+        return result.data.subscriptionPlan;
     }
 
     getPlayer = async (playerId) => {

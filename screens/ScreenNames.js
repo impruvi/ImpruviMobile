@@ -1,10 +1,18 @@
 export const RootScreenNames = {
-    InvitationCode: 'InvitationCode',
-    SignIn: 'SignIn',
     UpdateApp: 'UpdateApp',
-    TermsAndConditions: 'TermsAndConditions',
+    AuthNavigator: 'AuthNavigator',
     CoachNavigator: 'CoachNavigator',
     PlayerNavigator: 'PlayerNavigator',
+}
+
+export const AuthScreenNames = {
+    Landing: 'AuthLanding',
+    SignIn: 'AuthSignIn',
+    InvitationCode: 'AuthInvitationCode',
+    SignUp: 'AuthSignUp',
+    ChooseCoach: 'AuthChooseCoach',
+    PreviewCoach: 'AuthPreviewCoach',
+    VerifyEmail: 'AuthVerifyEmail'
 }
 
 export const CoachScreenNames = {
@@ -66,6 +74,4 @@ export const PlayerScreenNames = {
     EditHeadshot: 'PlayerEditHeadshot',
 
     Coach: 'PlayerCoach',
-
-    Onboarding: 'PlayerOnboarding',
 }

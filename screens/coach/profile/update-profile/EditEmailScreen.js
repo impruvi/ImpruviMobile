@@ -6,7 +6,7 @@ import {Alert, StyleSheet, TextInput} from "react-native";
 import {Colors} from "../../../../constants/colors";
 import useHttpClient from "../../../../hooks/useHttpClient";
 import useError from "../../../../hooks/useError";
-import {isValidEmail} from "../../../../util/emailUtil";
+import {isValidEmail} from "../../../../util/authUtil";
 
 const EditEmailScreen = ({route}) => {
 

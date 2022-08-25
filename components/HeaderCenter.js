@@ -1,21 +1,38 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View, SafeAreaView} from "react-native";
 import {Colors} from "../constants/colors";
 
-const HeaderCenter = ({left, right, title, onRightPress, onLeftPress, hasBorder}) => {
+
+const getContainerStyle = (hasBorder) => {
+    return hasBorder ? {...styles.headerWithBorder, ...styles.header} : styles.header;
+}
+
+const HeaderCenter = (
+    {
+        left,
+        right,
+        title,
+        titleComponent,
+        onRightPress,
+        onLeftPress,
+        hasBorder,
+        containerStyle= {marginBottom: 10}
+    }) => {
+
     return (
-        <View style={hasBorder ? styles.headerWithBorder : styles.header}>
+        <SafeAreaView style={{...getContainerStyle(hasBorder), ...containerStyle}}>
             <View style={styles.left}>
                 <TouchableOpacity onPress={onLeftPress} style={styles.button}>
                     {left}
                 </TouchableOpacity>
             </View>
-            <Text style={styles.title}>{title}</Text>
+            {!!titleComponent && titleComponent}
+            {!titleComponent && <Text style={styles.title}>{title}</Text>}
             <View style={styles.right}>
                 <TouchableOpacity onPress={onRightPress} style={styles.button}>
                     {right}
                 </TouchableOpacity>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -24,19 +41,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10
     },
     headerWithBorder: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
         borderBottomWidth: 1,
         borderColor: Colors.Border
     },
     title: {
         fontSize: 18,
-        fontWeight: '600'
+        fontWeight: '600',
     },
     left: {
         flex: 1,
