@@ -12,6 +12,7 @@ export const AuthScreenNames = {
     SignUp: 'AuthSignUp',
     ChooseCoach: 'AuthChooseCoach',
     PreviewCoach: 'AuthPreviewCoach',
+    PreviewDrill: 'AuthPreviewDrill',
     VerifyEmail: 'AuthVerifyEmail'
 }
 

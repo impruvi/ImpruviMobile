@@ -13,8 +13,15 @@ import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import useError from "../../hooks/useError";
 import * as Linking from "expo-linking";
+import CachedImage from "../../components/CachedImage";
+import {AuthScreenNames} from "../ScreenNames";
 
 const height = Dimensions.get('window').height / 1.2;
+
+const Tabs = {
+    Overview: 'Overview',
+    Previews: 'Previews'
+}
 
 const PreviewCoachScreen = ({route}) => {
 
@@ -22,6 +29,8 @@ const PreviewCoachScreen = ({route}) => {
 
     const [trialPlan, setTrialPlan] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState(Tabs.Overview);
+    const [previewDrills, setPreviewDrills] = useState([]);
 
     const {httpClient} = useHttpClient();
     const {setError} = useError();
@@ -41,7 +50,6 @@ const PreviewCoachScreen = ({route}) => {
                 stripePriceId: trialPlan.stripePriceId,
                 stripeProductId: trialPlan.stripeProductId
             });
-            console.log('setting playerId: ', playerId);
             setPlayerId(playerId);
         } catch (e) {
             console.log(e);
@@ -49,6 +57,14 @@ const PreviewCoachScreen = ({route}) => {
         }
         setIsSubmitting(false);
     }, [httpClient, coach, trialPlan, token]);
+
+    const onOverviewSelect = useCallback(() => {
+        setActiveTab(Tabs.Overview);
+    }, [activeTab]);
+
+    const onPreviewsSelect = useCallback(() => {
+        setActiveTab(Tabs.Previews);
+    }, [activeTab]);
 
     const onSelect = useCallback(() => {
         if (!trialPlan) {
@@ -63,16 +79,26 @@ const PreviewCoachScreen = ({route}) => {
         submit();
     }, [trialPlan]);
 
+    const getTrialPlan = useCallback(async () => {
+        const plans = await Promise.all(
+            coach.subscriptionPlanRefs.map(subscriptionPlanRef => httpClient.getSubscriptionPlan(subscriptionPlanRef))
+        );
+
+        const trialPlan = plans.find(plan => plan.isTrial && plan.unitAmount === 0);
+        setTrialPlan(trialPlan);
+    }, [httpClient]);
+
+    const getPreviewDrills = useCallback(async () => {
+        const drills = (await httpClient.getDrillsForCoach(coach.coachId)).drills;
+        setPreviewDrills(drills.slice(0,3))
+    }, [httpClient]);
+
     const initialize = useCallback(async () => {
         try {
-            const plans = await Promise.all(
-                coach.subscriptionPlanRefs.map(subscriptionPlanRef => httpClient.getSubscriptionPlan(subscriptionPlanRef))
-            );
-
-            const trialPlan = plans.find(plan => plan.isTrial && plan.unitAmount === 0);
-            setTrialPlan(trialPlan);
+            await Promise.all([getTrialPlan(), getPreviewDrills()]);
         } catch (e) {
-
+            console.log(e);
+            setError('An error occurred. Please check your internet connection.');
         }
     }, [httpClient]);
 
@@ -95,27 +121,58 @@ const PreviewCoachScreen = ({route}) => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.checkContainer}>
-                        <Image source={RedCircleCheck} style={styles.checkIcon} />
-                        <Text style={styles.checkText}>Customized at-home training plan</Text>
-                    </View>
-                    <View style={styles.checkContainer}>
-                        <Image source={RedCircleCheck} style={styles.checkIcon} />
-                        <Text style={styles.checkText}>Personalized notes for each drill</Text>
-                    </View>
-                    <View style={styles.checkContainer}>
-                        <Image source={RedCircleCheck} style={styles.checkIcon} />
-                        <Text style={styles.checkText}>Expert feedback for each drill you submit</Text>
-                    </View>
-                    <View style={styles.checkContainer}>
-                        <Image source={RedCircleCheck} style={styles.checkIcon} />
-                        <Text style={styles.checkText}>Drill bank and progress tracking</Text>
+                    <View style={styles.tabs}>
+                        <TouchableOpacity
+                            style={activeTab === Tabs.Overview ? [styles.tab, styles.tabActive] : styles.tab}
+                            onPress={onOverviewSelect}>
+                            <Text style={activeTab === Tabs.Overview ? [styles.tabText, styles.tabTextActive] : styles.tabText}>Overview</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={activeTab === Tabs.Previews ? [styles.tab, styles.tabActive] : styles.tab}
+                            onPress={onPreviewsSelect}>
+                            <Text style={activeTab === Tabs.Previews ? [styles.tabText, styles.tabTextActive] : styles.tabText}>Previews</Text>
+                        </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.title}>Biography</Text>
-                    <Text style={styles.body}>
-                        {coach.about}
-                    </Text>
+                    {activeTab === Tabs.Overview && (
+                        <>
+                            <View style={styles.checkContainer}>
+                                <Image source={RedCircleCheck} style={styles.checkIcon} />
+                                <Text style={styles.checkText}>Customized at-home training plan</Text>
+                            </View>
+                            <View style={styles.checkContainer}>
+                                <Image source={RedCircleCheck} style={styles.checkIcon} />
+                                <Text style={styles.checkText}>Personalized notes for each drill</Text>
+                            </View>
+                            <View style={styles.checkContainer}>
+                                <Image source={RedCircleCheck} style={styles.checkIcon} />
+                                <Text style={styles.checkText}>Expert feedback for each drill you submit</Text>
+                            </View>
+                            <View style={styles.checkContainer}>
+                                <Image source={RedCircleCheck} style={styles.checkIcon} />
+                                <Text style={styles.checkText}>Drill bank and progress tracking</Text>
+                            </View>
+
+                            <Text style={styles.title}>Biography</Text>
+                            <Text style={styles.body}>
+                                {coach.about}
+                            </Text>
+                        </>
+                    )}
+
+                    {activeTab === Tabs.Previews && (
+                        <View style={styles.previews}>
+                            {previewDrills.map(drill => {
+                                return (
+                                    <TouchableOpacity style={styles.preview} onPress={() => navigation.navigate(AuthScreenNames.PreviewDrill, {
+                                        drill: drill
+                                    })}>
+                                        <CachedImage sourceUri={drill.demos.frontThumbnail.fileLocation} style={styles.previewThumbnail}/>
+                                    </TouchableOpacity>
+                                )
+                            })}
+                        </View>
+                    )}
                 </View>
             </HeaderScrollView>
             <View style={styles.navigation}>
@@ -169,7 +226,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 50
+        marginBottom: 40
     },
     actionButtonText: {
         color: 'white',
@@ -216,6 +273,43 @@ const styles = StyleSheet.create({
     },
     body: {
         color: 'white',
+    },
+    tabs: {
+        flexDirection: 'row',
+        marginBottom: 25,
+    },
+    tab: {
+        marginRight: 20,
+        paddingBottom: 5,
+    },
+    tabActive: {
+        borderBottomColor: Colors.Primary,
+        borderBottomWidth: 2,
+    },
+    tabText: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: 'rgba(255,255,255,.6)'
+    },
+    tabTextActive: {
+        color: 'white',
+    },
+    previews: {
+        flex: 1,
+        flexDirection: 'row',
+        position: 'relative',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between'
+    },
+    preview: {
+        width: '48%',
+        marginBottom: 15
+    },
+    previewThumbnail: {
+        borderRadius: 5,
+        width: '100%',
+        height: 200,
+        resizeMode: 'cover'
     },
     submittingContainer: {
         position: 'absolute',
