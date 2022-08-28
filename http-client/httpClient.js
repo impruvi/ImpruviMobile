@@ -260,6 +260,12 @@ class HttpClient {
         }
     }
 
+    deletePlayer = async (playerId) => {
+        await this.#client.invokeApi({}, '/player/account/delete', 'POST', {},{
+            playerId: playerId
+        });
+    }
+
     getPlayerSessions = async (playerId) => {
         const response = await this.#client.invokeApi({}, '/sessions/player/get', 'POST', {}, {
             playerId: playerId

@@ -12,6 +12,7 @@ import HeadshotChip from "../../../components/HeadshotChip";
 import {useEffect, useState} from "react";
 import useHttpClient from "../../../hooks/useHttpClient";
 import ReloadableScreen from "../../../components/ReloadableScreen";
+import useError from "../../../hooks/useError";
 
 
 const SettingsScreen = () => {
@@ -24,6 +25,20 @@ const SettingsScreen = () => {
     const {httpClient} = useHttpClient();
     const navigation = useNavigation();
     const {signOut} = useAuth();
+    const {setError} = useError();
+
+    const deleteAccount = async () => {
+        setIsLoading(true);
+        try {
+            await httpClient.deletePlayer(playerId);
+            signOut();
+        } catch (e) {
+            console.log(e);
+            setError('An error occurred. Please try again.');
+            setHasError(true);
+        }
+        setIsLoading(false);
+    }
 
     const getPlayer = async () => {
         setIsLoading(true);
@@ -91,6 +106,24 @@ const SettingsScreen = () => {
                                                               {
                                                                   text: 'Confirm',
                                                                   onPress: signOut,
+                                                              },
+                                                              {
+                                                                  text: 'Cancel',
+                                                                  style: 'cancel',
+                                                              },
+                                                          ]);
+                                                      }}
+                                                      textValue={''}
+                                                      placeholder={''}
+                                                      errorMessage={null}
+                                                      shouldHideArrow={true}/>
+                                          <FormOption title={'Delete account'}
+                                                      titleColor={Colors.Primary}
+                                                      onPress={() => {
+                                                          Alert.alert('Are you sure you want to delete your account?', '', [
+                                                              {
+                                                                  text: 'Confirm',
+                                                                  onPress: deleteAccount,
                                                               },
                                                               {
                                                                   text: 'Cancel',
