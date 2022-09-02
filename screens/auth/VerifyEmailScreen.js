@@ -8,6 +8,7 @@ import useHttpClient from "../../hooks/useHttpClient";
 import {useNavigation} from "@react-navigation/native";
 import {AuthScreenNames} from "../ScreenNames";
 import usePush from "../../hooks/usePush";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const isValidVerificationCode = (code) => {
     return !!code && code.length > 0;
@@ -25,6 +26,7 @@ const VerifyEmailScreen = ({route}) => {
     const navigation = useNavigation();
     const {setError} = useError();
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
     const {expoPushToken} = usePush();
 
     const submit = useCallback(async () => {
@@ -42,6 +44,7 @@ const VerifyEmailScreen = ({route}) => {
             try {
                 const result = await httpClient.completeSignUp({playerId, verificationCode, expoPushToken});
                 if (result.success) {
+                    gaClient.sendGeneralEvent("sign_up");
                     navigation.navigate(AuthScreenNames.ChooseCoach, {
                         token: result.token,
                         playerId: playerId

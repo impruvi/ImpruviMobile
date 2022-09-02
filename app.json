@@ -24,7 +24,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Using camera for recording drill and feedback videos",
         "UIBackgroundModes": ["remote-notification"]
-      }
+      },
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +34,18 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyAR7_PC14iTcfiQRxRaXHkFNw3rVzTueN8",
+          "authDomain": "impruvi-abf0f.firebaseapp.com",
+          "projectId": "impruvi-abf0f",
+          "storageBucket": "impruvi-abf0f.appspot.com",
+          "messagingSenderId": "718924958341",
+          "appId": "1:718924958341:web:d03fdaef8b1dc9d23ff7ec",
+          "measurementId": "G-7DDV8C6GT1"
+        }
+      }
     }
   }
 }

@@ -61,12 +61,27 @@ const EditHeadshotScreen = ({route}) => {
                         title={'Headshot'}/>
 
             {!!headshot && (
-                <View style={{width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 50}}>
-                    <Image source={headshot} style={{width: 180, height: 180, borderRadius: 180, resizeMode: 'contain'}}/>
+                <View style={styles.headshotContainer}>
+                    <Image source={headshot} style={styles.headshotImage}/>
                 </View>
             )}
         </EditContainer>
     )
 }
+
+const styles = StyleSheet.create({
+    headshotContainer: {
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 50
+    },
+    headshotImage: {
+        width: 180,
+        height: 180,
+        borderRadius: 180,
+        resizeMode: 'contain'
+    }
+});
 
 export default EditHeadshotScreen;

@@ -8,6 +8,7 @@ import CoachCard from "../../components/CoachCard";
 import ReloadableScreen from "../../components/ReloadableScreen";
 import useError from "../../hooks/useError";
 import * as Linking from "expo-linking";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const ChooseCoachScreen = ({route}) => {
 
@@ -19,6 +20,7 @@ const ChooseCoachScreen = ({route}) => {
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
     const {setError} = useError();
 
     const initialize = useCallback(async () => {
@@ -35,6 +37,7 @@ const ChooseCoachScreen = ({route}) => {
     }, [httpClient]);
 
     const openHelp = useCallback(() => {
+        gaClient.sendGeneralEvent("link_to_help");
         Linking.openURL('https://impruviapp.com')
     }, [navigation]);
 

@@ -3,14 +3,20 @@ import {useNavigation} from "@react-navigation/native";
 import {Colors} from "../../constants/colors";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const SessionCompleteScreen = () => {
 
     const navigation = useNavigation();
+    const {gaClient} = useGoogleAnalyticsClient();
 
     const goBack = useCallback(() => {
         navigation.pop(2);
+    }, []);
+
+    useEffect(() => {
+        gaClient.sendGeneralEvent('feedback_complete');
     }, []);
 
     return (

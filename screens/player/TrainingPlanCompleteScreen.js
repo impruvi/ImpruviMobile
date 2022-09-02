@@ -3,14 +3,20 @@ import {PlayerScreenNames} from "../ScreenNames";
 import {FontAwesomeIcon} from "@fortawesome/react-native-fontawesome";
 import {faCheckCircle, faXmarkLarge} from "@fortawesome/pro-light-svg-icons";
 import {useNavigation} from "@react-navigation/native";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const TrainingPlanCompleteScreen = () => {
 
     const navigation = useNavigation();
+    const {gaClient} = useGoogleAnalyticsClient();
 
     const navigateToHome = useCallback(() => {
         navigation.navigate(PlayerScreenNames.Home);
+    }, []);
+
+    useEffect(() => {
+        gaClient.sendGeneralEvent("training_plan_complete");
     }, []);
 
     return (

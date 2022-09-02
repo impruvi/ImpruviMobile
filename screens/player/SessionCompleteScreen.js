@@ -8,6 +8,7 @@ import {useCallback, useEffect, useState} from 'react';
 import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import {doesEverySessionInPlanHaveSubmission} from "../../util/playerUtil";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const SessionCompleteScreen = () => {
 
@@ -17,8 +18,10 @@ const SessionCompleteScreen = () => {
     const {playerId} = useAuth();
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
 
     const initialize = async () => {
+        gaClient.sendGeneralEvent("session_complete");
         const [sessions, subscription] = await Promise.all([
             httpClient.getPlayerSessions(playerId),
             httpClient.getSubscription(playerId)

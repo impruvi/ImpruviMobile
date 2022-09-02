@@ -10,6 +10,7 @@ import Form from "../../components/auth/Form";
 import {isValidEmail, isValidPassword} from "../../util/authUtil";
 import {useNavigation} from "@react-navigation/native";
 import {AuthScreenNames} from "../ScreenNames";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const SignInScreen = () => {
 
@@ -23,6 +24,7 @@ const SignInScreen = () => {
     const {setError} = useError();
     const {setPlayerId} = useAuth();
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
     const {expoPushToken} = usePush();
 
     const onEmailChange = (email) => {
@@ -71,6 +73,7 @@ const SignInScreen = () => {
                     expoPushToken
                 });
                 if (result.success) {
+                    gaClient.sendGeneralEvent("login");
                     if (!!result.player.coachId) {
                         setPlayerId(result.player.playerId);
                     } else {

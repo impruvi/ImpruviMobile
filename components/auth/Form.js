@@ -17,12 +17,15 @@ import {useNavigation} from "@react-navigation/native";
 import {StatusBar} from "expo-status-bar";
 import {useCallback} from "react";
 import * as Linking from "expo-linking";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const Form = ({children, footerText, footerLink, onFooterLinkPress}) => {
 
     const navigation = useNavigation();
+    const {gaClient} = useGoogleAnalyticsClient();
 
     const openHelp = useCallback(() => {
+        gaClient.sendGeneralEvent("link_to_help");
         Linking.openURL('https://impruviapp.com')
     }, [navigation]);
 

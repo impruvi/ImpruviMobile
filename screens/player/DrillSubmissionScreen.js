@@ -9,6 +9,7 @@ import {LongRequest, LongRequestType} from "../../model/longRequest";
 import useLongRequest from "../../hooks/useLongRequest";
 import {generateThumbnail} from "../../util/thumbnailUtil";
 import * as Linking from "expo-linking";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 
 const DrillSubmissionScreen = ({route}) => {
@@ -16,6 +17,7 @@ const DrillSubmissionScreen = ({route}) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const {executeLongRequest} = useLongRequest();
+    const {gaClient} = useGoogleAnalyticsClient();
     const {setError} = useError();
     const {playerId} = useAuth();
     const navigation = useNavigation();
@@ -34,6 +36,7 @@ const DrillSubmissionScreen = ({route}) => {
             }
             executeLongRequest(new LongRequest(LongRequestType.CreateSubmission, {drillId: drillId, thumbnail: thumbnail}, input))
             setIsSubmitting(false);
+            gaClient.sendGeneralEvent("submit_drill");
             navigation.goBack();
         } catch (e) {
             console.log(e);

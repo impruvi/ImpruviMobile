@@ -10,8 +10,12 @@ import {LinearGradient} from "expo-linear-gradient";
 import {AuthScreenNames} from "../ScreenNames";
 import {useCallback} from "react";
 
-const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+const gradientColors = ['rgba(0, 0, 0, .7)', 'transparent'];
+const topGradientStart = { x: 0, y: 0 };
+const topGradientEnd = { x: 0, y: 1 };
+const bottomGradientStart = { x: 0, y: 1 };
+const bottomGradientEnd = { x: 0, y: 0 };
 
 const LandingScreen = () => {
 
@@ -39,15 +43,15 @@ const LandingScreen = () => {
                 isMuted={true}
                 isLooping={true}/>
             <LinearGradient
-                colors={['rgba(0, 0, 0, .7)', 'transparent']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={{width: '100%', height: 200, position: 'absolute', top: 0, left: 0}} />
+                colors={gradientColors}
+                start={topGradientStart}
+                end={topGradientEnd}
+                style={styles.topGradient} />
             <LinearGradient
-                colors={['rgba(0, 0, 0, .7)', 'transparent']}
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                style={{width: '100%', height: 600, position: 'absolute', bottom: 0, left: 0}} />
+                colors={gradientColors}
+                start={bottomGradientStart}
+                end={bottomGradientEnd}
+                style={styles.bottomGradient} />
 
             <SafeAreaView style={styles.safeAreaContainer}>
                 <View style={styles.navigation}>
@@ -148,6 +152,20 @@ const styles = StyleSheet.create({
     signInButtonText: {
         color: Colors.Primary,
         fontWeight: '500',
+    },
+    topGradient: {
+        width: '100%',
+        height: 200,
+        position: 'absolute',
+        top: 0,
+        left: 0
+    },
+    bottomGradient: {
+        width: '100%',
+        height: 600,
+        position: 'absolute',
+        bottom: 0,
+        left: 0
     }
 });
 

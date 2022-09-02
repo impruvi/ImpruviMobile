@@ -8,6 +8,7 @@ import Input from "../../components/auth/Input";
 import Button from "../../components/auth/Button";
 import Form from "../../components/auth/Form";
 import Error from "../../components/auth/Error";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 
 const isValidInvitationCode = (code) => {
@@ -23,6 +24,7 @@ const InvitationCodeScreen = () => {
     const {setError} = useError();
     const {setCoachId} = useAuth();
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
     const {expoPushToken} = usePush();
 
     const submit = useCallback(async () => {
@@ -41,6 +43,7 @@ const InvitationCodeScreen = () => {
                 const result = await httpClient.validateInviteCode(invitationCode, expoPushToken);
                 if (result.success) {
                     setCoachId(result.coach.coachId);
+                    gaClient.sendGeneralEvent("enter_invitation_code");
                 } else {
                     setIsSubmissionErrorShowing(true);
                 }

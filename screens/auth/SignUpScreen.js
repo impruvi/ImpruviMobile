@@ -8,6 +8,7 @@ import useHttpClient from "../../hooks/useHttpClient";
 import Form from "../../components/auth/Form";
 import Error from "../../components/auth/Error";
 import useError from "../../hooks/useError";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const isValidFirstName = (firstName) => {
     return !!firstName && firstName.length > 0;
@@ -21,6 +22,7 @@ const SignUpScreen = () => {
 
     const {setError} = useError();
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
     const navigation = useNavigation();
 
     const [firstName, setFirstName] = useState('');
@@ -109,6 +111,7 @@ const SignUpScreen = () => {
                 });
 
                 if (result.success) {
+                    gaClient.sendGeneralEvent("initiate_sign_up");
                     navigation.navigate(AuthScreenNames.VerifyEmail, {
                         playerId: result.playerId
                     });

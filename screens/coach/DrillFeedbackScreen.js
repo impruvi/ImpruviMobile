@@ -9,6 +9,7 @@ import useAuth from "../../hooks/useAuth";
 import {LongRequest, LongRequestType} from "../../model/longRequest";
 import useLongRequest from "../../hooks/useLongRequest";
 import {generateThumbnail} from "../../util/thumbnailUtil";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 
 const DrillFeedbackScreen = ({route}) => {
 
@@ -17,6 +18,7 @@ const DrillFeedbackScreen = ({route}) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const {executeLongRequest} = useLongRequest();
+    const {gaClient} = useGoogleAnalyticsClient();
     const navigation = useNavigation();
     const {coachId} = useAuth();
     const {playerId, sessionNumber, drillId} = route.params;
@@ -35,6 +37,7 @@ const DrillFeedbackScreen = ({route}) => {
             };
             executeLongRequest(new LongRequest(LongRequestType.CreateFeedback, {drillId: drillId, thumbnail: thumbnail}, input))
             setIsSubmitting(false);
+            gaClient.sendGeneralEvent('submit_feedback');
             navigation.goBack();
         } catch (e) {
             console.log(e);

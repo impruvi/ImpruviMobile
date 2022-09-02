@@ -2,7 +2,7 @@ import {AuthProvider} from "./hooks/useAuth";
 import {InboxViewDateProvider} from "./hooks/useInboxViewDate";
 import {HttpClientProvider} from "./hooks/useHttpClient";
 import Navigator from "./navigator/Navigator";
-import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer, useNavigationContainerRef} from '@react-navigation/native';
 import {ErrorProvider} from "./hooks/useError";
 import {OnboardingProvider} from "./hooks/useOnboarding";
 import {BottomSheetModalProvider,} from '@gorhom/bottom-sheet';
@@ -20,6 +20,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import './mockDataDog';
 import { DdSdkReactNative, DdSdkReactNativeConfiguration } from '@datadog/mobile-react-native';
 import { DdRumReactNavigationTracking } from '@datadog/mobile-react-navigation';
+import * as Analytics from 'expo-firebase-analytics';
+import {GoogleAnalyticsClientProvider} from "./hooks/useGoogleAnalyticsClient";
 
 
 if (!__DEV__) {
@@ -61,7 +63,8 @@ export default function App() {
 
     const notificationListener = useRef();
     const responseListener = useRef();
-    const navigationRef = useRef();
+    const navigationRef = useNavigationContainerRef();
+    const routeNameRef = useRef();
 
     useEffect(() => {
 
@@ -151,7 +154,16 @@ export default function App() {
             }}
             ref={navigationRef}
             onReady={() => {
-                DdRumReactNavigationTracking.startTrackingViews(navigationRef.current)
+                DdRumReactNavigationTracking.startTrackingViews(navigationRef.current);
+                routeNameRef.current = navigationRef.getCurrentRoute()?.name;
+            }}
+            onStateChange={async () => {
+                const previousRouteName = routeNameRef.current;
+                const currentRouteName = navigationRef.getCurrentRoute()?.name;
+                if (previousRouteName !== currentRouteName) {
+                    await Analytics.logEvent('screen_view', { currentRouteName });
+                }
+                routeNameRef.current = currentRouteName;
             }}>
             <SafeAreaProvider>
                 <BottomSheetModalProvider>
@@ -160,11 +172,13 @@ export default function App() {
                             <ErrorProvider>
                                 <OnboardingProvider>
                                     <HttpClientProvider>
-                                        <LongRequestProvider>
-                                            <PushProvider>
-                                                <Navigator isCompatible={isCompatible} newAppVersionPreviewImage={newAppVersionPreviewImage}/>
-                                            </PushProvider>
-                                        </LongRequestProvider>
+                                        <GoogleAnalyticsClientProvider>
+                                            <LongRequestProvider>
+                                                <PushProvider>
+                                                    <Navigator isCompatible={isCompatible} newAppVersionPreviewImage={newAppVersionPreviewImage}/>
+                                                </PushProvider>
+                                            </LongRequestProvider>
+                                        </GoogleAnalyticsClientProvider>
                                     </HttpClientProvider>
                                 </OnboardingProvider>
                             </ErrorProvider>

@@ -13,8 +13,8 @@ import useHttpClient from "../../hooks/useHttpClient";
 import useAuth from "../../hooks/useAuth";
 import useError from "../../hooks/useError";
 import * as Linking from "expo-linking";
-import CachedImage from "../../components/CachedImage";
-import {AuthScreenNames} from "../ScreenNames";
+import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
+import DrillPreviewThumbnail from "../../components/DrillPreviewThumbnail";
 
 const height = Dimensions.get('window').height / 1.2;
 
@@ -33,11 +33,13 @@ const PreviewCoachScreen = ({route}) => {
     const [previewDrills, setPreviewDrills] = useState([]);
 
     const {httpClient} = useHttpClient();
+    const {gaClient} = useGoogleAnalyticsClient();
     const {setError} = useError();
     const navigation = useNavigation();
     const {setPlayerId} = useAuth()
 
     const openHelp = useCallback(() => {
+        gaClient.sendGeneralEvent("link_to_help");
         Linking.openURL('https://impruviapp.com')
     }, [navigation]);
 
@@ -50,6 +52,7 @@ const PreviewCoachScreen = ({route}) => {
                 stripePriceId: trialPlan.stripePriceId,
                 stripeProductId: trialPlan.stripeProductId
             });
+            gaClient.sendPurchaseSubscriptionEvent(0);
             setPlayerId(playerId);
         } catch (e) {
             console.log(e);
@@ -162,15 +165,7 @@ const PreviewCoachScreen = ({route}) => {
 
                     {activeTab === Tabs.Previews && (
                         <View style={styles.previews}>
-                            {previewDrills.map(drill => {
-                                return (
-                                    <TouchableOpacity style={styles.preview} onPress={() => navigation.navigate(AuthScreenNames.PreviewDrill, {
-                                        drill: drill
-                                    })}>
-                                        <CachedImage sourceUri={drill.demos.frontThumbnail.fileLocation} style={styles.previewThumbnail}/>
-                                    </TouchableOpacity>
-                                )
-                            })}
+                            {previewDrills.map(drill => <DrillPreviewThumbnail key={drill.drillId} drill={drill} />)}
                         </View>
                     )}
                 </View>
@@ -300,16 +295,6 @@ const styles = StyleSheet.create({
         position: 'relative',
         flexWrap: 'wrap',
         justifyContent: 'space-between'
-    },
-    preview: {
-        width: '48%',
-        marginBottom: 15
-    },
-    previewThumbnail: {
-        borderRadius: 5,
-        width: '100%',
-        height: 200,
-        resizeMode: 'cover'
     },
     submittingContainer: {
         position: 'absolute',

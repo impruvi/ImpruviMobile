@@ -2,13 +2,16 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useCallback} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {AuthScreenNames} from "../screens/ScreenNames";
+import useGoogleAnalyticsClient from "../hooks/useGoogleAnalyticsClient";
 
 
 const CoachCard = ({coach, token, playerId}) => {
 
     const navigation = useNavigation();
+    const {gaClient} = useGoogleAnalyticsClient();
 
     const navigateToPreview = useCallback(() => {
+        gaClient.sendGeneralEvent("preview_coach");
         navigation.navigate(AuthScreenNames.PreviewCoach, {
             coach: coach,
             playerId: playerId,
