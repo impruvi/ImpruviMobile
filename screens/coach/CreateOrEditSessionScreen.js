@@ -9,7 +9,6 @@ import Loader from "../../components/Loader";
 import HeaderCenter from "../../components/HeaderCenter";
 import EmptyPlaceholder from "../../components/EmptyPlaceholder";
 import DrillListItem from "./DrillListItem";
-import useAuth from "../../hooks/useAuth";
 
 const CreateOrEditSessionScreen = ({route}) => {
 
@@ -21,7 +20,6 @@ const CreateOrEditSessionScreen = ({route}) => {
 
     const navigation = useNavigation();
     const {setError} = useError();
-    const {coachId} = useAuth();
     const {httpClient} = useHttpClient();
 
     const onSelectDrill = (drill) => {
@@ -66,7 +64,6 @@ const CreateOrEditSessionScreen = ({route}) => {
                     ...route.params.coach,
                     introSessionDrills: introSessionDrills
                 };
-                console.log('cleaned: ' + JSON.stringify(newCoach))
                 await httpClient.updateCoach(newCoach);
             } else {
                 await httpClient.createSession({playerId, drills});
@@ -74,13 +71,23 @@ const CreateOrEditSessionScreen = ({route}) => {
             setIsSubmitting(false);
             navigation.goBack();
         } catch (e) {
-            console.log(e);
             setError('An error occurred. Please try again.');
             setIsSubmitting(false);
         }
     }, [isSubmitting, playerId, session, drills]);
 
-    const onOptionClick = useCallback((drill) => {
+    const onOptionClick = useCallback(async (drill) => {
+        if (isDefaultSession) {
+            try {
+                var notes = drill.notes;
+                drill = await httpClient.getDrill(drill);
+                drill.notes = notes;
+            }
+            catch (e) {
+                useError('An error occurred. Please try again.')
+            }
+        }
+
         Alert.alert(`${drill.name}`, '', [
             {
                 text: 'Delete',
@@ -91,7 +98,7 @@ const CreateOrEditSessionScreen = ({route}) => {
                 text: 'Edit',
                 onPress: () => navigation.navigate(CoachScreenNames.EditDrillSelectionDetails, {
                     drill: drill,
-                    onSelectDrill: onSelectDrill,
+                    onSelectDrill: onSelectDrill
                 }),
                 style: 'default',
             },
@@ -111,7 +118,7 @@ const CreateOrEditSessionScreen = ({route}) => {
     return (
         <View style={styles.container}>
             <SafeAreaView style={styles.safeAreaView}>
-                <HeaderCenter title={!!session ? `Training ${session.sessionNumber}` : (isDefaultSession ? 'Add Default Training': 'Add a Training')}
+                <HeaderCenter title={!!session && !isDefaultSession ? `Training ${session.sessionNumber}` : (isDefaultSession ? 'Default Training': 'Add a Training')}
                               left={<Text>Cancel</Text>}
                               onLeftPress={navigation.goBack}
                               right={<Text style={styles.addDrillButton}>Add drill</Text>}
