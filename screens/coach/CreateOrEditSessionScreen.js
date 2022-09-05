@@ -9,16 +9,19 @@ import Loader from "../../components/Loader";
 import HeaderCenter from "../../components/HeaderCenter";
 import EmptyPlaceholder from "../../components/EmptyPlaceholder";
 import DrillListItem from "./DrillListItem";
+import useAuth from "../../hooks/useAuth";
 
 const CreateOrEditSessionScreen = ({route}) => {
 
-    const {playerId, session} = route.params;
+    const {playerId, session, isDefaultSession, coach} = route.params;
+
 
     const [drills, setDrills] = useState(!!session ? session.drills : []);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigation = useNavigation();
     const {setError} = useError();
+    const {coachId} = useAuth();
     const {httpClient} = useHttpClient();
 
     const onSelectDrill = (drill) => {
@@ -54,8 +57,17 @@ const CreateOrEditSessionScreen = ({route}) => {
         try {
             setIsSubmitting(true);
 
-            if (!!session) {
+            if (!!session && !isDefaultSession) {
                 await httpClient.updateSession({playerId, sessionNumber: session.sessionNumber, drills});
+            } else if (isDefaultSession) {
+                var introSessionDrills = [];
+                drills.forEach(drill => introSessionDrills.push({drillId: drill.drillId, notes: drill.notes}));
+                const newCoach = {
+                    ...route.params.coach,
+                    introSessionDrills: introSessionDrills
+                };
+                console.log('cleaned: ' + JSON.stringify(newCoach))
+                await httpClient.updateCoach(newCoach);
             } else {
                 await httpClient.createSession({playerId, drills});
             }
@@ -99,7 +111,7 @@ const CreateOrEditSessionScreen = ({route}) => {
     return (
         <View style={styles.container}>
             <SafeAreaView style={styles.safeAreaView}>
-                <HeaderCenter title={!!session ? `Training ${session.sessionNumber}` : 'Add a training'}
+                <HeaderCenter title={!!session ? `Training ${session.sessionNumber}` : (isDefaultSession ? 'Add Default Training': 'Add a Training')}
                               left={<Text>Cancel</Text>}
                               onLeftPress={navigation.goBack}
                               right={<Text style={styles.addDrillButton}>Add drill</Text>}

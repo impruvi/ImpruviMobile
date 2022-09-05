@@ -172,7 +172,7 @@ class HttpClient {
         return await this.getPlayer(playerId);
     }
 
-    updateCoach = async ({coachId, firstName, lastName, email, about, position, school, youthClub, headshot}) => {
+    updateCoach = async ({coachId, firstName, lastName, email, about, position, school, youthClub, headshot, introSessionDrills}) => {
         const currentCoach = await this.getCoach(coachId);
 
         const updatedCoach = {
@@ -184,8 +184,12 @@ class HttpClient {
             position,
             school,
             youthClub,
-            headshot
+            headshot,
+            introSessionDrills
         }
+
+        console.log('http: ' + JSON.stringify(updatedCoach))
+
         if (!!headshot && !!headshot.uri && !isRemoteMedia(headshot)) {
             const mediaUploadUrl = await this.getMediaUploadUrl('coach/headshot');
             await this.uploadFile(headshot, mediaUploadUrl.uploadUrl);

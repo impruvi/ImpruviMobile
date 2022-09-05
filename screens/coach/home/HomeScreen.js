@@ -88,7 +88,7 @@ const HomeScreen = () => {
                         {hasError && <Reload onReload={initialize}/>}
                         {!hasError && (
                             <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-                                <Text style={styles.title}>Review trainings</Text>
+                                <Text style={styles.title}>Review Trainings</Text>
 
                                 {playerSessionsRequiringFeedback.length > 0 && playerSessionsRequiringFeedback.slice(0,3).map(playerSession => (
                                     <ReviewTrainingListItem playerSession={playerSession}
@@ -96,7 +96,7 @@ const HomeScreen = () => {
                                                             key={playerSession.player.playerId}/>
                                 ))}
                                 {playerSessionsRequiringFeedback.length === 0 && (
-                                    <EmptyPlaceholder text={'No sessions to review'} />
+                                    <EmptyPlaceholder text={'No sessins to review'} />
                                 )}
                                 {playerSessionsRequiringFeedback.length > 0 && (
                                     <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.ReviewTrainings, {
@@ -107,7 +107,7 @@ const HomeScreen = () => {
                                     </TouchableOpacity>
                                 )}
 
-                                <Text style={styles.title}>Create training plans</Text>
+                                <Text style={styles.title}>Create Training Plans</Text>
                                 {playersAndSubscriptionsRequiringTrainings.length > 0 && playersAndSubscriptionsRequiringTrainings.slice(0,3).map(playerRequiringTrainings => (
                                     <CreateTrainingsListItem playerRequiringTrainings={playerRequiringTrainings}
                                                              subscription={findSubscription(playerRequiringTrainings.player, playersAndSubscriptionsRequiringTrainings)}
@@ -121,6 +121,25 @@ const HomeScreen = () => {
                                         playersAndSubscriptionsRequiringTrainings: playersAndSubscriptionsRequiringTrainings
                                     })}>
                                         <Text style={styles.viewAllButtonText}>View all ({playersAndSubscriptionsRequiringTrainings.length})</Text>
+                                    </TouchableOpacity>
+                                )}
+                                <Text style={styles.title}>Manage Default Session</Text>
+                                {coach?.introSessionDrills === null && (
+                                    <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
+                                        session: null,
+                                        isDefaultSession: true,
+                                        coach: coach
+                                    })}>
+                                        <Text style={styles.viewAllButtonText}>Create Default Session</Text>
+                                    </TouchableOpacity>
+                                )}
+                                {coach?.introSessionDrills && (
+                                    <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
+                                        session: { drills: coach?.introSessionDrills },
+                                        isDefaultSession: true,
+                                        coach: coach
+                                    })}>
+                                        <Text style={styles.viewAllButtonText}>Update Default Session</Text>
                                     </TouchableOpacity>
                                 )}
                             </ScrollView>
