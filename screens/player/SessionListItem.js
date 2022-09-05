@@ -1,4 +1,5 @@
 import {memo} from 'react';
+import {StyleSheet} from "react-native";
 import DrillVideos from "../../components/drill-videos/DrillVideos";
 import {LinearGradient} from "expo-linear-gradient";
 
