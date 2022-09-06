@@ -15,6 +15,7 @@ import useError from "../../hooks/useError";
 import * as Linking from "expo-linking";
 import useGoogleAnalyticsClient from "../../hooks/useGoogleAnalyticsClient";
 import DrillPreviewThumbnail from "../../components/DrillPreviewThumbnail";
+import {getTrialPlan} from "../../util/subscriptionUtil";
 
 const height = Dimensions.get('window').height / 1.2;
 
@@ -48,9 +49,7 @@ const PreviewCoachScreen = ({route}) => {
         try {
             await httpClient.createSubscription({
                 token: token,
-                coachId: coach.coachId,
-                stripePriceId: trialPlan.stripePriceId,
-                stripeProductId: trialPlan.stripeProductId
+                subscriptionPlanRef: trialPlan,
             });
             gaClient.sendPurchaseSubscriptionEvent(0);
             setPlayerId(playerId);
@@ -82,23 +81,12 @@ const PreviewCoachScreen = ({route}) => {
         submit();
     }, [trialPlan]);
 
-    const getTrialPlan = useCallback(async () => {
-        const plans = await Promise.all(
-            coach.subscriptionPlanRefs.map(subscriptionPlanRef => httpClient.getSubscriptionPlan(subscriptionPlanRef))
-        );
-
-        const trialPlan = plans.find(plan => plan.isTrial && plan.unitAmount === 0);
-        setTrialPlan(trialPlan);
-    }, [httpClient]);
-
-    const getPreviewDrills = useCallback(async () => {
-        const drills = (await httpClient.getDrillsForCoach(coach.coachId)).drills;
-        setPreviewDrills(drills.slice(0,3))
-    }, [httpClient]);
-
     const initialize = useCallback(async () => {
+        setTrialPlan(getTrialPlan(coach.pricingPlans))
+
         try {
-            await Promise.all([getTrialPlan(), getPreviewDrills()]);
+            const drills = (await httpClient.getDrillsForCoach(coach.coachId)).drills;
+            setPreviewDrills(drills.slice(0,3))
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please check your internet connection.');

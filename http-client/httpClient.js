@@ -226,24 +226,11 @@ class HttpClient {
         return response.data.coaches;
     }
 
-    createSubscription = async ({token, coachId, stripeProductId, stripePriceId}) => {
+    createSubscription = async ({token, subscriptionPlanRef}) => {
         await this.#client.invokeApi({}, '/player/subscription/create', 'POST', {}, {
             token: token,
-            subscriptionPlanRef: {
-                coachId: coachId,
-                stripeProductId: stripeProductId,
-                stripePriceId: stripePriceId
-            }
+            subscriptionPlanRef: subscriptionPlanRef
         });
-    }
-
-    getSubscriptionPlan = async ({stripeProductId, stripePriceId}) => {
-        const result = await this.#client.invokeApi({}, '/subscription-plan/get', 'POST', {}, {
-            stripeProductId,
-            stripePriceId
-        });
-
-        return result.data.subscriptionPlan;
     }
 
     getPlayer = async (playerId) => {
