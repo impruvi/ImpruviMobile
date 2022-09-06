@@ -188,8 +188,6 @@ class HttpClient {
             introSessionDrills
         }
 
-        console.log('http: ' + JSON.stringify(updatedCoach))
-
         if (!!headshot && !!headshot.uri && !isRemoteMedia(headshot)) {
             const mediaUploadUrl = await this.getMediaUploadUrl('coach/headshot');
             await this.uploadFile(headshot, mediaUploadUrl.uploadUrl);

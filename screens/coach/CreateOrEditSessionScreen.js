@@ -14,7 +14,6 @@ const CreateOrEditSessionScreen = ({route}) => {
 
     const {playerId, session, isDefaultSession, coach} = route.params;
 
-
     const [drills, setDrills] = useState(!!session ? session.drills : []);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,13 +21,14 @@ const CreateOrEditSessionScreen = ({route}) => {
     const {setError} = useError();
     const {httpClient} = useHttpClient();
 
-    const onSelectDrill = (drill) => {
-        if (drills.filter(d => d.drillId === drill.drillId).length > 0) {
-            setDrills(drills.map(d => d.drillId === drill.drillId ? drill : d));
+    const onSelectDrill = useCallback((drill) => {
+        if (!!drills.find(d => d.drillId === drill.drillId)) {
+            const newDrills = drills.map(d => d.drillId === drill.drillId ? drill : d);
+            setDrills(newDrills);
         } else {
             setDrills([...drills, drill]);
         }
-    };
+    }, [drills]);
 
     const onRemoveDrill = useCallback((drill) => {
         setDrills(drills.filter(d => d.drillId !== drill.drillId));
@@ -58,13 +58,10 @@ const CreateOrEditSessionScreen = ({route}) => {
             if (!!session && !isDefaultSession) {
                 await httpClient.updateSession({playerId, sessionNumber: session.sessionNumber, drills});
             } else if (isDefaultSession) {
-                var introSessionDrills = [];
-                drills.forEach(drill => introSessionDrills.push({drillId: drill.drillId, notes: drill.notes}));
-                const newCoach = {
-                    ...route.params.coach,
-                    introSessionDrills: introSessionDrills
-                };
-                await httpClient.updateCoach(newCoach);
+                await httpClient.updateCoach({
+                    ...coach,
+                    introSessionDrills: drills
+                });
             } else {
                 await httpClient.createSession({playerId, drills});
             }
@@ -77,17 +74,6 @@ const CreateOrEditSessionScreen = ({route}) => {
     }, [isSubmitting, playerId, session, drills]);
 
     const onOptionClick = useCallback(async (drill) => {
-        if (isDefaultSession) {
-            try {
-                var notes = drill.notes;
-                drill = await httpClient.getDrill(drill);
-                drill.notes = notes;
-            }
-            catch (e) {
-                useError('An error occurred. Please try again.')
-            }
-        }
-
         Alert.alert(`${drill.name}`, '', [
             {
                 text: 'Delete',

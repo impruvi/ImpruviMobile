@@ -19,7 +19,7 @@ const DrillListItem = ({drill, idx, onOptionClick}) => {
 
     const optionPressed = useCallback(() => {
         onOptionClick(drill);
-    }, [drill]);
+    }, [drill, onOptionClick]);
 
     return (
         <TouchableHighlight onPress={navigateToDrill} underlayColor={underlayColor} key={drill.drillId}>

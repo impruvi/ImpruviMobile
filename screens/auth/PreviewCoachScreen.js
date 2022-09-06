@@ -71,7 +71,7 @@ const PreviewCoachScreen = ({route}) => {
 
     const onSelect = useCallback(() => {
         if (!trialPlan) {
-            Alert.alert(`You can not select ${coach.firstName} ${coach.lastName} through the app. We know, it's not ideal`, '', [
+            Alert.alert(`You cannot select ${coach.firstName} ${coach.lastName} through the app. We know, it's not ideal`, '', [
                 {
                     text: 'Ok',
                 },

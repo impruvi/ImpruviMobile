@@ -28,12 +28,29 @@ const HomeScreen = () => {
     const [playerSessionsRequiringFeedback, setPlayerSessionsRequiringFeedback] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
+    const [introSessionDrills, setIntroSessionDrills] = useState(null);
 
     const navigation = useNavigation();
     const {httpClient} = useHttpClient();
     const {coachId} = useAuth();
     const {setError} = useError();
     const firstLoad = useRef();
+
+    const getFullIntroSessionDrills = async (coach) => {
+        if (!coach?.introSessionDrills) {
+            return null;
+        }
+
+        const drills = await Promise.all(coach.introSessionDrills.map(drill => httpClient.getDrill({drillId: drill.drillId})));
+
+        return drills.map(drill => {
+            const matchingIntroDrill = coach.introSessionDrills.find(introDrill => introDrill.drillId === drill.drillId);
+            return {
+                ...drill,
+                ...matchingIntroDrill
+            }
+        });
+    }
 
     const initialize = async () => {
         setIsLoading(true);
@@ -44,14 +61,17 @@ const HomeScreen = () => {
 
     const initializeLazy = async () => {
         try {
-            httpClient.getCoach(coachId).then(setCoach);
-            const [allPlayerSessions, playersAndSubscriptions] = await Promise.all([
+            const coach = await httpClient.getCoach(coachId);
+            const [allPlayerSessions, playersAndSubscriptions, introSessionDrills] = await Promise.all([
                 httpClient.getPlayerSessionsForCoach(coachId),
-                httpClient.getPlayersAndSubscriptionsForCoach(coachId)
+                httpClient.getPlayersAndSubscriptionsForCoach(coachId),
+                getFullIntroSessionDrills(coach)
             ]);
 
+            setCoach(coach);
             setPlayerSessionsRequiringFeedback(getPlayerSessionsRequiringFeedback(allPlayerSessions));
             setPlayersAndSubscriptionsRequiringTrainings(getPlayersAndSubscriptionsRequiringTrainings(allPlayerSessions, playersAndSubscriptions));
+            setIntroSessionDrills(introSessionDrills);
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again.');
@@ -124,24 +144,15 @@ const HomeScreen = () => {
                                     </TouchableOpacity>
                                 )}
                                 <Text style={styles.title}>Manage Default Session</Text>
-                                {coach?.introSessionDrills === null && (
-                                    <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
-                                        session: null,
-                                        isDefaultSession: true,
-                                        coach: coach
-                                    })}>
-                                        <Text style={styles.viewAllButtonText}>Create Default Session</Text>
-                                    </TouchableOpacity>
-                                )}
-                                {coach?.introSessionDrills && (
-                                    <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
-                                        session: { drills: coach?.introSessionDrills },
-                                        isDefaultSession: true,
-                                        coach: coach
-                                    })}>
-                                        <Text style={styles.viewAllButtonText}>Update Default Session</Text>
-                                    </TouchableOpacity>
-                                )}
+                                <TouchableOpacity style={styles.viewAllButton} onPress={() => navigation.navigate(CoachScreenNames.CreateOrEditSession, {
+                                    session: { drills: introSessionDrills },
+                                    isDefaultSession: true,
+                                    coach: coach
+                                })}>
+                                    <Text style={styles.viewAllButtonText}>
+                                        {!!introSessionDrills ? 'Update Default Session' : 'Create Default Session'}
+                                    </Text>
+                                </TouchableOpacity>
                             </ScrollView>
                         )}
                     </>
